@@ -1,0 +1,63 @@
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+coverage/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Logs
+*.log
+
+# Private clinical material
+private/
+patient-data/
+real-data/
+clinical-data/
+clinic-exports/
+raw-dicom/
+dicom-private/
+*.jpg
+*.jpeg
+*.png
+*.heic
+*.tif
+*.tiff
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+
+# DICOM files are ignored by default unless explicitly synthetic examples.
+*.dcm
+*.dicom
+!examples/synthetic-dicom/**/*.dcm
+!examples/synthetic-dicom/**/*.dicom
+
+# Public placeholders
+!docs/README.md
+!examples/synthetic-dicom/README.md
+!synthetic-data/README.md

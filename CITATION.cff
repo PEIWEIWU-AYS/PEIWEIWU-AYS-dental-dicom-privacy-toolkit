@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this toolkit, please cite it using the metadata below."
+title: "Dental DICOM Privacy Toolkit"
+authors:
+  - family-names: "Wu"
+    given-names: "Peiwei"
+repository-code: "https://github.com/PEIWEIWU-AYS/dental-dicom-privacy-toolkit"
+license: "MIT"
+version: "0.1.0"
+date-released: "2026-06-11"
