@@ -45,6 +45,11 @@ from ddpt.profiles import (
     lint_profile,
     write_profile_template,
 )
+from ddpt.publish import (
+    DEFAULT_OWNER,
+    DEFAULT_REPO_SLUG,
+    build_publish_preflight,
+)
 from ddpt.quality_gate import run_workflow_quality_gate
 from ddpt.redaction_plan import (
     load_redaction_plan,
@@ -78,6 +83,7 @@ from ddpt.reports import (
     write_profile_comparison_html,
     write_profile_conformance_html,
     write_profile_lint_html,
+    write_publish_preflight_html,
     write_release_audit_html,
     write_residual_risk_html,
     write_review_dashboard_html,
@@ -123,6 +129,7 @@ quality_app = typer.Typer(help="Run workflow quality gates.")
 remediation_app = typer.Typer(help="Build privacy remediation plans.")
 risk_app = typer.Typer(help="Score residual privacy risk from generated evidence.")
 regression_app = typer.Typer(help="Run synthetic privacy regression suites.")
+publish_app = typer.Typer(help="Prepare public GitHub publishing.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(confidentiality_app, name="confidentiality")
@@ -150,6 +157,7 @@ app.add_typer(quality_app, name="quality")
 app.add_typer(remediation_app, name="remediation")
 app.add_typer(risk_app, name="risk")
 app.add_typer(regression_app, name="regression")
+app.add_typer(publish_app, name="publish")
 console = Console()
 
 
@@ -892,6 +900,54 @@ def privacy_regression_suite(
     console.print(f"Cases: {report.passed_cases}/{report.total_cases}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
+        raise typer.Exit(1)
+
+
+@publish_app.command("preflight")
+def publish_preflight_command(
+    root_dir: Annotated[
+        Path,
+        typer.Argument(help="Repository root to inspect before GitHub publishing."),
+    ],
+    owner: Annotated[str, typer.Option(help="GitHub owner or account name.")] = DEFAULT_OWNER,
+    repo_slug: Annotated[
+        str, typer.Option(help="Expected GitHub repository slug.")
+    ] = DEFAULT_REPO_SLUG,
+    check_remote: Annotated[
+        bool,
+        typer.Option(
+            "--check-remote/--no-check-remote",
+            help="Run git ls-remote to confirm the GitHub repository exists.",
+        ),
+    ] = False,
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write publish preflight JSON.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write publish preflight HTML.")
+    ] = None,
+) -> None:
+    report = build_publish_preflight(root_dir, owner, repo_slug, check_remote=check_remote)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_publish_preflight_html(html_output, report)
+
+    table = Table(title="GitHub Publish Preflight")
+    table.add_column("Status")
+    table.add_column("Check")
+    table.add_column("Message")
+    for check in report.checks:
+        table.add_row(check.status, check.id, check.message)
+    console.print(table)
+    console.print(f"Expected remote: {report.expected_remote_url}")
+    console.print(f"Ready to push: {report.ready_to_push}")
+    if report.action_required_checks:
+        console.print(
+            f"Action required: {report.action_required_checks} check(s). "
+            "Create the GitHub repository before pushing if remote-exists is listed."
+        )
+    if report.failed_checks:
         raise typer.Exit(1)
 
 

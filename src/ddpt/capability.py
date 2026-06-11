@@ -747,6 +747,30 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="github-publish-preflight",
+        capability="GitHub publish preflight for public repository creation and push readiness",
+        source_tools=("RSNA CTP", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/publish.py",
+            "docs/github-publish-preflight.md",
+            "src/ddpt/cli.py",
+            "src/ddpt/evidence.py",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt publish preflight . --json publish-preflight.json "
+            "--html publish-preflight.html"
+        ),
+        differentiator=(
+            "Turns the final public GitHub handoff into an auditable local report "
+            "with repository name, description, topics, remote URL, and push commands."
+        ),
+        note=(
+            "Supports the upload step without automatically creating cloud resources "
+            "or publishing private material."
+        ),
+    ),
+    CapabilitySpec(
         id="bilingual-discoverability",
         capability="Bilingual GitHub discoverability and synthetic-data safety positioning",
         source_tools=("RSNA DICOM Anonymizer", "pydicom anonymization example"),

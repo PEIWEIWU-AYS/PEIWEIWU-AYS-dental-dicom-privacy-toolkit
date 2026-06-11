@@ -51,7 +51,8 @@ Version 0.1 is successful when a new user can:
 41. Export a review-only Orthanc REST anonymization plan from a dental profile.
 42. Run a residual privacy risk score across generated workflow evidence.
 43. Run a synthetic adversarial privacy regression suite.
-44. Run automated tests locally and in GitHub Actions.
+44. Run a GitHub publish preflight before creating or pushing the public repository.
+45. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -144,8 +145,34 @@ Required:
 - links to package verification receipts
 - links to profile conformance verification reports
 - static review dashboard JSON and HTML output
+- GitHub publish preflight JSON and HTML output
 - non-zero exit status when any major evidence gate fails
 - documentation that generated evidence output must not be committed by default
+
+### `ddpt publish preflight`
+
+Prepare a local repository for public GitHub publishing.
+
+Required:
+
+- repository root input
+- expected GitHub owner and repository slug
+- local Git repository check
+- commit identity check
+- current branch and HEAD commit check
+- working tree cleanliness check
+- expected `origin` remote URL check
+- README bilingual discoverability check
+- `docs/discoverability.md` check
+- GitHub Actions workflow gate check
+- repository safety scan check
+- optional remote existence check with `--check-remote`
+- public GitHub description and suggested topics in the report
+- empty-repository creation steps
+- push command suggestions
+- JSON output
+- optional HTML output
+- non-zero exit status only for blocking local failures
 
 ### `ddpt capability matrix`
 

@@ -33,6 +33,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Release Audit](release-audit.md)
 - [Evidence Bundle](evidence-bundle.md)
 - [Privacy Regression Suite](privacy-regression-suite.md)
+- [GitHub Publish Preflight](github-publish-preflight.md)
 - [Review Dashboard](review-dashboard.md)
 - [Package Verification Receipts](package-verification-receipts.md)
 - [Share Readiness](share-readiness.md)

@@ -38,6 +38,7 @@ jobs:
           test -f docs/competitor-coverage.md
           test -f docs/product-requirements.md
           test -f docs/privacy-regression-suite.md
+          test -f docs/github-publish-preflight.md
           test -f docs/policy-registry.md
           test -f docs/remediation-plan.md
           test -f docs/demo-guide.md
@@ -113,6 +114,9 @@ jobs:
 
       - name: Run synthetic privacy regression suite
         run: python -m ddpt regression suite regression-run --json regression-run/reports/privacy-regression-suite.json --html regression-run/reports/privacy-regression-suite.html
+
+      - name: Run GitHub publish preflight
+        run: python -m ddpt publish preflight . --json publish-preflight.json --html publish-preflight.html
 
       - name: Run de-identification comparison
         run: python -m ddpt compare deid evidence-run/demo-run/input/sample.synthetic.dcm evidence-run/demo-run/outputs/sample.anonymized.dcm --json deid-comparison.json --html deid-comparison.html

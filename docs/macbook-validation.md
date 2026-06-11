@@ -244,14 +244,19 @@ ddpt evidence bundle . --out evidence-run
 ddpt regression suite regression-run \
   --json regression-run/reports/privacy-regression-suite.json \
   --html regression-run/reports/privacy-regression-suite.html
+ddpt publish preflight . \
+  --json publish-preflight.json \
+  --html publish-preflight.html
 ```
 
 Expected:
 
 - overall evidence bundle status is `PASS`
 - overall privacy regression suite status is `PASS`
+- publish preflight reports the expected `PEIWEIWU-AYS/dental-dicom-privacy-toolkit` remote
 - `evidence-run/reports/evidence-bundle.html` exists
 - `evidence-run/reports/privacy-regression-suite.html` exists
+- `evidence-run/reports/publish-preflight.html` exists
 - `evidence-run/reports/review-dashboard.html` exists
 - `evidence-run/reports/capability-matrix.html` exists
 - `evidence-run/reports/competitor-coverage.html` exists

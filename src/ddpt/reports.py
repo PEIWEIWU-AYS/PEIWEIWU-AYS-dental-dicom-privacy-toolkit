@@ -32,6 +32,7 @@ from ddpt.models import (
     ProfileComparisonReport,
     ProfileConformanceReport,
     ProfileLintReport,
+    PublishPreflightReport,
     ReleaseAuditReport,
     ResidualRiskReport,
     ReviewDashboardReport,
@@ -2766,6 +2767,103 @@ PIXEL_REVIEW_TEMPLATE = Template(
 """
 )
 
+PUBLISH_PREFLIGHT_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM GitHub Publish Preflight</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    pre { background: #f3f6f8; padding: 12px; overflow: auto; border-radius: 6px; }
+    .pass { color: #1f6f43; font-weight: 700; }
+    .warning, .action-required { color: #8a5a00; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .not-checked { color: #4b5563; font-weight: 700; }
+    .notice { padding: 12px; background: #eef6ff; border: 1px solid #9dc6ee; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM GitHub Publish Preflight</h1>
+  <p class="notice">
+    This report prepares a public GitHub release without uploading files by itself.
+    Use synthetic data only. Do not publish real DICOM, patient images, clinic exports,
+    consent forms, or private manuscript drafts.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Repository root: <code>{{ report.root_dir }}</code></li>
+    <li>Owner/repo: <code>{{ report.owner }}/{{ report.repo_slug }}</code></li>
+    <li>Expected remote: <code>{{ report.expected_remote_url }}</code></li>
+    <li>Configured remote: <code>{{ report.remote_url or "none" }}</code></li>
+    <li>Branch: <code>{{ report.default_branch or "unknown" }}</code></li>
+    <li>HEAD: <code>{{ report.head_sha or "unknown" }}</code></li>
+    <li>Passed: {{ report.passed }}</li>
+    <li>Ready to push: {{ report.ready_to_push }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Checks</h2>
+  <table>
+    <thead>
+      <tr><th>Status</th><th>Check</th><th>Category</th><th>Message</th><th>Evidence</th></tr>
+    </thead>
+    <tbody>
+      {% for check in report.checks %}
+      <tr>
+        <td class="{{ check.status }}">{{ check.status }}</td>
+        <td><code>{{ check.id }}</code></td>
+        <td>{{ check.category }}</td>
+        <td>{{ check.message }}</td>
+        <td>
+          <ul>
+            {% for item in check.evidence %}
+            <li><code>{{ item }}</code></li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Create Repository Steps</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Title</th><th>Command or Value</th><th>Note</th></tr>
+    </thead>
+    <tbody>
+      {% for step in report.create_repository_steps %}
+      <tr>
+        <td>{{ step.order }}</td>
+        <td>{{ step.title }}</td>
+        <td><code>{{ step.command }}</code></td>
+        <td>{{ step.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Suggested GitHub Topics</h2>
+  <p>
+    {% for topic in report.suggested_topics %}
+    <code>{{ topic }}</code>
+    {% endfor %}
+  </p>
+  <h2>Push Commands</h2>
+  <pre>{% for command in report.push_commands %}{{ command }}
+{% endfor %}</pre>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -2833,6 +2931,10 @@ def write_privacy_regression_html(
     report: PrivacyRegressionSuiteReport,
 ) -> None:
     _write_html(path, PRIVACY_REGRESSION_TEMPLATE.render(report=report))
+
+
+def write_publish_preflight_html(path: Path, report: PublishPreflightReport) -> None:
+    _write_html(path, PUBLISH_PREFLIGHT_TEMPLATE.render(report=report))
 
 
 def write_filename_privacy_html(path: Path, report: FilenamePrivacyScanReport) -> None:

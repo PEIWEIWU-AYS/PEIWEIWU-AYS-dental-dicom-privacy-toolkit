@@ -23,6 +23,7 @@ The bundle includes:
 - public repository safety scan JSON
 - release-readiness audit JSON and HTML
 - privacy regression suite JSON and HTML
+- GitHub publish preflight JSON and HTML
 - competitor-informed capability matrix JSON and HTML
 - competitor coverage JSON and HTML
 - policy registry JSON, CSV, and HTML
@@ -62,6 +63,8 @@ evidence-run/
     release-audit.html
     privacy-regression-suite.json
     privacy-regression-suite.html
+    publish-preflight.json
+    publish-preflight.html
     capability-matrix.json
     capability-matrix.html
     competitor-coverage.json
@@ -129,6 +132,8 @@ This evidence bundle focuses on public demonstration value:
 - non-programmer collaborators can start from one dashboard page
 - CI can exercise the same proof path
 - GitHub visitors can understand the workflow without real patient data
+- maintainers can see whether the empty GitHub repository, topics, and push
+  commands are ready
 - collaborators can see environment, safety, release, workflow, audit, and package
   evidence together
 

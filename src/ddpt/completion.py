@@ -381,6 +381,30 @@ OBJECTIVE_REQUIREMENTS = [
         ),
     ),
     ObjectiveRequirement(
+        id="github-publish-preflight",
+        category="release-readiness",
+        requirement=(
+            "Provide a GitHub publish preflight that prepares repository creation, "
+            "topics, remote checks, and push commands before upload."
+        ),
+        evidence_files=(
+            "docs/github-publish-preflight.md",
+            "src/ddpt/publish.py",
+            "tests/test_cli_workflow.py",
+        ),
+        capability_ids=("github-publish-preflight", "bilingual-discoverability"),
+        evidence_terms=(
+            ("docs/github-publish-preflight.md", "ddpt publish preflight"),
+            ("docs/github-publish-preflight.md", "PEIWEIWU-AYS"),
+            ("src/ddpt/publish.py", "build_publish_preflight"),
+            (".github/workflows/ci.yml", "python -m ddpt publish preflight"),
+        ),
+        note=(
+            "Makes the final GitHub upload step inspectable even when the empty "
+            "remote repository still needs to be created manually."
+        ),
+    ),
+    ObjectiveRequirement(
         id="public-release-readiness",
         category="release-readiness",
         requirement=(

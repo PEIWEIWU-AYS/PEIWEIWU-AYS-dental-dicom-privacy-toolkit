@@ -842,6 +842,48 @@ def test_privacy_regression_suite_generates_adversarial_evidence(
     assert "adversarial" in html
 
 
+def test_publish_preflight_generates_github_readiness_report(tmp_path: Path) -> None:
+    report_json = tmp_path / "reports" / "publish-preflight.json"
+    report_html = tmp_path / "reports" / "publish-preflight.html"
+
+    result = runner.invoke(
+        app,
+        [
+            "publish",
+            "preflight",
+            ".",
+            "--json",
+            str(report_json),
+            "--html",
+            str(report_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert report_json.exists()
+    assert report_html.exists()
+    report = json.loads(report_json.read_text())
+    assert report["owner"] == "PEIWEIWU-AYS"
+    assert report["repo_slug"] == "dental-dicom-privacy-toolkit"
+    assert report["expected_remote_url"].endswith(
+        "PEIWEIWU-AYS/dental-dicom-privacy-toolkit.git"
+    )
+    assert report["check_remote"] is False
+    assert "dicom" in report["suggested_topics"]
+    assert "privacy-regression" in report["suggested_topics"]
+    check_ids = {check["id"]: check for check in report["checks"]}
+    assert check_ids["remote-exists"]["status"] == "not-checked"
+    assert check_ids["readme-discoverability"]["status"] == "pass"
+    assert check_ids["repository-safety"]["status"] == "pass"
+    assert any(
+        step["title"] == "Create empty GitHub repository"
+        for step in report["create_repository_steps"]
+    )
+    html = report_html.read_text()
+    assert "Dental DICOM GitHub Publish Preflight" in html
+    assert "PEIWEIWU-AYS/dental-dicom-privacy-toolkit" in html
+
+
 def test_pixel_review_command_generates_overlay_and_report(tmp_path: Path) -> None:
     source = tmp_path / "sample.dcm"
     review_dir = tmp_path / "reports" / "pixel-review"
@@ -1204,6 +1246,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "workflow-quality-gate" in capability_ids
     assert "residual-risk-score" in capability_ids
     assert "privacy-regression-suite" in capability_ids
+    assert "github-publish-preflight" in capability_ids
     assert "deid-certificate" in capability_ids
     assert "secure-sharing" in capability_ids
     assert "competitor-coverage-report" in capability_ids
@@ -1255,6 +1298,7 @@ def test_competitor_coverage_reports_reference_tool_mapping(tmp_path: Path) -> N
     assert "orthanc-anonymize-plan" in capability_ids
     assert "dcmodify-plan-export" in capability_ids
     assert "privacy-regression-suite" in capability_ids
+    assert "github-publish-preflight" in capability_ids
     assert "competitor-coverage-report" in capability_ids
     html = coverage_html.read_text()
     assert "Dental DICOM Competitor Coverage" in html
@@ -1294,6 +1338,7 @@ def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) ->
     assert "shareable-proof-package" in item_ids
     assert "residual-risk-score" in item_ids
     assert "privacy-regression-suite" in item_ids
+    assert "github-publish-preflight" in item_ids
     assert "deid-certificate-handoff" in item_ids
     assert "profile-conformance-proof" in item_ids
     assert "dicom-confidentiality-alignment" in item_ids
@@ -1328,6 +1373,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "policy-registry.html").exists()
     assert (output_dir / "reports" / "confidentiality-alignment.html").exists()
     assert (output_dir / "reports" / "privacy-regression-suite.html").exists()
+    assert (output_dir / "reports" / "publish-preflight.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-basic.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
@@ -1362,6 +1408,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/policy-registry.html" in artifact_paths
     assert "reports/confidentiality-alignment.html" in artifact_paths
     assert "reports/privacy-regression-suite.html" in artifact_paths
+    assert "reports/publish-preflight.html" in artifact_paths
     assert "reports/profile-lint-dental-basic.html" in artifact_paths
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
     assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
@@ -1392,6 +1439,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Objective completion audit HTML" in html
     assert "Release audit HTML" in html
     assert "Privacy regression suite HTML" in html
+    assert "GitHub publish preflight HTML" in html
     assert "De-identification certificate HTML" in html
     assert "Workflow quality gate HTML" in html
     assert "Residual privacy risk HTML" in html

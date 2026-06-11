@@ -42,6 +42,7 @@ The audit checks evidence for:
 - synthetic privacy regression evidence for adversarial known-risk cases
 - de-identification certificate evidence for synthetic sharing handoff
 - competitor coverage evidence for reference-tool mapping and safety boundaries
+- GitHub publish preflight evidence for repository creation and push readiness
 
 ## Why This Matters
 

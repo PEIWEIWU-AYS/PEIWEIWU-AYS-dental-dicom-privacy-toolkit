@@ -430,6 +430,57 @@ class ReleaseAuditReport(BaseModel):
         return sum(1 for check in self.checks if not check.passed)
 
 
+class PublishPreflightCheck(BaseModel):
+    id: str
+    category: str
+    status: Literal["pass", "warning", "action-required", "fail", "not-checked"]
+    passed: bool
+    message: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class PublishPreflightStep(BaseModel):
+    order: int
+    title: str
+    command: str
+    note: str
+
+
+class PublishPreflightReport(BaseModel):
+    root_dir: str
+    owner: str
+    repo_slug: str
+    expected_remote_url: str
+    remote_url: str | None = None
+    default_branch: str | None = None
+    head_sha: str | None = None
+    git_user_name: str | None = None
+    git_user_email: str | None = None
+    public_description: str
+    suggested_topics: list[str]
+    check_remote: bool
+    passed: bool
+    ready_to_push: bool
+    checks: list[PublishPreflightCheck]
+    create_repository_steps: list[PublishPreflightStep]
+    push_commands: list[str]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+    @property
+    def passed_checks(self) -> int:
+        return sum(1 for check in self.checks if check.passed)
+
+    @property
+    def action_required_checks(self) -> int:
+        return sum(1 for check in self.checks if check.status == "action-required")
+
+    @property
+    def failed_checks(self) -> int:
+        return sum(1 for check in self.checks if check.status == "fail")
+
+
 class EvidenceArtifact(BaseModel):
     label: str
     category: str

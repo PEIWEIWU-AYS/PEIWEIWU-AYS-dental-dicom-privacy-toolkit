@@ -12,6 +12,7 @@ from ddpt.models import EvidenceArtifact, EvidenceBundleResult
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.policy import policy_registry_report, write_policy_registry_csv
 from ddpt.profiles import lint_profile
+from ddpt.publish import build_publish_preflight
 from ddpt.quality_gate import run_workflow_quality_gate
 from ddpt.regression import run_privacy_regression_suite
 from ddpt.release import run_release_audit
@@ -25,6 +26,7 @@ from ddpt.reports import (
     write_policy_registry_html,
     write_privacy_regression_html,
     write_profile_lint_html,
+    write_publish_preflight_html,
     write_release_audit_html,
     write_review_dashboard_html,
     write_workflow_html,
@@ -56,6 +58,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     basic_lint_report = lint_profile("dental-basic")
     research_lint_report = lint_profile("dental-research-sharing")
     linkable_lint_report = lint_profile("dental-linkable-research")
+    publish_report = build_publish_preflight(repository_root)
 
     doctor_json = reports_dir / "doctor.json"
     safety_json = reports_dir / "safety-scan.json"
@@ -78,6 +81,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     research_lint_html = reports_dir / "profile-lint-dental-research-sharing.html"
     linkable_lint_json = reports_dir / "profile-lint-dental-linkable-research.json"
     linkable_lint_html = reports_dir / "profile-lint-dental-linkable-research.html"
+    publish_json = reports_dir / "publish-preflight.json"
+    publish_html = reports_dir / "publish-preflight.html"
     write_json(doctor_json, model_to_dict(doctor_report))
     write_json(safety_json, model_to_dict(safety_report))
     write_json(release_json, model_to_dict(release_report))
@@ -99,6 +104,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_profile_lint_html(research_lint_html, research_lint_report)
     write_json(linkable_lint_json, model_to_dict(linkable_lint_report))
     write_profile_lint_html(linkable_lint_html, linkable_lint_report)
+    write_json(publish_json, model_to_dict(publish_report))
+    write_publish_preflight_html(publish_html, publish_report)
 
     demo_result = run_demo_pipeline(demo_dir)
     quality_report = run_workflow_quality_gate(demo_dir)
@@ -318,6 +325,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            publish_html,
+            "GitHub publish preflight HTML",
+            "publishing",
+            "Public GitHub repository creation, topics, remote, and push readiness report.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "remediation-plan.html",
             "Privacy remediation plan HTML",
             "planning",
@@ -409,6 +423,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             and basic_lint_report.passed
             and research_lint_report.passed
             and linkable_lint_report.passed
+            and publish_report.passed
             and demo_result.validation_passed
             and demo_result.audit_chain_passed
             and quality_report.passed
