@@ -324,6 +324,30 @@ CAPABILITY_SPECS = [
         note="Gives expert users deterministic control without hiding DICOM tag changes.",
     ),
     CapabilitySpec(
+        id="dcmodify-plan-export",
+        capability="DCMTK dcmodify-style profile operation plan export",
+        source_tools=("DCMTK dcmodify", "RSNA DICOM Anonymizer", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/dcmodify_plan.py",
+            "docs/dcmodify-plan.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt dcmodify plan input.dcm --profile dental-basic "
+            "--json dcmodify-plan.json --html dcmodify-plan.html "
+            "--script dcmodify-plan.sh"
+        ),
+        differentiator=(
+            "Readable YAML profile decisions become a low-level command plan "
+            "that DICOM experts can audit before any file is changed."
+        ),
+        note=(
+            "This is a review artifact, not an automatic DCMTK execution wrapper; "
+            "it keeps the MacBook demo safe while showing exact tag-level intent."
+        ),
+    ),
+    CapabilitySpec(
         id="pipeline-recipes",
         capability="Multi-stage privacy workflow recipes",
         source_tools=("RSNA CTP", "Orthanc"),

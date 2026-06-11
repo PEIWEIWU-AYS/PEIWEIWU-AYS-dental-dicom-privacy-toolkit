@@ -79,6 +79,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - exportable DICOM privacy policy registry in JSON, CSV, and HTML
 - reusable YAML pixel redaction plans for known burned-in regions
 - DCMTK-style exact tag operations with audit JSON
+- DCMTK-style profile-to-command plan export before expert tag editing
 - Orthanc-inspired local REST API without heavy PACS infrastructure
 - local browser workbench that runs against the REST API without cloud upload
 - JSON audit events and manifests
@@ -138,6 +139,7 @@ The project should add:
 - pixel review HTML report for known burned-in annotation regions
 - percent-based pixel redaction plans for repeated dental export layouts
 - exact tag dump/set/blank/delete commands with write-operation audits
+- dcmodify-style command plan export from anonymization profiles
 - local REST API endpoints for inventory, inspection, anonymization, validation, and preview
 - local browser workbench for synthetic demo, inventory, inspect, anonymize, validate, and preview
 - static HTML reports

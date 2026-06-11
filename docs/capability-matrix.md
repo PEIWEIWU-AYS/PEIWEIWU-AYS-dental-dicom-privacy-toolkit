@@ -36,6 +36,7 @@ The matrix reviews whether the repository has evidence for:
 - conservative pixel risk scan for burned-in identifier triage
 - burned-in pixel review and redaction evidence
 - exact DICOM tag operations
+- DCMTK dcmodify-style profile operation plan export
 - multi-stage YAML workflow recipes
 - batch de-identification evidence for directory workflows
 - workflow-level de-identification certificate generation

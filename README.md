@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, filename privacy scan, path privacy, privacy remediation plan, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, 文件名隐私扫描, 路径隐私, 隐私整改计划, 像素风险扫描, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, filename privacy scan, path privacy, privacy remediation plan, dcmodify plan, DCMTK dcmodify, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, 文件名隐私扫描, 路径隐私, 隐私整改计划, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -18,6 +18,7 @@ Core goals:
 - Directory inventory and privacy risk preflight
 - Filename and path privacy scan before sharing
 - Pre-anonymization privacy remediation plans
+- DCMTK dcmodify-style expert operation plan export
 - Multi-file synthetic dental study generation
 - DICOM anonymization profiles for dental imaging
 - Research-sharing profile with deterministic date shifting
@@ -73,6 +74,7 @@ ddpt quality gate workflow-run --workflow-report workflow-run/reports/workflow-r
 ddpt filename scan demo-run/input --json demo-run/reports/filename-privacy.json --html demo-run/reports/filename-privacy.html
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt remediation plan demo-run/input --profile dental-basic --json demo-run/reports/remediation-plan.json --html demo-run/reports/remediation-plan.html
+ddpt dcmodify plan demo-run/input/sample.synthetic.dcm --profile dental-basic --json demo-run/reports/dcmodify-plan.json --html demo-run/reports/dcmodify-plan.html --script demo-run/reports/dcmodify-plan.sh
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
 ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
@@ -118,6 +120,7 @@ The one-command demo writes a synthetic input file, anonymized and pixel-redacte
 See [docs/inventory.md](docs/inventory.md) for the inventory safety boundary and output formats.
 See [docs/filename-privacy-scan.md](docs/filename-privacy-scan.md) for path-level privacy checks.
 See [docs/remediation-plan.md](docs/remediation-plan.md) for pre-anonymization privacy action plans.
+See [docs/dcmodify-plan.md](docs/dcmodify-plan.md) for DCMTK-style low-level operation plans.
 See [docs/synthetic-study.md](docs/synthetic-study.md) for multi-file synthetic dental study generation.
 See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limits.
 See [docs/pixel-risk-scan.md](docs/pixel-risk-scan.md) for conservative burned-in identifier triage.
@@ -169,7 +172,7 @@ ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out 
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `filename-privacy` `privacy-remediation` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `filename-privacy` `privacy-remediation` `dcmodify` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## Repository Structure
 

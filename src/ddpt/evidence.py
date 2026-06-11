@@ -267,6 +267,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "dcmodify-plan.html",
+            "dcmodify plan HTML",
+            "expert-review",
+            "DCMTK dcmodify-style low-level operation plan from the workflow.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "filename-privacy.html",
             "Filename privacy scan HTML",
             "path-privacy",

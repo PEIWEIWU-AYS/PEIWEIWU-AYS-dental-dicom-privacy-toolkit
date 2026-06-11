@@ -27,6 +27,7 @@ The bundle includes:
 - built-in profile lint JSON and HTML
 - filename privacy scan JSON and HTML from the workflow recipe
 - privacy remediation plan JSON and HTML from the workflow recipe
+- dcmodify plan JSON, HTML, and review script from the workflow recipe
 - pixel risk scan JSON and HTML from the workflow recipe
 - one-command synthetic demo output
 - demo summary HTML with synthetic PNG previews
@@ -83,6 +84,8 @@ evidence-run/
     reports/
       filename-privacy.html
       remediation-plan.html
+      dcmodify-plan.html
+      dcmodify-plan.sh
       pixel-risk.html
     share/
 ```

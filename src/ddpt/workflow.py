@@ -8,6 +8,7 @@ import yaml
 from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.certificate import build_deidentification_certificate
+from ddpt.dcmodify_plan import build_dcmodify_plan, write_dcmodify_script
 from ddpt.deid_compare import compare_deidentification
 from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
@@ -22,6 +23,7 @@ from ddpt.remediation import build_privacy_remediation_plan
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
+    write_dcmodify_plan_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
     write_filename_privacy_html,
@@ -169,6 +171,26 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             artifacts.append(html_path)
         if not report.passed:
             raise ValueError("Privacy remediation plan requires review")
+        return artifacts
+
+    if action == "dcmodify-plan":
+        report = build_dcmodify_plan(
+            _path(root_dir, step["input"]),
+            profile=str(step.get("profile", "dental-basic")),
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_dcmodify_plan_html(html_path, report)
+            artifacts.append(html_path)
+        if step.get("script"):
+            script_path = _path(root_dir, step["script"])
+            write_dcmodify_script(script_path, report)
+            artifacts.append(script_path)
         return artifacts
 
     if action == "anonymize":

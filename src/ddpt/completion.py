@@ -111,16 +111,25 @@ OBJECTIVE_REQUIREMENTS = [
         id="study-dcmtk-dcmodify",
         category="competitor-learning",
         requirement="Study DCMTK dcmodify and inherit exact DICOM tag operations.",
-        evidence_files=("docs/competitor-analysis.md", "docs/tag-operations.md"),
-        capability_ids=("tag-operations", "privacy-remediation-plan"),
+        evidence_files=(
+            "docs/competitor-analysis.md",
+            "docs/tag-operations.md",
+            "docs/dcmodify-plan.md",
+        ),
+        capability_ids=(
+            "tag-operations",
+            "dcmodify-plan-export",
+            "privacy-remediation-plan",
+        ),
         evidence_terms=(
             ("docs/competitor-analysis.md", "DCMTK"),
             ("docs/tag-operations.md", "ddpt tag set"),
+            ("docs/dcmodify-plan.md", "ddpt dcmodify plan"),
             ("docs/remediation-plan.md", "recommended action"),
         ),
         note=(
-            "Covers dump, set, blank, delete, JSON audit, and planning around "
-            "tag-level remediation actions."
+            "Covers dump, set, blank, delete, JSON audit, dcmodify-style "
+            "command planning, and tag-level remediation actions."
         ),
     ),
     ObjectiveRequirement(

@@ -554,6 +554,34 @@ class TagEditAudit(BaseModel):
     )
 
 
+class DcmodifyPlanItem(BaseModel):
+    order: int
+    keyword: str
+    tag: str
+    profile_action: str
+    dcmodify_action: Literal["modify", "erase-private", "generate-uid"]
+    option: str
+    argument: str
+    command: str
+    value_preview: str
+    note: str
+
+
+class DcmodifyPlanReport(BaseModel):
+    input_path: str
+    profile: str
+    total_operations: int
+    modify_operations: int
+    uid_operations: int
+    private_tag_operations: int
+    commands: list[str]
+    items: list[DcmodifyPlanItem]
+    note: str
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class WorkflowStepResult(BaseModel):
     id: str
     action: str

@@ -9,6 +9,7 @@ from ddpt.models import (
     AnonymizationAudit,
     BatchSummary,
     CapabilityMatrixReport,
+    DcmodifyPlanReport,
     DeidentificationCertificate,
     DeidentificationComparisonReport,
     DemoPipelineResult,
@@ -151,6 +152,83 @@ AUDIT_TEMPLATE = Template(
       {% endfor %}
     </tbody>
   </table>
+</body>
+</html>
+"""
+)
+
+DCMODIFY_PLAN_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM dcmodify Plan</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    pre { background: #f3f6f8; padding: 12px; overflow: auto; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM dcmodify Plan</h1>
+  <p class="warning">
+    Review-only DCMTK dcmodify-style plan. The toolkit does not execute these
+    commands. dcmodify edits DICOM files in place, so use copies and backups.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>Profile: <code>{{ report.profile }}</code></li>
+    <li>Total operations: {{ report.total_operations }}</li>
+    <li>Modify operations: {{ report.modify_operations }}</li>
+    <li>UID operations: {{ report.uid_operations }}</li>
+    <li>Private tag operations: {{ report.private_tag_operations }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Command Script Preview</h2>
+  <pre>{% for command in report.commands %}{{ command }}
+{% endfor %}</pre>
+  <h2>Operations</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Keyword</th>
+        <th>Tag</th>
+        <th>Profile Action</th>
+        <th>dcmodify Action</th>
+        <th>Option</th>
+        <th>Argument</th>
+        <th>Value Preview</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.items %}
+      <tr>
+        <td>{{ item.order }}</td>
+        <td><code>{{ item.keyword }}</code></td>
+        <td><code>{{ item.tag }}</code></td>
+        <td>{{ item.profile_action }}</td>
+        <td>{{ item.dcmodify_action }}</td>
+        <td><code>{{ item.option }}</code></td>
+        <td><code>{{ item.argument }}</code></td>
+        <td><code>{{ item.value_preview }}</code></td>
+        <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p>{{ report.note }}</p>
 </body>
 </html>
 """
@@ -2013,6 +2091,10 @@ def write_inspection_html(path: Path, report: InspectionReport) -> None:
 
 def write_audit_html(path: Path, audit: AnonymizationAudit) -> None:
     _write_html(path, AUDIT_TEMPLATE.render(audit=audit))
+
+
+def write_dcmodify_plan_html(path: Path, report: DcmodifyPlanReport) -> None:
+    _write_html(path, DCMODIFY_PLAN_TEMPLATE.render(report=report))
 
 
 def write_demo_summary_html(path: Path, result: DemoPipelineResult) -> None:

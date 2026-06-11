@@ -31,6 +31,7 @@ jobs:
           test -f ROADMAP.md
           test -f docs/data-safety.md
           test -f docs/discoverability.md
+          test -f docs/dcmodify-plan.md
           test -f docs/project-blueprint.md
           test -f docs/competitor-analysis.md
           test -f docs/product-requirements.md
@@ -111,6 +112,9 @@ jobs:
 
       - name: Run filename privacy scan
         run: python -m ddpt filename scan evidence-run/demo-run/input --json filename-privacy.json --html filename-privacy.html
+
+      - name: Run dcmodify operation plan
+        run: python -m ddpt dcmodify plan evidence-run/demo-run/input/sample.synthetic.dcm --json dcmodify-plan.json --html dcmodify-plan.html --script dcmodify-plan.sh
 
       - name: Run pixel risk scan
         run: python -m ddpt pixel-risk scan evidence-run/demo-run/outputs/sample.anonymized.dcm --json pixel-risk.json --html pixel-risk.html

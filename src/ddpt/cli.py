@@ -16,6 +16,7 @@ from ddpt.capability import build_capability_matrix
 from ddpt.certificate import build_deidentification_certificate
 from ddpt.completion import run_objective_audit
 from ddpt.dashboard import build_review_dashboard_report
+from ddpt.dcmodify_plan import build_dcmodify_plan, write_dcmodify_script
 from ddpt.deid_compare import compare_deidentification
 from ddpt.doctor import run_doctor
 from ddpt.evidence import run_evidence_bundle
@@ -51,6 +52,7 @@ from ddpt.reports import (
     model_to_dict,
     write_audit_html,
     write_capability_matrix_html,
+    write_dcmodify_plan_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
     write_filename_privacy_html,
@@ -88,6 +90,7 @@ redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.
 pixel_risk_app = typer.Typer(help="Scan pixel-layer privacy risk signals.")
 filename_app = typer.Typer(help="Scan DICOM filename and path privacy risk.")
 tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
+dcmodify_app = typer.Typer(help="Export DCMTK dcmodify-style review plans.")
 api_app = typer.Typer(help="Run local REST API demo.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
@@ -108,6 +111,7 @@ app.add_typer(redaction_plan_app, name="redaction-plan")
 app.add_typer(pixel_risk_app, name="pixel-risk")
 app.add_typer(filename_app, name="filename")
 app.add_typer(tag_app, name="tag")
+app.add_typer(dcmodify_app, name="dcmodify")
 app.add_typer(api_app, name="api")
 app.add_typer(workflow_app, name="workflow")
 app.add_typer(release_app, name="release")
@@ -1124,6 +1128,47 @@ def policy_export_command(
         f"High: {report.high_risk_items}; "
         f"Medium: {report.medium_risk_items}; Low: {report.low_risk_items}"
     )
+
+
+@dcmodify_app.command("plan")
+def dcmodify_plan_command(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON dcmodify plan.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML dcmodify plan.")
+    ] = None,
+    script_output: Annotated[
+        Path | None, typer.Option("--script", help="Write review shell script.")
+    ] = None,
+) -> None:
+    report = build_dcmodify_plan(input_path, profile=profile)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_dcmodify_plan_html(html_output, report)
+    if script_output:
+        write_dcmodify_script(script_output, report)
+
+    table = Table(title="DCMTK dcmodify-Style Plan")
+    table.add_column("#")
+    table.add_column("Keyword")
+    table.add_column("Action")
+    table.add_column("Option")
+    table.add_column("Argument")
+    for item in report.items:
+        table.add_row(
+            str(item.order),
+            item.keyword,
+            item.profile_action,
+            item.option,
+            item.argument,
+        )
+    console.print(table)
+    console.print(f"Operations: {report.total_operations}")
+    console.print("Review only. Commands were not executed.")
 
 
 @audit_app.command("chain")

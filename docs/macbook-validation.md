@@ -92,6 +92,8 @@ Expected:
 - `workflow-run/reports/workflow-run.html` exists
 - `workflow-run/reports/filename-privacy.html` exists
 - `workflow-run/reports/remediation-plan.html` exists
+- `workflow-run/reports/dcmodify-plan.html` exists
+- `workflow-run/reports/dcmodify-plan.sh` exists
 - `workflow-run/reports/pixel-risk.html` exists
 - `workflow-run/reports/quality-gate.json` exists
 - `workflow-run/reports/quality-gate.html` exists
@@ -225,6 +227,7 @@ Expected:
 - `evidence-run/reports/release-audit.html` exists
 - `evidence-run/reports/workflow-run.html` exists
 - `evidence-run/workflow-run/reports/filename-privacy.html` exists
+- `evidence-run/workflow-run/reports/dcmodify-plan.html` exists
 - `evidence-run/demo-run/reports/demo-summary.html` exists
 - `evidence-run/demo-run/reports/deid-comparison.html` exists
 - `evidence-run/demo-run/reports/pixel-review.html` exists
@@ -259,6 +262,7 @@ evidence-run/reports/review-dashboard.html
 demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
 workflow-run/reports/filename-privacy.html
+workflow-run/reports/dcmodify-plan.html
 demo-run/reports/deid-comparison.html
 demo-run/reports/deid-certificate.html
 demo-run/reports/inspect.html

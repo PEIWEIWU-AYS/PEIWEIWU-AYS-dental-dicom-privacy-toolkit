@@ -18,32 +18,33 @@ Version 0.1 is successful when a new user can:
 8. Generate a privacy remediation plan before anonymization.
 9. Generate PNG previews for visual workflow review.
 10. Run exact tag dump/set/blank/delete operations for expert workflows.
-11. Inspect metadata and receive JSON plus HTML reports.
-12. Preview anonymization actions with dry-run mode.
-13. Apply the `dental-basic` anonymization profile.
-14. Apply the `dental-research-sharing` profile with deterministic date shifting.
-15. Lint anonymization profiles before running workflows.
-16. Compare anonymization profiles with JSON and HTML reports.
-17. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
-18. Generate before/after de-identification comparison reports.
-19. Confirm direct identifiers were replaced or removed.
-20. Generate an audit event JSON file.
-21. Validate anonymized output with a pass/fail report.
-22. Run a conservative pixel risk scan before manual pixel review.
-23. Generate pixel review reports for known burned-in annotation regions.
-24. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-25. Package anonymized files with checksums.
-26. Encrypt the package.
-27. Verify or decrypt the package.
-28. Generate package verification receipts for receiver-side sharing evidence.
-29. Run a share-readiness gate before synthetic package handoff.
-30. Run local REST API workflow demos for integration testing.
-31. Run a release-readiness audit before public GitHub publishing.
-32. Run a competitor-informed capability matrix that maps features to repository evidence.
-33. Generate a static local review dashboard for non-programmer walkthroughs.
-34. Generate a local evidence bundle for MacBook validation and public demonstrations.
-35. Run a workflow quality gate that verifies public review evidence.
-36. Run automated tests locally and in GitHub Actions.
+11. Export a DCMTK `dcmodify`-style expert operation plan from an anonymization profile.
+12. Inspect metadata and receive JSON plus HTML reports.
+13. Preview anonymization actions with dry-run mode.
+14. Apply the `dental-basic` anonymization profile.
+15. Apply the `dental-research-sharing` profile with deterministic date shifting.
+16. Lint anonymization profiles before running workflows.
+17. Compare anonymization profiles with JSON and HTML reports.
+18. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
+19. Generate before/after de-identification comparison reports.
+20. Confirm direct identifiers were replaced or removed.
+21. Generate an audit event JSON file.
+22. Validate anonymized output with a pass/fail report.
+23. Run a conservative pixel risk scan before manual pixel review.
+24. Generate pixel review reports for known burned-in annotation regions.
+25. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+26. Package anonymized files with checksums.
+27. Encrypt the package.
+28. Verify or decrypt the package.
+29. Generate package verification receipts for receiver-side sharing evidence.
+30. Run a share-readiness gate before synthetic package handoff.
+31. Run local REST API workflow demos for integration testing.
+32. Run a release-readiness audit before public GitHub publishing.
+33. Run a competitor-informed capability matrix that maps features to repository evidence.
+34. Generate a static local review dashboard for non-programmer walkthroughs.
+35. Generate a local evidence bundle for MacBook validation and public demonstrations.
+36. Run a workflow quality gate that verifies public review evidence.
+37. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -127,6 +128,7 @@ Required:
 - one-command synthetic demo artifacts
 - YAML workflow JSON and HTML reports
 - filename privacy scan JSON and HTML from the staged workflow
+- dcmodify plan JSON, HTML, and review script from the staged workflow
 - evidence index JSON and HTML
 - links to demo summary, audit chain, encrypted package, and workflow report
 - links to package verification receipts
@@ -193,7 +195,7 @@ Required:
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails
-- support synthetic, filename scan, inventory, inspect, anonymize, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
+- support synthetic, filename scan, inventory, inspect, dcmodify plan, anonymize, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
 - support remediation-plan stages before anonymization
 - support before/after de-identification comparison stages
 
@@ -235,6 +237,24 @@ Required:
 - optional HTML report
 - non-zero exit status when high-risk or medium-risk items are not covered by the selected profile
 - documentation that this is a planning aid, not de-identification proof
+
+### `ddpt dcmodify plan`
+
+Export a DCMTK `dcmodify`-style expert operation plan from an anonymization
+profile.
+
+Required:
+
+- input DICOM path
+- profile name or YAML path
+- JSON report
+- optional HTML report
+- optional review shell script
+- list each planned profile action with DICOM keyword, tag, action, command option, and argument
+- include UID regeneration shortcuts where a matching `dcmodify` shortcut exists
+- include private tag erase operation when the profile removes private tags
+- do not execute DCMTK automatically
+- document that the generated script is for expert review and should only be run manually on copies of synthetic or approved test DICOM files
 
 ### `ddpt quality gate`
 

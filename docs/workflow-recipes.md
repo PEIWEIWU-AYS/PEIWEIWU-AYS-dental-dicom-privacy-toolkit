@@ -20,6 +20,8 @@ Expected outputs:
 - `workflow-run/reports/inventory.json`
 - `workflow-run/reports/inspect.html`
 - `workflow-run/reports/remediation-plan.html`
+- `workflow-run/reports/dcmodify-plan.html`
+- `workflow-run/reports/dcmodify-plan.sh`
 - `workflow-run/outputs/sample.anonymized.dcm`
 - `workflow-run/reports/deid-comparison.html`
 - `workflow-run/reports/pixel-risk.html`
@@ -42,6 +44,7 @@ Expected outputs:
 - `inventory`
 - `inspect`
 - `remediation-plan`
+- `dcmodify-plan`
 - `anonymize`
 - `compare-deid`
 - `validate`
