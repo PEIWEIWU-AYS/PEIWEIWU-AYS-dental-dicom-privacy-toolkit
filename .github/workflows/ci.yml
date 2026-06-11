@@ -35,6 +35,8 @@ jobs:
           test -f docs/competitor-analysis.md
           test -f docs/product-requirements.md
           test -f docs/policy-registry.md
+          test -f docs/demo-guide.md
+          test -f scripts/generate_demo_assets.py
 
       - name: Run tests
         run: pytest

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import zipfile
 from pathlib import Path
 
@@ -183,6 +185,27 @@ def test_batch_workflow_command(tmp_path: Path) -> None:
     assert summary["processed_files"] == 2
     assert summary["failed_files"] == 0
     assert summary["validation_failures"] == 0
+
+
+def test_demo_asset_script(tmp_path: Path) -> None:
+    output_dir = tmp_path / "script-demo"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/generate_demo_assets.py",
+            "--out",
+            str(output_dir),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "Validation passed: True" in result.stdout
+    assert (output_dir / "reports" / "demo-summary.html").exists()
+    assert (output_dir / "share" / "package.ddpt").exists()
 
 
 def test_profile_commands(tmp_path: Path) -> None:

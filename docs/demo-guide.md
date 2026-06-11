@@ -1,0 +1,77 @@
+# Demo Guide | 演示指南
+
+This guide shows how to validate Dental DICOM Privacy Toolkit locally on a MacBook using synthetic data only.
+
+## Quick Demo
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+python scripts/generate_demo_assets.py --out demo-run
+```
+
+The generated `demo-run/` directory contains:
+
+```text
+demo-run/
+  input/sample.synthetic.dcm
+  outputs/sample.anonymized.dcm
+  outputs/sample.redacted.dcm
+  reports/inspect.json
+  reports/inspect.html
+  reports/audit.json
+  reports/audit.html
+  reports/validation.json
+  reports/redaction.json
+  reports/demo-summary.json
+  reports/demo-summary.html
+  share/manifest.json
+  share/package.ddpt
+  share/package.key
+```
+
+## What to Check
+
+Open:
+
+```text
+demo-run/reports/demo-summary.html
+demo-run/reports/inspect.html
+demo-run/reports/audit.html
+```
+
+The demo should show:
+
+- synthetic DICOM input creation
+- high-risk metadata detection
+- dental-basic anonymization
+- direct identifier replacement or blanking
+- UID regeneration
+- validation pass result
+- manual pixel redaction audit
+- encrypted package with manifest and checksums
+
+## CLI Equivalent
+
+The script is equivalent to:
+
+```bash
+ddpt demo demo-run
+```
+
+For step-by-step inspection:
+
+```bash
+ddpt synthetic demo-run/sample.dcm
+ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
+ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
+ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
+ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out demo-run/outputs/sample.redacted.dcm --audit demo-run/reports/redaction.json
+ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
+ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key
+```
+
+## Safety
+
+The demo uses synthetic DICOM data only. Do not copy real patient DICOM files, clinical photos, PDFs, spreadsheets, or clinic exports into the repository.

@@ -40,6 +40,8 @@ ddpt batch demo-run/input --out demo-run/batch-output
 
 The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, JSON reports, HTML reports, an encrypted package, and a summary page to `demo-run/`.
 
+See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
+
 ## Manual Step-by-Step Demo
 
 ```bash

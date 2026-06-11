@@ -8,6 +8,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Competitor Analysis](competitor-analysis.md)
 - [Product Requirements](product-requirements.md)
 - [Policy Registry](policy-registry.md)
+- [Demo Guide](demo-guide.md)
 - [Data Safety](data-safety.md)
 - [Discoverability Profile](discoverability.md)
 - [Project Charter](project-charter.md)
