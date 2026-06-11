@@ -9,19 +9,20 @@ Build a local-first, synthetic-data-only toolkit for dental DICOM privacy workfl
 Version 0.1 is successful when a new user can:
 
 1. Install the Python package in a virtual environment.
-2. Generate a synthetic DICOM file.
-3. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
-4. Generate PNG previews for visual workflow review.
-5. Inspect metadata and receive JSON plus HTML reports.
-6. Apply the `dental-basic` anonymization profile.
-7. Confirm direct identifiers were replaced or removed.
-8. Generate an audit event JSON file.
-9. Validate anonymized output with a pass/fail report.
-10. Apply manual pixel redaction for known burned-in annotation regions.
-11. Package anonymized files with checksums.
-12. Encrypt the package.
-13. Verify or decrypt the package.
-14. Run automated tests locally and in GitHub Actions.
+2. Run `ddpt doctor` to confirm the local environment is ready.
+3. Generate a synthetic DICOM file.
+4. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
+5. Generate PNG previews for visual workflow review.
+6. Inspect metadata and receive JSON plus HTML reports.
+7. Apply the `dental-basic` anonymization profile.
+8. Confirm direct identifiers were replaced or removed.
+9. Generate an audit event JSON file.
+10. Validate anonymized output with a pass/fail report.
+11. Apply manual pixel redaction for known burned-in annotation regions.
+12. Package anonymized files with checksums.
+13. Encrypt the package.
+14. Verify or decrypt the package.
+15. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -41,6 +42,19 @@ Required:
 - JSON reports
 - HTML reports
 - summary HTML page
+
+### `ddpt doctor`
+
+Check whether the local environment can run the toolkit.
+
+Required:
+
+- Python version check
+- runtime dependency import checks
+- package version
+- platform summary
+- terminal pass/fail output
+- optional JSON export
 
 ### `ddpt inventory`
 

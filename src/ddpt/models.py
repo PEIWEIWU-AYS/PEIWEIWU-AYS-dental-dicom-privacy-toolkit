@@ -125,6 +125,23 @@ class PreviewReport(BaseModel):
     )
 
 
+class DoctorCheck(BaseModel):
+    name: str
+    passed: bool
+    message: str
+
+
+class DoctorReport(BaseModel):
+    passed: bool
+    python_version: str
+    platform: str
+    package_version: str
+    checks: list[DoctorCheck]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DemoPipelineResult(BaseModel):
     output_dir: str
     input_dicom: str

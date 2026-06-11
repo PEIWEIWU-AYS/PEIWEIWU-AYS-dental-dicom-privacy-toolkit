@@ -11,6 +11,7 @@ from ddpt import __version__
 from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
+from ddpt.doctor import run_doctor
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
@@ -140,6 +141,28 @@ def inventory(
     modalities = ", ".join(f"{key}:{value}" for key, value in report.modalities.items())
     table.add_row("Modalities", modalities)
     console.print(table)
+
+
+@app.command()
+def doctor(
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write environment report JSON.")
+    ] = None,
+) -> None:
+    report = run_doctor()
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+
+    table = Table(title="Dental DICOM Privacy Toolkit Doctor")
+    table.add_column("Check")
+    table.add_column("Status")
+    table.add_column("Message")
+    for check in report.checks:
+        table.add_row(check.name, "PASS" if check.passed else "FAIL", check.message)
+    console.print(table)
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
 
 
 @profile_app.command("list")

@@ -33,6 +33,7 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
 
+ddpt doctor
 ddpt demo demo-run
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
@@ -51,6 +52,7 @@ See [docs/inventory.md](docs/inventory.md) for the inventory safety boundary and
 See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limits.
 
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
+See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 
 ## Manual Step-by-Step Demo
 

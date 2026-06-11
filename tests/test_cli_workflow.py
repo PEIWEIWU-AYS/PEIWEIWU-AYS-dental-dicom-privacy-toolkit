@@ -255,6 +255,21 @@ def test_preview_command_exports_png_and_metadata(tmp_path: Path) -> None:
         assert image.size == (report["rendered_width"], report["rendered_height"])
 
 
+def test_doctor_command_reports_environment(tmp_path: Path) -> None:
+    doctor_json = tmp_path / "reports" / "doctor.json"
+
+    result = runner.invoke(app, ["doctor", "--json", str(doctor_json)])
+
+    assert result.exit_code == 0, result.output
+    assert doctor_json.exists()
+    report = json.loads(doctor_json.read_text())
+    assert report["passed"] is True
+    check_names = {item["name"] for item in report["checks"]}
+    assert "python-version" in check_names
+    assert "module:pydicom" in check_names
+    assert "module:PIL" in check_names
+
+
 def test_audit_chain_detects_tampering(tmp_path: Path) -> None:
     demo_dir = tmp_path / "demo"
     chain_json = demo_dir / "reports" / "audit-chain.json"
