@@ -14,6 +14,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [DICOM Inventory Preflight](inventory.md)
 - [DICOM PNG Preview](preview.md)
 - [Pixel Redaction Plans](pixel-redaction-plans.md)
+- [DICOM Tag Operations](tag-operations.md)
 - [Audit Chain](audit-chain.md)
 - [Data Safety](data-safety.md)
 - [Discoverability Profile](discoverability.md)

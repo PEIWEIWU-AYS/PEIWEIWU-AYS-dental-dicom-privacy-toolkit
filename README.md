@@ -39,6 +39,7 @@ ddpt demo demo-run
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
+ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-dump.json
 ddpt profile show dental-basic
 ddpt profile coverage dental-basic
 ddpt profile init profiles/my-dental-profile.yml
@@ -63,6 +64,7 @@ See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety chec
 ddpt synthetic demo-run/sample.dcm
 ddpt inventory demo-run --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt preview demo-run/sample.dcm --out demo-run/reports/sample-preview.png --json demo-run/reports/sample-preview.json
+ddpt tag set demo-run/sample.dcm PatientName ANON^TEST --out demo-run/outputs/sample.tag-set.dcm --audit demo-run/reports/tag-set-audit.json
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json

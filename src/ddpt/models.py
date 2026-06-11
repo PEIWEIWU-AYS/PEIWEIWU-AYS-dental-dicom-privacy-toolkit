@@ -174,6 +174,42 @@ class SafetyScanReport(BaseModel):
     )
 
 
+class DicomTagRecord(BaseModel):
+    tag: str
+    keyword: str
+    name: str
+    vr: str
+    value: str
+
+
+class TagDumpReport(BaseModel):
+    file_path: str
+    tags: list[DicomTagRecord]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
+class TagEditAction(BaseModel):
+    tag: str
+    keyword: str
+    name: str
+    vr: str
+    action: Literal["set", "blank", "delete"]
+    existed_before: bool
+    before: str
+    after: str
+
+
+class TagEditAudit(BaseModel):
+    input_path: str
+    output_path: str
+    actions: list[TagEditAction]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DemoPipelineResult(BaseModel):
     output_dir: str
     input_dicom: str

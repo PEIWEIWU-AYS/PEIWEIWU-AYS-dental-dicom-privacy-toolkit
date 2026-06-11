@@ -14,16 +14,17 @@ Version 0.1 is successful when a new user can:
 4. Generate a synthetic DICOM file.
 5. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
 6. Generate PNG previews for visual workflow review.
-7. Inspect metadata and receive JSON plus HTML reports.
-8. Apply the `dental-basic` anonymization profile.
-9. Confirm direct identifiers were replaced or removed.
-10. Generate an audit event JSON file.
-11. Validate anonymized output with a pass/fail report.
-12. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-13. Package anonymized files with checksums.
-14. Encrypt the package.
-15. Verify or decrypt the package.
-16. Run automated tests locally and in GitHub Actions.
+7. Run exact tag dump/set/blank/delete operations for expert workflows.
+8. Inspect metadata and receive JSON plus HTML reports.
+9. Apply the `dental-basic` anonymization profile.
+10. Confirm direct identifiers were replaced or removed.
+11. Generate an audit event JSON file.
+12. Validate anonymized output with a pass/fail report.
+13. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+14. Package anonymized files with checksums.
+15. Encrypt the package.
+16. Verify or decrypt the package.
+17. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -177,6 +178,22 @@ Required outputs:
 - terminal summary
 - JSON report
 - optional HTML report
+
+### `ddpt tag dump/set/blank/delete`
+
+Perform exact low-level DICOM metadata operations for expert workflows.
+
+Required:
+
+- dump metadata tags with optional JSON output
+- exclude PixelData from dump by default
+- set existing tags
+- insert missing dictionary tags
+- support explicit VR for unknown or private tags
+- blank existing tags
+- delete tags
+- accept both DICOM keywords and hex tags such as `0010,0010`
+- audit JSON output for write operations
 
 ### `ddpt preview`
 

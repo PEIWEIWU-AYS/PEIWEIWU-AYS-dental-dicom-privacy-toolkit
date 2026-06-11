@@ -33,6 +33,7 @@ from ddpt.reports import (
 from ddpt.safety import scan_repository_safety
 from ddpt.sharing import create_package, decrypt_package, verify_package
 from ddpt.synthetic import create_synthetic_dicom
+from ddpt.tag_ops import blank_tag_value, delete_tag, dump_tags, set_tag_value
 from ddpt.utils import write_json
 from ddpt.validation import validate_anonymized_dicom
 
@@ -41,10 +42,12 @@ profile_app = typer.Typer(help="Inspect anonymization profiles.")
 audit_app = typer.Typer(help="Create and verify audit chains.")
 safety_app = typer.Typer(help="Run public repository safety checks.")
 redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.")
+tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
 app.add_typer(redaction_plan_app, name="redaction-plan")
+app.add_typer(tag_app, name="tag")
 console = Console()
 
 
@@ -244,6 +247,68 @@ def redaction_plan_show(
             str(region.height),
         )
     console.print(table)
+
+
+@tag_app.command("dump")
+def tag_dump(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write tag dump JSON.")
+    ] = None,
+    include_pixel_data: Annotated[
+        bool, typer.Option("--include-pixel-data", help="Include PixelData in dump.")
+    ] = False,
+) -> None:
+    report = dump_tags(input_path, include_pixel_data=include_pixel_data)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+
+    table = Table(title="DICOM Tag Dump")
+    table.add_column("Tag")
+    table.add_column("Keyword")
+    table.add_column("VR")
+    table.add_column("Value")
+    for item in report.tags:
+        table.add_row(item.tag, item.keyword, item.vr, item.value)
+    console.print(table)
+    console.print(f"Tags: {len(report.tags)}")
+
+
+@tag_app.command("set")
+def tag_set(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    tag_identifier: Annotated[str, typer.Argument(help="DICOM keyword or tag.")],
+    value: Annotated[str, typer.Argument(help="New tag value.")],
+    output_path: Annotated[Path, typer.Option("--out", help="Output DICOM path.")],
+    vr: Annotated[
+        str | None, typer.Option("--vr", help="VR for adding unknown tags.")
+    ] = None,
+    audit_json: Annotated[Path | None, typer.Option("--audit", help="Write audit JSON.")] = None,
+) -> None:
+    audit = set_tag_value(input_path, output_path, tag_identifier, value, vr=vr)
+    _write_tag_audit(audit, audit_json)
+
+
+@tag_app.command("blank")
+def tag_blank(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    tag_identifier: Annotated[str, typer.Argument(help="DICOM keyword or tag.")],
+    output_path: Annotated[Path, typer.Option("--out", help="Output DICOM path.")],
+    audit_json: Annotated[Path | None, typer.Option("--audit", help="Write audit JSON.")] = None,
+) -> None:
+    audit = blank_tag_value(input_path, output_path, tag_identifier)
+    _write_tag_audit(audit, audit_json)
+
+
+@tag_app.command("delete")
+def tag_delete(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    tag_identifier: Annotated[str, typer.Argument(help="DICOM keyword or tag.")],
+    output_path: Annotated[Path, typer.Option("--out", help="Output DICOM path.")],
+    audit_json: Annotated[Path | None, typer.Option("--audit", help="Write audit JSON.")] = None,
+) -> None:
+    audit = delete_tag(input_path, output_path, tag_identifier)
+    _write_tag_audit(audit, audit_json)
 
 
 @profile_app.command("list")
@@ -482,6 +547,18 @@ def decrypt(
     manifest = decrypt_package(package_path, output_dir, key)
     console.print(f"Decrypted package to: {output_dir}")
     console.print(f"Files in manifest: {len(manifest.entries)}")
+
+
+def _write_tag_audit(audit, audit_json: Path | None) -> None:
+    if audit_json:
+        write_json(audit_json, model_to_dict(audit))
+    console.print(f"Tag-edited DICOM written to: {audit.output_path}")
+    console.print(f"Actions: {len(audit.actions)}")
+    for action in audit.actions:
+        console.print(
+            f"{action.action} {action.tag} {action.keyword}: "
+            f"{action.before!r} -> {action.after!r}"
+        )
 
 
 def _print_inspection_table(report) -> None:

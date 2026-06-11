@@ -311,6 +311,104 @@ def test_redaction_plan_commands_and_plan_based_redaction(tmp_path: Path) -> Non
     assert audit["rectangles"][0] == {"x": 0, "y": 0, "width": 2, "height": 1}
 
 
+def test_tag_commands_dump_set_blank_and_delete(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    dump_json = tmp_path / "reports" / "tag-dump.json"
+    set_output = tmp_path / "outputs" / "tag-set.dcm"
+    set_audit = tmp_path / "reports" / "tag-set.json"
+    blank_output = tmp_path / "outputs" / "tag-blank.dcm"
+    blank_audit = tmp_path / "reports" / "tag-blank.json"
+    delete_output = tmp_path / "outputs" / "tag-delete.dcm"
+    delete_audit = tmp_path / "reports" / "tag-delete.json"
+    insert_output = tmp_path / "outputs" / "tag-insert.dcm"
+    insert_audit = tmp_path / "reports" / "tag-insert.json"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+
+    result = runner.invoke(app, ["tag", "dump", str(source), "--json", str(dump_json)])
+    assert result.exit_code == 0, result.output
+    dump = json.loads(dump_json.read_text())
+    assert any(item["keyword"] == "PatientName" for item in dump["tags"])
+    assert not any(item["keyword"] == "PixelData" for item in dump["tags"])
+
+    result = runner.invoke(
+        app,
+        [
+            "tag",
+            "set",
+            str(source),
+            "PatientName",
+            "LOWLEVEL^EDIT",
+            "--out",
+            str(set_output),
+            "--audit",
+            str(set_audit),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert str(pydicom.dcmread(set_output).PatientName) == "LOWLEVEL^EDIT"
+    set_report = json.loads(set_audit.read_text())
+    assert set_report["actions"][0]["action"] == "set"
+    assert set_report["actions"][0]["before"] == "SYNTHETIC^DENTAL"
+
+    result = runner.invoke(
+        app,
+        [
+            "tag",
+            "blank",
+            str(set_output),
+            "0010,1040",
+            "--out",
+            str(blank_output),
+            "--audit",
+            str(blank_audit),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert pydicom.dcmread(blank_output).PatientAddress == ""
+    blank_report = json.loads(blank_audit.read_text())
+    assert blank_report["actions"][0]["keyword"] == "PatientAddress"
+
+    result = runner.invoke(
+        app,
+        [
+            "tag",
+            "delete",
+            str(blank_output),
+            "PatientTelephoneNumbers",
+            "--out",
+            str(delete_output),
+            "--audit",
+            str(delete_audit),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    deleted_dataset = pydicom.dcmread(delete_output)
+    assert "PatientTelephoneNumbers" not in deleted_dataset
+    delete_report = json.loads(delete_audit.read_text())
+    assert delete_report["actions"][0]["action"] == "delete"
+    assert delete_report["actions"][0]["after"] == ""
+
+    result = runner.invoke(
+        app,
+        [
+            "tag",
+            "set",
+            str(delete_output),
+            "ImageComments",
+            "Synthetic low-level insert",
+            "--out",
+            str(insert_output),
+            "--audit",
+            str(insert_audit),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert pydicom.dcmread(insert_output).ImageComments == "Synthetic low-level insert"
+    insert_report = json.loads(insert_audit.read_text())
+    assert insert_report["actions"][0]["existed_before"] is False
+
+
 def test_doctor_command_reports_environment(tmp_path: Path) -> None:
     doctor_json = tmp_path / "reports" / "doctor.json"
 
