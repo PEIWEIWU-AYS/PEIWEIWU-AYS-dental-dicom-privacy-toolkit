@@ -14,6 +14,7 @@ from ddpt.reports import model_to_dict, write_audit_html, write_inspection_html
 from ddpt.sharing import create_package, decrypt_package, verify_package
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.utils import write_json
+from ddpt.validation import validate_anonymized_dicom
 
 app = typer.Typer(help="Dental DICOM Privacy Toolkit", invoke_without_command=True)
 console = Console()
@@ -75,6 +76,27 @@ def anonymize(
         write_audit_html(audit_html, audit)
     console.print(f"Anonymized DICOM written to: {output_path}")
     console.print(f"Actions: {len(audit.actions)}")
+
+
+@app.command()
+def validate(
+    dicom_path: Annotated[Path, typer.Argument(help="Anonymized DICOM path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write validation JSON.")
+    ] = None,
+) -> None:
+    report = validate_anonymized_dicom(dicom_path)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+
+    for check in report.checks:
+        mark = "PASS" if check.passed else "FAIL"
+        console.print(f"{mark} {check.name}: {check.message}")
+    for warning in report.warnings:
+        console.print(f"WARNING {warning}")
+
+    if not report.passed:
+        raise typer.Exit(1)
 
 
 @app.command("package")

@@ -34,6 +34,7 @@ python -m pip install -e ".[dev]"
 ddpt synthetic demo-run/sample.dcm
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
+ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
 ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key
 ```

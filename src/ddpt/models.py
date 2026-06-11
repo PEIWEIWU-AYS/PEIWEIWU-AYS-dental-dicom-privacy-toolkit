@@ -70,3 +70,19 @@ class PackageManifest(BaseModel):
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
+
+
+class ValidationCheck(BaseModel):
+    name: str
+    passed: bool
+    message: str
+
+
+class ValidationReport(BaseModel):
+    file_path: str
+    passed: bool
+    checks: list[ValidationCheck]
+    warnings: list[str] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )

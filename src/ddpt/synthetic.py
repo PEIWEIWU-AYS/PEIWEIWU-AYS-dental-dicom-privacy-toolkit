@@ -44,6 +44,7 @@ def create_synthetic_dicom(
     dataset.AccessionNumber = "SYNTHETIC-ACCESS"
     dataset.StudyDescription = study_description
     dataset.SeriesDescription = "Synthetic Dental Series"
+    dataset.BurnedInAnnotation = "NO"
     dataset.InstitutionName = "Synthetic Dental Clinic"
     dataset.InstitutionAddress = "Synthetic City"
     dataset.ReferringPhysicianName = "SYNTHETIC^REFERRER"

@@ -20,6 +20,7 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     anonymized = tmp_path / "outputs" / "sample.anonymized.dcm"
     audit_json = tmp_path / "reports" / "audit.json"
     audit_html = tmp_path / "reports" / "audit.html"
+    validation_json = tmp_path / "reports" / "validation.json"
     package = tmp_path / "share" / "package.ddpt"
     manifest = tmp_path / "share" / "manifest.json"
     key = tmp_path / "share" / "package.key"
@@ -71,6 +72,13 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     assert dataset.SeriesInstanceUID != source_dataset.SeriesInstanceUID
     assert dataset.SOPInstanceUID != source_dataset.SOPInstanceUID
     assert dataset.file_meta.MediaStorageSOPInstanceUID == dataset.SOPInstanceUID
+
+    result = runner.invoke(app, ["validate", str(anonymized), "--json", str(validation_json)])
+    assert result.exit_code == 0, result.output
+    assert validation_json.exists()
+
+    result = runner.invoke(app, ["validate", str(source)])
+    assert result.exit_code == 1
 
     result = runner.invoke(
         app,

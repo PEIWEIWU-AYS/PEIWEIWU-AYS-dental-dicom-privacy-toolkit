@@ -14,10 +14,11 @@ Version 0.1 is successful when a new user can:
 4. Apply the `dental-basic` anonymization profile.
 5. Confirm direct identifiers were replaced or removed.
 6. Generate an audit event JSON file.
-7. Package anonymized files with checksums.
-8. Encrypt the package.
-9. Verify or decrypt the package.
-10. Run automated tests locally and in GitHub Actions.
+7. Validate anonymized output with a pass/fail report.
+8. Package anonymized files with checksums.
+9. Encrypt the package.
+10. Verify or decrypt the package.
+11. Run automated tests locally and in GitHub Actions.
 
 ## Command Requirements
 
@@ -77,6 +78,19 @@ Required:
 
 - support encrypted package when key is provided
 - report pass/fail clearly
+
+### `ddpt validate`
+
+Validate an anonymized DICOM file against the initial dental privacy profile.
+
+Required:
+
+- direct identifier replacement checks
+- direct identifier blanking checks
+- private tag removal check
+- burned-in annotation warning
+- JSON report output
+- non-zero exit status on failed validation
 
 ### `ddpt decrypt`
 
