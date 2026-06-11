@@ -13,6 +13,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Public Repository Safety Scan](safety-scan.md)
 - [DICOM Inventory Preflight](inventory.md)
 - [DICOM PNG Preview](preview.md)
+- [Pixel Redaction Plans](pixel-redaction-plans.md)
 - [Audit Chain](audit-chain.md)
 - [Data Safety](data-safety.md)
 - [Discoverability Profile](discoverability.md)

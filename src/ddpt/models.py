@@ -98,6 +98,21 @@ class PixelRectangle(BaseModel):
     height: int
 
 
+class PixelRedactionPlanRegion(BaseModel):
+    label: str
+    unit: Literal["pixels", "percent"] = "percent"
+    x: float
+    y: float
+    width: float
+    height: float
+
+
+class PixelRedactionPlan(BaseModel):
+    name: str
+    description: str
+    regions: list[PixelRedactionPlanRegion]
+
+
 class PixelRedactionAudit(BaseModel):
     input_path: str
     output_path: str

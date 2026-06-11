@@ -255,6 +255,62 @@ def test_preview_command_exports_png_and_metadata(tmp_path: Path) -> None:
         assert image.size == (report["rendered_width"], report["rendered_height"])
 
 
+def test_redaction_plan_commands_and_plan_based_redaction(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    redacted = tmp_path / "outputs" / "sample.plan-redacted.dcm"
+    audit_json = tmp_path / "reports" / "redaction-plan-audit.json"
+    plan_json = tmp_path / "reports" / "redaction-plan.json"
+    custom_plan = tmp_path / "plans" / "custom-redaction.yml"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+
+    result = runner.invoke(app, ["redaction-plan", "init", str(custom_plan)])
+    assert result.exit_code == 0, result.output
+    assert custom_plan.exists()
+
+    result = runner.invoke(app, ["redaction-plan", "init", str(custom_plan)])
+    assert result.exit_code == 1
+
+    result = runner.invoke(
+        app,
+        [
+            "redaction-plan",
+            "show",
+            "profiles/dental-pixel-redaction.yml",
+            "--json",
+            str(plan_json),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    plan = json.loads(plan_json.read_text())
+    assert plan["name"] == "dental-burned-in-banner"
+    assert plan["regions"][0]["unit"] == "percent"
+
+    result = runner.invoke(
+        app,
+        [
+            "redact-pixels",
+            str(source),
+            "--out",
+            str(redacted),
+            "--plan",
+            "profiles/dental-pixel-redaction.yml",
+            "--audit",
+            str(audit_json),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert redacted.exists()
+    assert audit_json.exists()
+    source_dataset = pydicom.dcmread(source)
+    redacted_dataset = pydicom.dcmread(redacted)
+    assert int(source_dataset.pixel_array[0, 1]) == 64
+    assert int(redacted_dataset.pixel_array[0, 1]) == 0
+    audit = json.loads(audit_json.read_text())
+    assert audit["rectangles"][0] == {"x": 0, "y": 0, "width": 2, "height": 1}
+
+
 def test_doctor_command_reports_environment(tmp_path: Path) -> None:
     doctor_json = tmp_path / "reports" / "doctor.json"
 

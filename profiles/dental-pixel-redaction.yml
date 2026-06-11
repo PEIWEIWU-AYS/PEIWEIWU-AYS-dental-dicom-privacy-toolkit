@@ -1,0 +1,9 @@
+name: dental-burned-in-banner
+description: Demo dental pixel redaction plan for known burned-in acquisition labels near the top image banner.
+regions:
+  - label: top-acquisition-banner
+    unit: percent
+    x: 0
+    y: 0
+    width: 100
+    height: 12

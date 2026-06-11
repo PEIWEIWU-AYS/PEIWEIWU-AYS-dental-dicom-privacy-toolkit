@@ -60,6 +60,7 @@ The demo should show:
 - UID regeneration
 - validation pass result
 - manual pixel redaction audit
+- reusable percent-based pixel redaction plans
 - tamper-evident audit chain
 - encrypted package with manifest and checksums
 
@@ -81,6 +82,7 @@ ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html dem
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out demo-run/outputs/sample.redacted.dcm --audit demo-run/reports/redaction.json
+ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental-pixel-redaction.yml --out demo-run/outputs/sample.plan-redacted.dcm --audit demo-run/reports/plan-redaction.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
 ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key
 ```
@@ -95,6 +97,12 @@ ddpt inventory demo-run/input \
 ```
 
 Open `demo-run/reports/demo-summary.html` to see embedded input, anonymized, and pixel-redacted PNG previews.
+
+For reusable burned-in label removal, inspect the sample percent-based plan:
+
+```bash
+ddpt redaction-plan show profiles/dental-pixel-redaction.yml
+```
 
 ## Safety
 

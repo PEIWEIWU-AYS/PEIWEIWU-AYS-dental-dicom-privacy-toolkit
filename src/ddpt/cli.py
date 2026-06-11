@@ -19,6 +19,11 @@ from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.policy import profile_coverage
 from ddpt.preview import render_dicom_preview
 from ddpt.profiles import built_in_profiles, describe_profile, write_profile_template
+from ddpt.redaction_plan import (
+    load_redaction_plan,
+    rectangles_from_plan,
+    write_redaction_plan_template,
+)
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
@@ -35,9 +40,11 @@ app = typer.Typer(help="Dental DICOM Privacy Toolkit", invoke_without_command=Tr
 profile_app = typer.Typer(help="Inspect anonymization profiles.")
 audit_app = typer.Typer(help="Create and verify audit chains.")
 safety_app = typer.Typer(help="Run public repository safety checks.")
+redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
+app.add_typer(redaction_plan_app, name="redaction-plan")
 console = Console()
 
 
@@ -192,6 +199,51 @@ def safety_scan(
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)
+
+
+@redaction_plan_app.command("init")
+def redaction_plan_init(
+    output_path: Annotated[Path, typer.Argument(help="Output YAML redaction plan path.")],
+    overwrite: Annotated[
+        bool, typer.Option("--overwrite", help="Overwrite existing file.")
+    ] = False,
+) -> None:
+    try:
+        path = write_redaction_plan_template(output_path, overwrite=overwrite)
+    except FileExistsError as exc:
+        console.print(str(exc))
+        raise typer.Exit(1) from exc
+    console.print(f"Redaction plan template written to: {path}")
+
+
+@redaction_plan_app.command("show")
+def redaction_plan_show(
+    plan_path: Annotated[Path, typer.Argument(help="YAML redaction plan path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write redaction plan JSON.")
+    ] = None,
+) -> None:
+    plan = load_redaction_plan(plan_path)
+    if json_output:
+        write_json(json_output, model_to_dict(plan))
+
+    table = Table(title=f"Pixel Redaction Plan: {plan.name}")
+    table.add_column("Label")
+    table.add_column("Unit")
+    table.add_column("X")
+    table.add_column("Y")
+    table.add_column("Width")
+    table.add_column("Height")
+    for region in plan.regions:
+        table.add_row(
+            region.label,
+            region.unit,
+            str(region.x),
+            str(region.y),
+            str(region.width),
+            str(region.height),
+        )
+    console.print(table)
 
 
 @profile_app.command("list")
@@ -356,16 +408,22 @@ def redact_pixels_command(
     input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
     output_path: Annotated[Path, typer.Option("--out", help="Output redacted DICOM path.")],
     rect: Annotated[
-        list[str],
+        list[str] | None,
         typer.Option(
             "--rect",
             help="Rectangle to redact in x,y,width,height format. Can be repeated.",
         ),
-    ],
+    ] = None,
+    plan: Annotated[
+        Path | None,
+        typer.Option("--plan", help="YAML redaction plan with pixel or percent regions."),
+    ] = None,
     fill_value: Annotated[int, typer.Option(help="Pixel fill value.")] = 0,
     audit_json: Annotated[Path | None, typer.Option("--audit", help="Write audit JSON.")] = None,
 ) -> None:
-    rectangles = [parse_rectangle(value) for value in rect]
+    rectangles = [parse_rectangle(value) for value in rect or []]
+    if plan:
+        rectangles.extend(rectangles_from_plan(input_path, plan))
     audit = redact_pixels(input_path, output_path, rectangles, fill_value)
     if audit_json:
         write_json(audit_json, model_to_dict(audit))

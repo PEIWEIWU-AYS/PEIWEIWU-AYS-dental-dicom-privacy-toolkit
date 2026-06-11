@@ -19,7 +19,7 @@ Version 0.1 is successful when a new user can:
 9. Confirm direct identifiers were replaced or removed.
 10. Generate an audit event JSON file.
 11. Validate anonymized output with a pass/fail report.
-12. Apply manual pixel redaction for known burned-in annotation regions.
+12. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
 13. Package anonymized files with checksums.
 14. Encrypt the package.
 15. Verify or decrypt the package.
@@ -222,10 +222,24 @@ Apply manual rectangular pixel redaction for known burned-in annotation regions.
 Required:
 
 - one or more `x,y,width,height` rectangles
+- optional YAML redaction plan
+- percent-based reusable regions
 - output DICOM
 - audit JSON output
 - bounds checking
 - documentation that this does not automatically find all burned-in identifiers
+
+### `ddpt redaction-plan init/show`
+
+Create and inspect reusable pixel redaction plans.
+
+Required:
+
+- YAML template generation
+- refuse to overwrite by default
+- show plan regions in terminal
+- optional JSON export
+- support `pixels` and `percent` coordinate units
 
 ### `ddpt verify`
 

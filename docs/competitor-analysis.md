@@ -58,6 +58,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - static HTML reports for non-programmers
 - PNG previews for GitHub-friendly visual review
 - read-only directory inventory before anonymization
+- reusable YAML pixel redaction plans for known burned-in regions
 - JSON audit events and manifests
 - encrypted sharing package demo
 - GitHub-friendly screenshots, docs, and one-command demo
@@ -98,6 +99,7 @@ The project should add:
 - audit event JSON output
 - directory inventory with JSON, CSV, and HTML exports
 - PNG preview generation for before/after workflow review
+- percent-based pixel redaction plans for repeated dental export layouts
 - static HTML reports
 - encrypted sharing package with manifest and checksums
 - manual pixel redaction audit for known burned-in annotation regions
