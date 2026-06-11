@@ -28,11 +28,13 @@
 - Manifest and checksum generation
 - Access-control workflow sketch
 - Transfer audit event examples
+- Package verification receipts
 
 ## Milestone 5: Demonstration Workflow
 
 - CLI prototype
 - Synthetic end-to-end example
+- Pixel review reports
 - Release-readiness audit
 - Local evidence bundle
 - Documentation for paper and open-source release

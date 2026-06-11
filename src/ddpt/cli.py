@@ -17,6 +17,7 @@ from ddpt.evidence import run_evidence_bundle
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
+from ddpt.pixel_review import create_pixel_review
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.policy import (
     compare_profiles,
@@ -38,6 +39,7 @@ from ddpt.reports import (
     write_inspection_html,
     write_inventory_html,
     write_package_receipt_html,
+    write_pixel_review_html,
     write_policy_registry_html,
     write_profile_comparison_html,
     write_release_audit_html,
@@ -729,6 +731,48 @@ def redact_pixels_command(
         write_json(audit_json, model_to_dict(audit))
     console.print(f"Pixel-redacted DICOM written to: {output_path}")
     console.print(f"Rectangles redacted: {len(rectangles)}")
+
+
+@app.command("pixel-review")
+def pixel_review_command(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    output_dir: Annotated[Path, typer.Option("--out-dir", help="Output review directory.")],
+    rect: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--rect",
+            help="Manual rectangle in x,y,width,height format. Can be repeated.",
+        ),
+    ] = None,
+    plan: Annotated[
+        Path | None,
+        typer.Option("--plan", help="YAML redaction plan with pixel or percent regions."),
+    ] = None,
+    fill_value: Annotated[int, typer.Option(help="Preview redaction fill value.")] = 0,
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write pixel review JSON.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write pixel review HTML.")
+    ] = None,
+    max_size: Annotated[int, typer.Option(help="Maximum rendered side length.")] = 512,
+) -> None:
+    rectangles = [parse_rectangle(value) for value in rect or []]
+    report = create_pixel_review(
+        input_path,
+        output_dir,
+        rectangles=rectangles,
+        plan_path=plan,
+        fill_value=fill_value,
+        max_size=max_size,
+    )
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_pixel_review_html(html_output, report)
+    console.print(f"Pixel review directory: {output_dir}")
+    console.print(f"Regions reviewed: {len(report.regions)}")
+    console.print(f"Overlay preview: {report.overlay_preview_png}")
 
 
 @app.command()

@@ -25,15 +25,16 @@ Version 0.1 is successful when a new user can:
 15. Confirm direct identifiers were replaced or removed.
 16. Generate an audit event JSON file.
 17. Validate anonymized output with a pass/fail report.
-18. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-19. Package anonymized files with checksums.
-20. Encrypt the package.
-21. Verify or decrypt the package.
-22. Generate package verification receipts for receiver-side sharing evidence.
-23. Run local REST API workflow demos for integration testing.
-24. Run a release-readiness audit before public GitHub publishing.
-25. Generate a local evidence bundle for MacBook validation and public demonstrations.
-26. Run automated tests locally and in GitHub Actions.
+18. Generate pixel review reports for known burned-in annotation regions.
+19. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+20. Package anonymized files with checksums.
+21. Encrypt the package.
+22. Verify or decrypt the package.
+23. Generate package verification receipts for receiver-side sharing evidence.
+24. Run local REST API workflow demos for integration testing.
+25. Run a release-readiness audit before public GitHub publishing.
+26. Generate a local evidence bundle for MacBook validation and public demonstrations.
+27. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -47,6 +48,7 @@ Required:
 - metadata inspection
 - anonymization
 - validation
+- pixel review report
 - manual pixel redaction
 - encrypted package creation
 - package verification
@@ -315,6 +317,21 @@ Required outputs:
 - rendered preview dimensions
 - pixel value range
 - warning that previews are not diagnostic images
+
+### `ddpt pixel-review`
+
+Generate a visual review report for known pixel redaction regions.
+
+Required outputs:
+
+- original PNG preview
+- redaction overlay PNG preview
+- redacted PNG preview
+- JSON report
+- optional HTML report
+- support manual rectangles
+- support reusable YAML redaction plans
+- warnings that pixel review does not automatically detect every burned-in identifier
 
 ### `ddpt anonymize`
 

@@ -7,6 +7,7 @@ from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import DemoPipelineResult
+from ddpt.pixel_review import create_pixel_review
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.preview import render_dicom_preview
 from ddpt.reports import (
@@ -16,6 +17,7 @@ from ddpt.reports import (
     write_inspection_html,
     write_inventory_html,
     write_package_receipt_html,
+    write_pixel_review_html,
 )
 from ddpt.sharing import create_package, create_verification_receipt
 from ddpt.synthetic import create_synthetic_dicom
@@ -47,6 +49,9 @@ def run_demo_pipeline(
     audit_json = reports_dir / "audit.json"
     audit_html = reports_dir / "audit.html"
     validation_json = reports_dir / "validation.json"
+    pixel_review_json = reports_dir / "pixel-review.json"
+    pixel_review_html = reports_dir / "pixel-review.html"
+    pixel_review_dir = reports_dir / "pixel-review"
     redaction_json = reports_dir / "redaction.json"
     summary_json = reports_dir / "demo-summary.json"
     summary_html = reports_dir / "demo-summary.html"
@@ -78,7 +83,16 @@ def run_demo_pipeline(
     validation = validate_anonymized_dicom(anonymized_dicom)
     write_json(validation_json, model_to_dict(validation))
 
-    redaction = redact_pixels(anonymized_dicom, redacted_dicom, [parse_rectangle(rectangle)])
+    redaction_rectangle = parse_rectangle(rectangle)
+    pixel_review = create_pixel_review(
+        anonymized_dicom,
+        pixel_review_dir,
+        rectangles=[redaction_rectangle],
+    )
+    write_json(pixel_review_json, model_to_dict(pixel_review))
+    write_pixel_review_html(pixel_review_html, pixel_review)
+
+    redaction = redact_pixels(anonymized_dicom, redacted_dicom, [redaction_rectangle])
     render_dicom_preview(redacted_dicom, redacted_preview_png)
     write_json(redaction_json, model_to_dict(redaction))
 
@@ -115,6 +129,8 @@ def run_demo_pipeline(
         audit_json=str(audit_json),
         audit_html=str(audit_html),
         validation_json=str(validation_json),
+        pixel_review_json=str(pixel_review_json),
+        pixel_review_html=str(pixel_review_html),
         redaction_json=str(redaction_json),
         manifest_json=str(manifest_json),
         package_path=str(package_path),

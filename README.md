@@ -22,6 +22,7 @@ Core goals:
 - DICOM privacy policy registry export in JSON, CSV, and HTML
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
+- Pixel review reports with original, overlay, and redacted PNG previews
 - YAML workflow recipes for reproducible staged pipelines
 - Local REST API for integration demos
 - Release-readiness audit for public GitHub publishing
@@ -51,6 +52,7 @@ ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json wo
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
+ddpt pixel-review demo-run/outputs/sample.anonymized.dcm --out-dir demo-run/reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json demo-run/reports/pixel-review.json --html demo-run/reports/pixel-review.html
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
 ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-dump.json
 ddpt policy export --json demo-run/reports/policy-registry.json --csv demo-run/reports/policy-registry.csv --html demo-run/reports/policy-registry.html
@@ -76,6 +78,7 @@ The one-command demo writes a synthetic input file, anonymized and pixel-redacte
 
 See [docs/inventory.md](docs/inventory.md) for the inventory safety boundary and output formats.
 See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limits.
+See [docs/pixel-review.md](docs/pixel-review.md) for burned-in annotation region review reports.
 
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
 See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
@@ -143,7 +146,7 @@ synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
 research-sharing date shifting, release-readiness checks, and local evidence
 bundle generation, package verification receipts, profile comparison reports,
-and policy registry exports.
+policy registry exports, and pixel review reports.
 
 ## License
 

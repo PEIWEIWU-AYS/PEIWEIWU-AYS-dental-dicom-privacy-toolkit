@@ -22,6 +22,9 @@ demo-run/
   reports/input-preview.png
   reports/anonymized-preview.png
   reports/redacted-preview.png
+  reports/pixel-review.json
+  reports/pixel-review.html
+  reports/pixel-review/pixel-review-overlay.png
   outputs/sample.anonymized.dcm
   outputs/sample.redacted.dcm
   reports/inspect.json
@@ -62,6 +65,7 @@ The demo should show:
 - direct identifier replacement or blanking
 - UID regeneration
 - validation pass result
+- pixel review overlay for known burned-in annotation regions
 - manual pixel redaction audit
 - reusable percent-based pixel redaction plans
 - tamper-evident audit chain
@@ -86,6 +90,7 @@ ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html dem
 ddpt anonymize demo-run/sample.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
+ddpt pixel-review demo-run/outputs/sample.anonymized.dcm --out-dir demo-run/reports/pixel-review --rect 1,0,1,1 --json demo-run/reports/pixel-review.json --html demo-run/reports/pixel-review.html
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out demo-run/outputs/sample.redacted.dcm --audit demo-run/reports/redaction.json
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental-pixel-redaction.yml --out demo-run/outputs/sample.plan-redacted.dcm --audit demo-run/reports/plan-redaction.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt

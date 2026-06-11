@@ -20,6 +20,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Package Verification Receipts](package-verification-receipts.md)
 - [DICOM Inventory Preflight](inventory.md)
 - [DICOM PNG Preview](preview.md)
+- [Pixel Review](pixel-review.md)
 - [Pixel Redaction Plans](pixel-redaction-plans.md)
 - [DICOM Tag Operations](tag-operations.md)
 - [Local REST API](local-api.md)

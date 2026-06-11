@@ -227,6 +227,9 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "reports" / "inspect.html").exists()
     assert (demo_dir / "reports" / "audit.html").exists()
     assert (demo_dir / "reports" / "validation.json").exists()
+    assert (demo_dir / "reports" / "pixel-review.json").exists()
+    assert (demo_dir / "reports" / "pixel-review.html").exists()
+    assert (demo_dir / "reports" / "pixel-review" / "pixel-review-overlay.png").exists()
     assert (demo_dir / "reports" / "redaction.json").exists()
     assert (demo_dir / "reports" / "demo-summary.html").exists()
     assert (demo_dir / "reports" / "audit-chain.json").exists()
@@ -266,6 +269,9 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "inspect.html").exists()
     assert (workflow_dir / "outputs" / "sample.anonymized.dcm").exists()
     assert (workflow_dir / "outputs" / "sample.redacted.dcm").exists()
+    assert (workflow_dir / "reports" / "pixel-review.json").exists()
+    assert (workflow_dir / "reports" / "pixel-review.html").exists()
+    assert (workflow_dir / "reports" / "pixel-review" / "pixel-review-redacted.png").exists()
     assert (workflow_dir / "share" / "package.ddpt").exists()
     assert (workflow_dir / "share" / "package.key").exists()
     assert (workflow_dir / "reports" / "package-receipt.json").exists()
@@ -281,6 +287,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "anonymize",
         "validate",
         "preview-anonymized",
+        "pixel-review",
         "redact-known-pixels",
         "package",
         "verify-package",
@@ -459,6 +466,46 @@ def test_redaction_plan_commands_and_plan_based_redaction(tmp_path: Path) -> Non
     assert int(redacted_dataset.pixel_array[0, 1]) == 0
     audit = json.loads(audit_json.read_text())
     assert audit["rectangles"][0] == {"x": 0, "y": 0, "width": 2, "height": 1}
+
+
+def test_pixel_review_command_generates_overlay_and_report(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    review_dir = tmp_path / "reports" / "pixel-review"
+    review_json = tmp_path / "reports" / "pixel-review.json"
+    review_html = tmp_path / "reports" / "pixel-review.html"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    result = runner.invoke(
+        app,
+        [
+            "pixel-review",
+            str(source),
+            "--out-dir",
+            str(review_dir),
+            "--plan",
+            "profiles/dental-pixel-redaction.yml",
+            "--json",
+            str(review_json),
+            "--html",
+            str(review_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert review_json.exists()
+    assert review_html.exists()
+    assert (review_dir / "pixel-review-original.png").exists()
+    assert (review_dir / "pixel-review-overlay.png").exists()
+    assert (review_dir / "pixel-review-redacted.png").exists()
+    report = json.loads(review_json.read_text())
+    assert report["rows"] == 2
+    assert report["columns"] == 2
+    assert report["regions"][0]["label"] == "top-acquisition-banner"
+    assert report["regions"][0]["width"] == 2
+    assert report["warnings"]
+    html = review_html.read_text()
+    assert "Dental DICOM Pixel Review" in html
+    assert "pixel-review-overlay.png" in html
 
 
 def test_tag_commands_dump_set_blank_and_delete(tmp_path: Path) -> None:
@@ -704,6 +751,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "policy-registry.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
     assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
     assert (output_dir / "demo-run" / "share" / "package.ddpt").exists()
     report = json.loads(evidence_json.read_text())
@@ -713,6 +761,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/policy-registry.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
+    assert "demo-run/reports/pixel-review.html" in artifact_paths
     assert "demo-run/reports/package-receipt.html" in artifact_paths
     html = evidence_html.read_text()
     assert "Dental DICOM Evidence Bundle" in html

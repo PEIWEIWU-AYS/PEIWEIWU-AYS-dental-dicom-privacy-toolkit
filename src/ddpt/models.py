@@ -155,6 +155,33 @@ class PreviewReport(BaseModel):
     )
 
 
+class PixelReviewRegion(BaseModel):
+    label: str
+    x: int
+    y: int
+    width: int
+    height: int
+
+
+class PixelReviewReport(BaseModel):
+    input_path: str
+    plan_path: str | None = None
+    original_preview_png: str
+    overlay_preview_png: str
+    redacted_preview_png: str
+    rows: int
+    columns: int
+    rendered_width: int
+    rendered_height: int
+    burned_in_annotation: str | None = None
+    regions: list[PixelReviewRegion]
+    warnings: list[str] = Field(default_factory=list)
+    note: str
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DoctorCheck(BaseModel):
     name: str
     passed: bool
@@ -307,6 +334,8 @@ class DemoPipelineResult(BaseModel):
     audit_json: str
     audit_html: str
     validation_json: str
+    pixel_review_json: str
+    pixel_review_html: str
     redaction_json: str
     manifest_json: str
     package_path: str

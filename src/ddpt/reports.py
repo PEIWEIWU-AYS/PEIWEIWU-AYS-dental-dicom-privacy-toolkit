@@ -13,6 +13,7 @@ from ddpt.models import (
     InspectionReport,
     InventoryReport,
     PackageVerificationReceipt,
+    PixelReviewReport,
     PolicyRegistryReport,
     ProfileComparisonReport,
     ReleaseAuditReport,
@@ -225,6 +226,8 @@ DEMO_SUMMARY_TEMPLATE = Template(
       <tr><td>Inspection HTML</td><td><code>{{ result.inspection_html }}</code></td></tr>
       <tr><td>Anonymization audit HTML</td><td><code>{{ result.audit_html }}</code></td></tr>
       <tr><td>Validation JSON</td><td><code>{{ result.validation_json }}</code></td></tr>
+      <tr><td>Pixel review JSON</td><td><code>{{ result.pixel_review_json }}</code></td></tr>
+      <tr><td>Pixel review HTML</td><td><code>{{ result.pixel_review_html }}</code></td></tr>
       <tr><td>Redaction audit JSON</td><td><code>{{ result.redaction_json }}</code></td></tr>
       <tr><td>Encrypted package</td><td><code>{{ result.package_path }}</code></td></tr>
       <tr><td>Package manifest</td><td><code>{{ result.manifest_json }}</code></td></tr>
@@ -837,6 +840,97 @@ POLICY_REGISTRY_TEMPLATE = Template(
 """
 )
 
+PIXEL_REVIEW_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Pixel Review</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .preview-grid { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+    .preview-grid figure { margin: 0; }
+    .preview-grid img {
+      image-rendering: pixelated;
+      width: 192px;
+      height: 192px;
+      object-fit: contain;
+      border: 1px solid #d9dee3;
+      background: #f3f6f8;
+    }
+    .preview-grid figcaption { margin-top: 6px; font-size: 0.9rem; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Pixel Review</h1>
+  <p class="warning">
+    Pixel review report for known redaction regions. This does not automatically
+    detect every burned-in identifier and is not diagnostic interpretation.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>Plan: <code>{{ report.plan_path or "" }}</code></li>
+    <li>Pixel size: {{ report.columns }} x {{ report.rows }}</li>
+    <li>Rendered size: {{ report.rendered_width }} x {{ report.rendered_height }}</li>
+    <li>BurnedInAnnotation: {{ report.burned_in_annotation or "missing" }}</li>
+    <li>Regions: {{ report.regions|length }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Previews</h2>
+  <div class="preview-grid">
+    <figure>
+      <img src="{{ original_src }}" alt="Original preview">
+      <figcaption>Original</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ overlay_src }}" alt="Redaction overlay preview">
+      <figcaption>Overlay</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ redacted_src }}" alt="Redacted preview">
+      <figcaption>Redacted</figcaption>
+    </figure>
+  </div>
+  <h2>Regions</h2>
+  <table>
+    <thead>
+      <tr><th>Label</th><th>X</th><th>Y</th><th>Width</th><th>Height</th></tr>
+    </thead>
+    <tbody>
+      {% for item in report.regions %}
+      <tr>
+        <td>{{ item.label }}</td>
+        <td>{{ item.x }}</td>
+        <td>{{ item.y }}</td>
+        <td>{{ item.width }}</td>
+        <td>{{ item.height }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Warnings</h2>
+  <ul>
+    {% for warning in report.warnings %}
+    <li>{{ warning }}</li>
+    {% endfor %}
+  </ul>
+  <p>{{ report.note }}</p>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -890,9 +984,28 @@ def write_policy_registry_html(path: Path, report: PolicyRegistryReport) -> None
     _write_html(path, POLICY_REGISTRY_TEMPLATE.render(report=report))
 
 
+def write_pixel_review_html(path: Path, report: PixelReviewReport) -> None:
+    _write_html(
+        path,
+        PIXEL_REVIEW_TEMPLATE.render(
+            report=report,
+            original_src=_relative_html_src(path, Path(report.original_preview_png)),
+            overlay_src=_relative_html_src(path, Path(report.overlay_preview_png)),
+            redacted_src=_relative_html_src(path, Path(report.redacted_preview_png)),
+        ),
+    )
+
+
 def _write_html(path: Path, html: str) -> None:
     ensure_parent(path)
     path.write_text(html, encoding="utf-8")
+
+
+def _relative_html_src(html_path: Path, image_path: Path) -> str:
+    try:
+        return str(image_path.resolve().relative_to(html_path.parent.resolve()))
+    except ValueError:
+        return str(image_path)
 
 
 def model_to_dict(model: Any) -> dict[str, Any]:

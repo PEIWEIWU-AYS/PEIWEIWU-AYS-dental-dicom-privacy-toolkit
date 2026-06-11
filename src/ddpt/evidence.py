@@ -113,6 +113,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            Path(demo_result.pixel_review_html),
+            "Pixel review HTML",
+            "pixel-review",
+            "Human-readable burned-in annotation redaction review.",
+        ),
+        _artifact(
+            output_dir,
             Path(demo_result.package_path),
             "Encrypted package",
             "sharing",

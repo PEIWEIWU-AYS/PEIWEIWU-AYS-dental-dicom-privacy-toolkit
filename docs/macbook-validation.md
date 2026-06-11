@@ -37,6 +37,8 @@ Expected key artifacts:
 - `demo-run/reports/input-preview.png`
 - `demo-run/reports/anonymized-preview.png`
 - `demo-run/reports/redacted-preview.png`
+- `demo-run/reports/pixel-review.html`
+- `demo-run/reports/pixel-review/pixel-review-overlay.png`
 - `demo-run/reports/audit.html`
 - `demo-run/reports/audit-chain.json`
 - `demo-run/reports/package-receipt.html`
@@ -135,6 +137,7 @@ Expected:
 - `evidence-run/reports/release-audit.html` exists
 - `evidence-run/reports/workflow-run.html` exists
 - `evidence-run/demo-run/reports/demo-summary.html` exists
+- `evidence-run/demo-run/reports/pixel-review.html` exists
 - `evidence-run/demo-run/reports/package-receipt.html` exists
 
 ## 10. Open Human-Readable Outputs

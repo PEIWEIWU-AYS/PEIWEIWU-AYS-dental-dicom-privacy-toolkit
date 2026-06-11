@@ -25,6 +25,7 @@ The bundle includes:
 - policy registry JSON, CSV, and HTML
 - one-command synthetic demo output
 - demo summary HTML with synthetic PNG previews
+- pixel review HTML with original, overlay, and redacted previews
 - encrypted sharing package from anonymized synthetic DICOM files
 - package verification receipt HTML
 - tamper-evident demo audit chain
@@ -49,6 +50,8 @@ evidence-run/
     evidence-bundle.html
   demo-run/
     reports/demo-summary.html
+    reports/pixel-review.html
+    reports/pixel-review/pixel-review-overlay.png
     reports/audit-chain.json
     reports/package-receipt.html
     share/package.ddpt

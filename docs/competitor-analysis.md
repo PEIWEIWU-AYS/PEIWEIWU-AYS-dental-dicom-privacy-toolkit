@@ -57,6 +57,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - CLI that works cleanly in CI
 - static HTML reports for non-programmers
 - PNG previews for GitHub-friendly visual review
+- pixel review reports with original, overlay, and redacted previews
 - read-only directory inventory before anonymization
 - RSNA CTP-inspired YAML workflow recipes
 - HTML workflow reports for staged pipeline review
@@ -116,6 +117,7 @@ The project should add:
 - profile comparison JSON and HTML reports for explaining configuration differences
 - policy registry export for transparent DICOM keyword risk/action rationale
 - PNG preview generation for before/after workflow review
+- pixel review HTML report for known burned-in annotation regions
 - percent-based pixel redaction plans for repeated dental export layouts
 - exact tag dump/set/blank/delete commands with write-operation audits
 - local REST API endpoints for inventory, inspection, anonymization, validation, and preview

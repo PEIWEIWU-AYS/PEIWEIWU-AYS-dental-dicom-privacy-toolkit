@@ -19,6 +19,7 @@ Expected outputs:
 - `workflow-run/reports/inventory.json`
 - `workflow-run/reports/inspect.html`
 - `workflow-run/outputs/sample.anonymized.dcm`
+- `workflow-run/reports/pixel-review.html`
 - `workflow-run/outputs/sample.redacted.dcm`
 - `workflow-run/share/package.ddpt`
 - `workflow-run/reports/package-receipt.html`
@@ -34,6 +35,7 @@ Expected outputs:
 - `anonymize`
 - `validate`
 - `preview`
+- `pixel-review`
 - `redact-pixels`
 - `package`
 - `verify-package`

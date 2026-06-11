@@ -37,6 +37,15 @@ steps:
     output: reports/anonymized-preview.png
     json: reports/anonymized-preview.json
 
+  - id: pixel-review
+    action: pixel-review
+    input: outputs/sample.anonymized.dcm
+    out_dir: reports/pixel-review
+    rects:
+      - 1,0,1,1
+    json: reports/pixel-review.json
+    html: reports/pixel-review.html
+
   - id: redact-known-pixels
     action: redact-pixels
     input: outputs/sample.anonymized.dcm

@@ -10,6 +10,7 @@ from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import WorkflowRunReport, WorkflowStepResult
+from ddpt.pixel_review import create_pixel_review
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.preview import render_dicom_preview
 from ddpt.reports import (
@@ -18,6 +19,7 @@ from ddpt.reports import (
     write_inspection_html,
     write_inventory_html,
     write_package_receipt_html,
+    write_pixel_review_html,
 )
 from ddpt.sharing import create_package, create_verification_receipt
 from ddpt.synthetic import create_synthetic_dicom
@@ -175,6 +177,31 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             audit_path = _path(root_dir, step["audit"])
             write_json(audit_path, model_to_dict(audit))
             artifacts.append(audit_path)
+        return artifacts
+
+    if action == "pixel-review":
+        rectangles = [parse_rectangle(value) for value in step.get("rects", [])]
+        report = create_pixel_review(
+            _path(root_dir, step["input"]),
+            _path(root_dir, step["out_dir"]),
+            rectangles=rectangles,
+            plan_path=_optional_path(root_dir, step.get("plan")),
+            fill_value=int(step.get("fill_value", 0)),
+            max_size=int(step.get("max_size", 512)),
+        )
+        artifacts = [
+            Path(report.original_preview_png),
+            Path(report.overlay_preview_png),
+            Path(report.redacted_preview_png),
+        ]
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_pixel_review_html(html_path, report)
+            artifacts.append(html_path)
         return artifacts
 
     if action == "package":

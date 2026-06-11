@@ -46,6 +46,7 @@ ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --h
 ddpt profile compare dental-basic dental-research-sharing --json reports/profile-comparison.json --html reports/profile-comparison.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out outputs/sample.anonymized.dcm --audit reports/audit.json
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-research-sharing --dry-run --audit reports/research-dry-run.json
+ddpt pixel-review outputs/sample.anonymized.dcm --out-dir reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json reports/pixel-review.json --html reports/pixel-review.html
 ddpt package outputs/ --encrypt --key-out share/package.key --manifest reports/manifest.json --out share/dental-dicom-package.ddpt
 ddpt verify share/dental-dicom-package.ddpt --key share/package.key --receipt reports/package-receipt.json --html reports/package-receipt.html
 ddpt decrypt share/dental-dicom-package.ddpt --key share/package.key --out restored/

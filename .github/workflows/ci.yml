@@ -45,6 +45,7 @@ jobs:
           test -f docs/research-sharing-profile.md
           test -f docs/inventory.md
           test -f docs/preview.md
+          test -f docs/pixel-review.md
           test -f docs/pixel-redaction-plans.md
           test -f docs/tag-operations.md
           test -f docs/local-api.md
