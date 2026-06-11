@@ -11,6 +11,7 @@ from ddpt.models import (
     DemoPipelineResult,
     InspectionReport,
     InventoryReport,
+    WorkflowRunReport,
 )
 from ddpt.utils import ensure_parent
 
@@ -389,6 +390,81 @@ INVENTORY_TEMPLATE = Template(
 """
 )
 
+WORKFLOW_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Workflow Report</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Workflow Report</h1>
+  <p class="warning">
+    Synthetic-data workflow report only. This report records pipeline execution and
+    artifacts; it is not legal certification or clinical validation.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Name: {{ report.name }}</li>
+    <li>Recipe: <code>{{ report.recipe_path }}</code></li>
+    <li>Root directory: <code>{{ report.root_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Steps</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Step</th>
+        <th>Action</th>
+        <th>Status</th>
+        <th>Message</th>
+        <th>Artifacts</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for step in report.steps %}
+      <tr>
+        <td>{{ step.id }}</td>
+        <td>{{ step.action }}</td>
+        <td class="{{ "ok" if step.passed else "fail" }}">
+          {{ "PASS" if step.passed else "FAIL" }}
+        </td>
+        <td>{{ step.message }}</td>
+        <td>
+          {% for artifact in step.artifacts %}
+          <code>{{ artifact }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -416,6 +492,10 @@ def write_batch_summary_html(path: Path, summary: BatchSummary) -> None:
 
 def write_inventory_html(path: Path, report: InventoryReport) -> None:
     _write_html(path, INVENTORY_TEMPLATE.render(report=report))
+
+
+def write_workflow_html(path: Path, report: WorkflowRunReport) -> None:
+    _write_html(path, WORKFLOW_TEMPLATE.render(report=report))
 
 
 def _write_html(path: Path, html: str) -> None:

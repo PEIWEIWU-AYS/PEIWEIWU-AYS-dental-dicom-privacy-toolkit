@@ -9,7 +9,8 @@
 ```bash
 ddpt workflow run recipes/dental-demo-workflow.yml \
   --root workflow-run \
-  --json workflow-run/reports/workflow-run.json
+  --json workflow-run/reports/workflow-run.json \
+  --html workflow-run/reports/workflow-run.html
 ```
 
 Expected outputs:
@@ -22,6 +23,7 @@ Expected outputs:
 - `workflow-run/share/package.ddpt`
 - `workflow-run/reports/audit-chain.json`
 - `workflow-run/reports/workflow-run.json`
+- `workflow-run/reports/workflow-run.html`
 
 ## Supported Actions
 

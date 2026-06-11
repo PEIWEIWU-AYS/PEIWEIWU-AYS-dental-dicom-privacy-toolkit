@@ -39,7 +39,7 @@ python -m pip install -e ".[dev]"
 ddpt doctor
 ddpt safety scan .
 ddpt demo demo-run
-ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json
+ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png

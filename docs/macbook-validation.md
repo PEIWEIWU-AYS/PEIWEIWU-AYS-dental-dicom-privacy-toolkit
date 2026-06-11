@@ -71,12 +71,14 @@ Expected:
 ```bash
 ddpt workflow run recipes/dental-demo-workflow.yml \
   --root workflow-run \
-  --json workflow-run/reports/workflow-run.json
+  --json workflow-run/reports/workflow-run.json \
+  --html workflow-run/reports/workflow-run.html
 ```
 
 Expected:
 
 - `workflow-run/reports/workflow-run.json` exists
+- `workflow-run/reports/workflow-run.html` exists
 - overall workflow status is `PASS`
 
 ## 7. Open Human-Readable Outputs

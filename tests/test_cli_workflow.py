@@ -217,6 +217,7 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
 def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> None:
     workflow_dir = tmp_path / "workflow-run"
     workflow_json = workflow_dir / "reports" / "workflow-run.json"
+    workflow_html = workflow_dir / "reports" / "workflow-run.html"
 
     result = runner.invoke(
         app,
@@ -228,11 +229,14 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
             str(workflow_dir),
             "--json",
             str(workflow_json),
+            "--html",
+            str(workflow_html),
         ],
     )
 
     assert result.exit_code == 0, result.output
     assert workflow_json.exists()
+    assert workflow_html.exists()
     assert (workflow_dir / "input" / "sample.synthetic.dcm").exists()
     assert (workflow_dir / "reports" / "inventory.json").exists()
     assert (workflow_dir / "reports" / "inspect.html").exists()
@@ -257,6 +261,10 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "audit-chain",
         "audit-verify",
     ]
+    html = workflow_html.read_text()
+    assert "Dental DICOM Workflow Report" in html
+    assert "create-synthetic" in html
+    assert "audit-chain" in html
 
 
 def test_workflow_recipe_accepts_relative_root(
@@ -274,15 +282,18 @@ def test_workflow_recipe_accepts_relative_root(
             str(recipe_path),
             "--root",
             "relative-workflow",
-            "--json",
-            "relative-workflow/reports/workflow-run.json",
-        ],
-    )
+                "--json",
+                "relative-workflow/reports/workflow-run.json",
+                "--html",
+                "relative-workflow/reports/workflow-run.html",
+            ],
+        )
 
     assert result.exit_code == 0, result.output
     report = json.loads(Path("relative-workflow/reports/workflow-run.json").read_text())
     assert report["passed"] is True
     assert Path("relative-workflow/reports/audit-chain-verify.json").exists()
+    assert Path("relative-workflow/reports/workflow-run.html").exists()
 
 
 def test_inventory_command_exports_safe_directory_report(tmp_path: Path) -> None:

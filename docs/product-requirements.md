@@ -83,7 +83,8 @@ Required:
 
 - workflow recipe YAML
 - root output directory
-- structured workflow report
+- structured JSON workflow report
+- human-readable HTML workflow report
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails

@@ -30,6 +30,7 @@ from ddpt.reports import (
     write_audit_html,
     write_inspection_html,
     write_inventory_html,
+    write_workflow_html,
 )
 from ddpt.safety import scan_repository_safety
 from ddpt.sharing import create_package, decrypt_package, verify_package
@@ -205,10 +206,15 @@ def workflow_run(
     json_output: Annotated[
         Path | None, typer.Option("--json", help="Write workflow report JSON.")
     ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write workflow report HTML.")
+    ] = None,
 ) -> None:
     report = run_workflow(recipe_path, root_dir)
     if json_output:
         write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_workflow_html(html_output, report)
 
     table = Table(title=f"Workflow: {report.name}")
     table.add_column("Step")
