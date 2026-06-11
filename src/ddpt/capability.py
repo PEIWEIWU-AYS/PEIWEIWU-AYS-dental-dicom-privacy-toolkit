@@ -131,6 +131,33 @@ CAPABILITY_SPECS = [
         note="Matches the baseline need to see risky DICOM header values before writing output.",
     ),
     CapabilitySpec(
+        id="privacy-remediation-plan",
+        capability="Pre-anonymization privacy remediation plans",
+        source_tools=(
+            "DicomCleaner",
+            "RSNA DICOM Anonymizer",
+            "DCMTK dcmodify",
+            "pydicom anonymization example",
+        ),
+        evidence_files=(
+            "src/ddpt/remediation.py",
+            "docs/remediation-plan.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt remediation plan input.dcm --profile dental-basic "
+            "--json remediation-plan.json --html remediation-plan.html"
+        ),
+        differentiator=(
+            "Risk findings become a profile-aware action plan before DICOM output is written."
+        ),
+        note=(
+            "Connects metadata inspection, policy registry, profile coverage, "
+            "private-tag handling, and burned-in pixel review reminders."
+        ),
+    ),
+    CapabilitySpec(
         id="synthetic-study-generator",
         capability="Multi-file synthetic dental study generation for local workflow demos",
         source_tools=("RSNA CTP", "pydicom anonymization example"),

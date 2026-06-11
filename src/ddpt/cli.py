@@ -44,6 +44,7 @@ from ddpt.redaction_plan import (
     write_redaction_plan_template,
 )
 from ddpt.release import run_release_audit
+from ddpt.remediation import build_privacy_remediation_plan
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
@@ -56,6 +57,7 @@ from ddpt.reports import (
     write_package_receipt_html,
     write_pixel_review_html,
     write_policy_registry_html,
+    write_privacy_remediation_html,
     write_profile_comparison_html,
     write_profile_lint_html,
     write_release_audit_html,
@@ -91,6 +93,7 @@ dashboard_app = typer.Typer(help="Build static local review dashboards.")
 compare_app = typer.Typer(help="Compare DICOM privacy outputs.")
 share_app = typer.Typer(help="Check sharing readiness gates.")
 quality_app = typer.Typer(help="Run workflow quality gates.")
+remediation_app = typer.Typer(help="Build privacy remediation plans.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(audit_app, name="audit")
@@ -108,6 +111,7 @@ app.add_typer(dashboard_app, name="dashboard")
 app.add_typer(compare_app, name="compare")
 app.add_typer(share_app, name="share")
 app.add_typer(quality_app, name="quality")
+app.add_typer(remediation_app, name="remediation")
 console = Console()
 
 
@@ -664,6 +668,63 @@ def quality_gate(
     console.print(f"Required checks: {report.passed_checks}/{report.required_checks}")
     console.print(f"Failed required checks: {report.failed_checks}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@remediation_app.command("plan")
+def remediation_plan(
+    input_path: Annotated[Path, typer.Argument(help="DICOM file or directory.")],
+    profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON remediation plan.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML remediation plan.")
+    ] = None,
+    recursive: Annotated[
+        bool, typer.Option("--recursive/--no-recursive", help="Recurse through directories.")
+    ] = True,
+) -> None:
+    report = build_privacy_remediation_plan(
+        input_path,
+        profile=profile,
+        recursive=recursive,
+    )
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_privacy_remediation_html(html_output, report)
+
+    table = Table(title="Dental DICOM Privacy Remediation Plan")
+    table.add_column("Readable")
+    table.add_column("Path")
+    table.add_column("High")
+    table.add_column("Medium")
+    table.add_column("Uncovered")
+    table.add_column("Private")
+    table.add_column("Pixel Review")
+    for file_plan in report.files:
+        table.add_row(
+            "yes" if file_plan.readable else "no",
+            file_plan.path,
+            str(file_plan.high_risk_items),
+            str(file_plan.medium_risk_items),
+            (
+                f"{file_plan.uncovered_high_risk_items}/"
+                f"{file_plan.uncovered_medium_risk_items}"
+            ),
+            str(file_plan.private_tags_present),
+            "yes" if file_plan.pixel_review_recommended else "no",
+        )
+    console.print(table)
+    console.print(f"Profile: {report.profile}")
+    console.print(f"Files: {report.readable_files}/{report.total_files} readable")
+    console.print(f"Covered items: {report.covered_items}/{report.total_items}")
+    console.print(f"Uncovered high-risk items: {report.uncovered_high_risk_items}")
+    console.print(f"Uncovered medium-risk items: {report.uncovered_medium_risk_items}")
+    console.print(f"Pixel review recommended files: {report.pixel_review_recommended_files}")
+    console.print(f"Overall: {'PASS' if report.passed else 'REVIEW'}")
     if not report.passed:
         raise typer.Exit(1)
 

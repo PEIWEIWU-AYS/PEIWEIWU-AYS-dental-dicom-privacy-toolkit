@@ -296,6 +296,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "input" / "sample.synthetic.dcm").exists()
     assert (workflow_dir / "reports" / "inventory.json").exists()
     assert (workflow_dir / "reports" / "inspect.html").exists()
+    assert (workflow_dir / "reports" / "remediation-plan.json").exists()
+    assert (workflow_dir / "reports" / "remediation-plan.html").exists()
     assert (workflow_dir / "outputs" / "sample.anonymized.dcm").exists()
     assert (workflow_dir / "outputs" / "sample.redacted.dcm").exists()
     assert (workflow_dir / "reports" / "deid-comparison.json").exists()
@@ -321,6 +323,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "create-synthetic",
         "inventory-input",
         "inspect-input",
+        "remediation-plan",
         "anonymize",
         "compare-deidentification",
         "validate",
@@ -344,6 +347,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
+    assert "remediation-plan" in html
     assert "deid-certificate" in html
     assert "workflow-quality-gate" in html
 
@@ -841,6 +845,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "Orthanc" in reference_names
     capability_ids = {item["id"] for item in report["items"]}
     assert "objective-completion-audit" in capability_ids
+    assert "privacy-remediation-plan" in capability_ids
     assert "linkable-pseudonymization" in capability_ids
     assert "before-after-deid-comparison" in capability_ids
     assert "pixel-review-redaction" in capability_ids
@@ -917,6 +922,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "remediation-plan.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
     assert (output_dir / "demo-run" / "reports" / "deid-comparison.html").exists()
     assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
@@ -937,6 +943,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
     assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
+    assert "workflow-run/reports/remediation-plan.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
     assert "demo-run/reports/deid-comparison.html" in artifact_paths
     assert "demo-run/reports/pixel-review.html" in artifact_paths
@@ -952,6 +959,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Release audit HTML" in html
     assert "De-identification certificate HTML" in html
     assert "Workflow quality gate HTML" in html
+    assert "Privacy remediation plan HTML" in html
 
 
 def test_certificate_command_builds_handoff_certificate(tmp_path: Path) -> None:
@@ -1117,6 +1125,51 @@ def test_quality_gate_command_checks_workflow_evidence(tmp_path: Path) -> None:
     assert "share-readiness" in check_ids
     html = quality_html.read_text()
     assert "Dental DICOM Workflow Quality Gate" in html
+
+
+def test_remediation_plan_command_builds_profile_aware_action_plan(tmp_path: Path) -> None:
+    input_dir = tmp_path / "input"
+    source = input_dir / "sample.dcm"
+    remediation_json = tmp_path / "reports" / "remediation-plan.json"
+    remediation_html = tmp_path / "reports" / "remediation-plan.html"
+
+    result = runner.invoke(app, ["synthetic", str(source)])
+    assert result.exit_code == 0, result.output
+
+    result = runner.invoke(
+        app,
+        [
+            "remediation",
+            "plan",
+            str(input_dir),
+            "--profile",
+            "dental-basic",
+            "--json",
+            str(remediation_json),
+            "--html",
+            str(remediation_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert remediation_json.exists()
+    assert remediation_html.exists()
+    report = json.loads(remediation_json.read_text())
+    assert report["passed"] is True
+    assert report["total_files"] == 1
+    assert report["uncovered_high_risk_items"] == 0
+    assert report["uncovered_medium_risk_items"] == 0
+    assert report["covered_items"] == report["total_items"]
+    assert report["pixel_review_recommended_files"] == 0
+    file_plan = report["files"][0]
+    assert file_plan["high_risk_items"] >= 2
+    patient_name = next(item for item in file_plan["items"] if item["keyword"] == "PatientName")
+    assert patient_name["recommended_action"] == "replace"
+    assert patient_name["profile_action"] == "replace"
+    assert patient_name["covered_by_profile"] is True
+    html = remediation_html.read_text()
+    assert "Dental DICOM Privacy Remediation Plan" in html
+    assert "PatientName" in html
 
 
 def test_safety_scan_flags_private_material(tmp_path: Path) -> None:

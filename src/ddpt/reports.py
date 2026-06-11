@@ -19,6 +19,7 @@ from ddpt.models import (
     PackageVerificationReceipt,
     PixelReviewReport,
     PolicyRegistryReport,
+    PrivacyRemediationPlanReport,
     ProfileComparisonReport,
     ProfileLintReport,
     ReleaseAuditReport,
@@ -588,6 +589,116 @@ WORKFLOW_QUALITY_GATE_TEMPLATE = Template(
       {% endfor %}
     </tbody>
   </table>
+</body>
+</html>
+"""
+)
+
+PRIVACY_REMEDIATION_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Privacy Remediation Plan</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2, h3 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .high { color: #b00020; font-weight: 700; }
+    .medium { color: #8a5a00; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Privacy Remediation Plan</h1>
+  <p class="warning">
+    Synthetic-data planning report only. This plan helps explain metadata and
+    pixel-review work before anonymization; it is not legal, clinical,
+    regulatory, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>Profile: <code>{{ report.profile }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "REVIEW" }}
+      </span>
+    </li>
+    <li>Files: {{ report.readable_files }} readable / {{ report.total_files }} total</li>
+    <li>Covered items: {{ report.covered_items }} / {{ report.total_items }}</li>
+    <li>Uncovered high-risk items: {{ report.uncovered_high_risk_items }}</li>
+    <li>Uncovered medium-risk items: {{ report.uncovered_medium_risk_items }}</li>
+    <li>Private tags present: {{ report.private_tags_present }}</li>
+    <li>Pixel review recommended files: {{ report.pixel_review_recommended_files }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Next Steps</h2>
+  <ul>
+    {% for step in report.next_steps %}
+    <li>{{ step }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Files</h2>
+  {% for file in report.files %}
+  <h3><code>{{ file.path }}</code></h3>
+  <ul>
+    <li>Readable: {{ file.readable }}</li>
+    <li>Modality: {{ file.modality or "unknown" }}</li>
+    <li>High-risk items: {{ file.high_risk_items }}</li>
+    <li>Medium-risk items: {{ file.medium_risk_items }}</li>
+    <li>Uncovered high-risk items: {{ file.uncovered_high_risk_items }}</li>
+    <li>Uncovered medium-risk items: {{ file.uncovered_medium_risk_items }}</li>
+    <li>Private tags present: {{ file.private_tags_present }}</li>
+    <li>BurnedInAnnotation: {{ file.burned_in_annotation or "missing" }}</li>
+    <li>Pixel review recommended: {{ file.pixel_review_recommended }}</li>
+    {% if file.error %}<li>Error: {{ file.error }}</li>{% endif %}
+  </ul>
+  {% if file.items %}
+  <table>
+    <thead>
+      <tr>
+        <th>Covered</th>
+        <th>Risk</th>
+        <th>Tag</th>
+        <th>Keyword</th>
+        <th>Recommended</th>
+        <th>Profile</th>
+        <th>DICOM Code</th>
+        <th>Value</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in file.items %}
+      <tr>
+        <td class="{{ "ok" if item.covered_by_profile else "fail" }}">
+          {{ "yes" if item.covered_by_profile else "no" }}
+        </td>
+        <td class="{{ item.risk }}">{{ item.risk }}</td>
+        <td>{{ item.tag }}</td>
+        <td>{{ item.keyword }}</td>
+        <td>{{ item.recommended_action }}</td>
+        <td>{{ item.profile_action }}</td>
+        <td>{{ item.dicom_action_code }}</td>
+        <td>{{ item.current_value }}</td>
+        <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% endfor %}
 </body>
 </html>
 """
@@ -1745,6 +1856,13 @@ def write_workflow_quality_gate_html(
     report: WorkflowQualityGateReport,
 ) -> None:
     _write_html(path, WORKFLOW_QUALITY_GATE_TEMPLATE.render(report=report))
+
+
+def write_privacy_remediation_html(
+    path: Path,
+    report: PrivacyRemediationPlanReport,
+) -> None:
+    _write_html(path, PRIVACY_REMEDIATION_TEMPLATE.render(report=report))
 
 
 def write_release_audit_html(path: Path, report: ReleaseAuditReport) -> None:

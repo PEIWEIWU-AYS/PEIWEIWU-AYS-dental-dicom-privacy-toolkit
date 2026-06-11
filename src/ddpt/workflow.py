@@ -16,6 +16,7 @@ from ddpt.pixel_review import create_pixel_review
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.preview import render_dicom_preview
 from ddpt.quality_gate import run_workflow_quality_gate
+from ddpt.remediation import build_privacy_remediation_plan
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
@@ -25,6 +26,7 @@ from ddpt.reports import (
     write_inventory_html,
     write_package_receipt_html,
     write_pixel_review_html,
+    write_privacy_remediation_html,
     write_share_readiness_html,
     write_workflow_quality_gate_html,
 )
@@ -126,6 +128,25 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             html_path = _path(root_dir, step["html"])
             write_inspection_html(html_path, report)
             artifacts.append(html_path)
+        return artifacts
+
+    if action == "remediation-plan":
+        report = build_privacy_remediation_plan(
+            _path(root_dir, step["input"]),
+            profile=str(step.get("profile", "dental-basic")),
+            recursive=bool(step.get("recursive", True)),
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_privacy_remediation_html(html_path, report)
+            artifacts.append(html_path)
+        if not report.passed:
+            raise ValueError("Privacy remediation plan requires review")
         return artifacts
 
     if action == "anonymize":

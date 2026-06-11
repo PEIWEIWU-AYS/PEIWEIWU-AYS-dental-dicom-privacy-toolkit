@@ -18,6 +18,7 @@ Expected outputs:
 - `workflow-run/input/sample.synthetic.dcm`
 - `workflow-run/reports/inventory.json`
 - `workflow-run/reports/inspect.html`
+- `workflow-run/reports/remediation-plan.html`
 - `workflow-run/outputs/sample.anonymized.dcm`
 - `workflow-run/reports/deid-comparison.html`
 - `workflow-run/reports/pixel-review.html`
@@ -37,6 +38,7 @@ Expected outputs:
 - `synthetic`
 - `inventory`
 - `inspect`
+- `remediation-plan`
 - `anonymize`
 - `compare-deid`
 - `validate`

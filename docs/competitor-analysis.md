@@ -64,6 +64,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - PNG previews for GitHub-friendly visual review
 - pixel review reports with original, overlay, and redacted previews
 - read-only directory inventory before anonymization
+- privacy remediation plans before anonymization
 - RSNA CTP-inspired YAML workflow recipes
 - workflow-level de-identification certificate generation
 - workflow quality gate for public review evidence
@@ -120,6 +121,7 @@ The project should add:
 - dental-specific profile names and documentation
 - audit event JSON output
 - directory inventory with JSON, CSV, and HTML exports
+- privacy remediation plan with JSON and HTML outputs before anonymization
 - multi-stage YAML workflow runner with step-level artifacts
 - human-readable HTML report for workflow execution
 - JSON/HTML workflow quality gate for reproducibility evidence

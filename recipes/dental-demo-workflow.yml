@@ -18,6 +18,13 @@ steps:
     json: reports/inspect.json
     html: reports/inspect.html
 
+  - id: remediation-plan
+    action: remediation-plan
+    input: input
+    profile: dental-basic
+    json: reports/remediation-plan.json
+    html: reports/remediation-plan.html
+
   - id: anonymize
     action: anonymize
     input: input/sample.synthetic.dcm

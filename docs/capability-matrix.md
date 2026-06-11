@@ -27,6 +27,7 @@ Expected result:
 The matrix reviews whether the repository has evidence for:
 
 - metadata inspection and risk classification
+- privacy remediation plans before anonymization
 - multi-file synthetic dental study generation
 - configurable anonymization profiles
 - profile coverage, comparison, and lint checks

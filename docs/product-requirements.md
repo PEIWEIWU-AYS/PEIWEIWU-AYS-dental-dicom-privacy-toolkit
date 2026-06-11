@@ -14,33 +14,34 @@ Version 0.1 is successful when a new user can:
 4. Generate a synthetic DICOM file.
 5. Run a YAML recipe as a reproducible multi-stage workflow.
 6. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
-7. Generate PNG previews for visual workflow review.
-8. Run exact tag dump/set/blank/delete operations for expert workflows.
-9. Inspect metadata and receive JSON plus HTML reports.
-10. Preview anonymization actions with dry-run mode.
-11. Apply the `dental-basic` anonymization profile.
-12. Apply the `dental-research-sharing` profile with deterministic date shifting.
-13. Lint anonymization profiles before running workflows.
-14. Compare anonymization profiles with JSON and HTML reports.
-15. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
-16. Generate before/after de-identification comparison reports.
-17. Confirm direct identifiers were replaced or removed.
-18. Generate an audit event JSON file.
-19. Validate anonymized output with a pass/fail report.
-20. Generate pixel review reports for known burned-in annotation regions.
-21. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-22. Package anonymized files with checksums.
-23. Encrypt the package.
-24. Verify or decrypt the package.
-25. Generate package verification receipts for receiver-side sharing evidence.
-26. Run a share-readiness gate before synthetic package handoff.
-27. Run local REST API workflow demos for integration testing.
-28. Run a release-readiness audit before public GitHub publishing.
-29. Run a competitor-informed capability matrix that maps features to repository evidence.
-30. Generate a static local review dashboard for non-programmer walkthroughs.
-31. Generate a local evidence bundle for MacBook validation and public demonstrations.
-32. Run a workflow quality gate that verifies public review evidence.
-33. Run automated tests locally and in GitHub Actions.
+7. Generate a privacy remediation plan before anonymization.
+8. Generate PNG previews for visual workflow review.
+9. Run exact tag dump/set/blank/delete operations for expert workflows.
+10. Inspect metadata and receive JSON plus HTML reports.
+11. Preview anonymization actions with dry-run mode.
+12. Apply the `dental-basic` anonymization profile.
+13. Apply the `dental-research-sharing` profile with deterministic date shifting.
+14. Lint anonymization profiles before running workflows.
+15. Compare anonymization profiles with JSON and HTML reports.
+16. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
+17. Generate before/after de-identification comparison reports.
+18. Confirm direct identifiers were replaced or removed.
+19. Generate an audit event JSON file.
+20. Validate anonymized output with a pass/fail report.
+21. Generate pixel review reports for known burned-in annotation regions.
+22. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+23. Package anonymized files with checksums.
+24. Encrypt the package.
+25. Verify or decrypt the package.
+26. Generate package verification receipts for receiver-side sharing evidence.
+27. Run a share-readiness gate before synthetic package handoff.
+28. Run local REST API workflow demos for integration testing.
+29. Run a release-readiness audit before public GitHub publishing.
+30. Run a competitor-informed capability matrix that maps features to repository evidence.
+31. Generate a static local review dashboard for non-programmer walkthroughs.
+32. Generate a local evidence bundle for MacBook validation and public demonstrations.
+33. Run a workflow quality gate that verifies public review evidence.
+34. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -190,7 +191,30 @@ Required:
 - artifacts list per step
 - non-zero exit status when any step fails
 - support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
+- support remediation-plan stages before anonymization
 - support before/after de-identification comparison stages
+
+### `ddpt remediation plan`
+
+Generate a pre-anonymization privacy remediation plan for a DICOM file or
+directory.
+
+Required:
+
+- DICOM file or directory input
+- profile name or YAML path
+- recursive directory support
+- high-risk and medium-risk metadata item list
+- recommended action for each tracked item
+- selected profile action for each tracked item
+- covered/uncovered status for each tracked item
+- private tag presence count
+- `BurnedInAnnotation` and pixel review recommendation
+- unreadable file reporting
+- JSON report
+- optional HTML report
+- non-zero exit status when high-risk or medium-risk items are not covered by the selected profile
+- documentation that this is a planning aid, not de-identification proof
 
 ### `ddpt quality gate`
 

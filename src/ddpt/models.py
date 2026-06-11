@@ -539,6 +539,56 @@ class WorkflowQualityGateReport(BaseModel):
     )
 
 
+class PrivacyRemediationItem(BaseModel):
+    tag: str
+    keyword: str
+    risk: RiskLevel
+    category: str
+    current_value: str
+    recommended_action: str
+    profile_action: str
+    covered_by_profile: bool
+    dicom_action_code: str
+    note: str
+
+
+class PrivacyRemediationFilePlan(BaseModel):
+    path: str
+    readable: bool
+    error: str | None = None
+    modality: str | None = None
+    high_risk_items: int = 0
+    medium_risk_items: int = 0
+    uncovered_high_risk_items: int = 0
+    uncovered_medium_risk_items: int = 0
+    private_tags_present: int = 0
+    burned_in_annotation: str | None = None
+    pixel_review_recommended: bool = False
+    items: list[PrivacyRemediationItem] = Field(default_factory=list)
+
+
+class PrivacyRemediationPlanReport(BaseModel):
+    input_path: str
+    profile: str
+    recursive: bool
+    passed: bool
+    total_files: int
+    readable_files: int
+    unreadable_files: int
+    total_items: int
+    covered_items: int
+    uncovered_items: int
+    uncovered_high_risk_items: int
+    uncovered_medium_risk_items: int
+    private_tags_present: int
+    pixel_review_recommended_files: int
+    files: list[PrivacyRemediationFilePlan]
+    next_steps: list[str] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DemoPipelineResult(BaseModel):
     output_dir: str
     input_dicom: str

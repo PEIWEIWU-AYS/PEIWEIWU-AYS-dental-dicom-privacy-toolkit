@@ -40,13 +40,25 @@ OBJECTIVE_REQUIREMENTS = [
         id="study-dicomcleaner",
         category="competitor-learning",
         requirement="Study DicomCleaner and inherit header cleaning plus burned-in pixel review.",
-        evidence_files=("docs/competitor-analysis.md", "docs/pixel-review.md"),
-        capability_ids=("metadata-inspection", "pixel-review-redaction"),
+        evidence_files=(
+            "docs/competitor-analysis.md",
+            "docs/pixel-review.md",
+            "docs/remediation-plan.md",
+        ),
+        capability_ids=(
+            "metadata-inspection",
+            "privacy-remediation-plan",
+            "pixel-review-redaction",
+        ),
         evidence_terms=(
             ("docs/competitor-analysis.md", "DicomCleaner"),
             ("docs/competitor-analysis.md", "burned-in"),
+            ("docs/remediation-plan.md", "ddpt remediation plan"),
         ),
-        note="Covers metadata risk review, pixel preview, overlay, and redaction evidence.",
+        note=(
+            "Covers metadata risk review, remediation planning, pixel preview, "
+            "overlay, and redaction evidence."
+        ),
     ),
     ObjectiveRequirement(
         id="study-orthanc",
@@ -93,12 +105,16 @@ OBJECTIVE_REQUIREMENTS = [
         category="competitor-learning",
         requirement="Study DCMTK dcmodify and inherit exact DICOM tag operations.",
         evidence_files=("docs/competitor-analysis.md", "docs/tag-operations.md"),
-        capability_ids=("tag-operations",),
+        capability_ids=("tag-operations", "privacy-remediation-plan"),
         evidence_terms=(
             ("docs/competitor-analysis.md", "DCMTK"),
             ("docs/tag-operations.md", "ddpt tag set"),
+            ("docs/remediation-plan.md", "recommended action"),
         ),
-        note="Covers dump, set, blank, delete, and JSON audit for low-level tag edits.",
+        note=(
+            "Covers dump, set, blank, delete, JSON audit, and planning around "
+            "tag-level remediation actions."
+        ),
     ),
     ObjectiveRequirement(
         id="study-pydicom-example",
@@ -178,6 +194,7 @@ OBJECTIVE_REQUIREMENTS = [
             "docs/share-readiness.md",
             "docs/deid-certificate.md",
             "docs/quality-gate.md",
+            "docs/remediation-plan.md",
         ),
         capability_ids=(
             "audit-evidence-bundle",
@@ -185,16 +202,18 @@ OBJECTIVE_REQUIREMENTS = [
             "secure-sharing",
             "deid-certificate",
             "workflow-quality-gate",
+            "privacy-remediation-plan",
         ),
         evidence_terms=(
             ("docs/evidence-bundle.md", "ddpt evidence bundle"),
             ("docs/share-readiness.md", "ddpt share readiness"),
             ("docs/deid-certificate.md", "ddpt certificate create"),
             ("docs/quality-gate.md", "ddpt quality gate"),
+            ("docs/remediation-plan.md", "Privacy Remediation Plan"),
         ),
         note=(
             "Covers release audit, safety scan, evidence bundle, dashboard, "
-            "package receipt, quality gate, and handoff certificate."
+            "remediation plan, package receipt, quality gate, and handoff certificate."
         ),
     ),
     ObjectiveRequirement(

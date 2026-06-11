@@ -260,6 +260,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "remediation-plan.html",
+            "Privacy remediation plan HTML",
+            "planning",
+            "Pre-anonymization metadata remediation plan from the staged workflow.",
+        ),
+        _artifact(
+            output_dir,
             evidence_json,
             "Evidence bundle JSON",
             "evidence",

@@ -35,6 +35,7 @@ jobs:
           test -f docs/competitor-analysis.md
           test -f docs/product-requirements.md
           test -f docs/policy-registry.md
+          test -f docs/remediation-plan.md
           test -f docs/demo-guide.md
           test -f docs/deid-certificate.md
           test -f docs/evidence-bundle.md
@@ -102,6 +103,9 @@ jobs:
 
       - name: Run batch de-identification evidence
         run: python -m ddpt batch evidence-run/demo-run/input --out batch-run
+
+      - name: Run privacy remediation plan
+        run: python -m ddpt remediation plan evidence-run/demo-run/input --json remediation-plan.json --html remediation-plan.html
 
       - name: Run share readiness gate
         run: python -m ddpt share readiness evidence-run/demo-run --json share-readiness.json --html share-readiness.html
