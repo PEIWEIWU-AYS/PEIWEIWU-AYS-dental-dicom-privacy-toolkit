@@ -564,6 +564,34 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="residual-risk-score",
+        capability="Residual privacy risk score across generated evidence",
+        source_tools=(
+            "RSNA DICOM Anonymizer",
+            "PixelMed DicomCleaner",
+            "Orthanc",
+            "RSNA CTP",
+        ),
+        evidence_files=(
+            "src/ddpt/residual_risk.py",
+            "docs/residual-risk-score.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt risk score workflow-run --json workflow-run/reports/"
+            "residual-risk.json --html workflow-run/reports/residual-risk.html"
+        ),
+        differentiator=(
+            "A 100-point reviewer-friendly score aggregates metadata, profile, "
+            "standards, pixel, filename, sharing, and quality-gate evidence."
+        ),
+        note=(
+            "Turns many low-level reports into a single MacBook-verifiable "
+            "residual privacy risk summary without claiming legal or regulatory certification."
+        ),
+    ),
+    CapabilitySpec(
         id="deid-certificate",
         capability="De-identification certificate for synthetic sharing handoff",
         source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "PixelMed DicomCleaner"),

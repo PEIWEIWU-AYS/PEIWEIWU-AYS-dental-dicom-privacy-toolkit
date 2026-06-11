@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM PS3.15, DICOM confidentiality alignment, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOM保密配置, DICOM PS3.15, DICOM保密配置对齐, DICOM JSON导出, Orthanc风格接口, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM PS3.15, DICOM confidentiality alignment, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, residual privacy risk score, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOM保密配置, DICOM PS3.15, DICOM保密配置对齐, DICOM JSON导出, Orthanc风格接口, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 残余隐私风险评分, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -40,6 +40,7 @@ Core goals:
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
 - Pixel risk scan for conservative burned-in identifier triage
+- Residual privacy risk score across generated workflow evidence
 - Pixel review reports with original, overlay, and redacted PNG previews
 - YAML workflow recipes for reproducible staged pipelines
 - Local REST API for integration demos
@@ -76,6 +77,7 @@ ddpt demo demo-run
 ddpt synthetic-study synthetic-study-demo --patients 2 --files-per-patient 2 --json synthetic-study-demo/manifest.json
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
 ddpt quality gate workflow-run --workflow-report workflow-run/reports/workflow-run.json --json workflow-run/reports/quality-gate.json --html workflow-run/reports/quality-gate.html
+ddpt risk score workflow-run --json workflow-run/reports/residual-risk.json --html workflow-run/reports/residual-risk.html
 ddpt filename scan demo-run/input --json demo-run/reports/filename-privacy.json --html demo-run/reports/filename-privacy.html
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt remediation plan demo-run/input --profile dental-basic --json demo-run/reports/remediation-plan.json --html demo-run/reports/remediation-plan.html
@@ -139,6 +141,7 @@ See [docs/pixel-review.md](docs/pixel-review.md) for burned-in annotation region
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
 See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
 See [docs/quality-gate.md](docs/quality-gate.md) for workflow-level evidence gates.
+See [docs/residual-risk-score.md](docs/residual-risk-score.md) for residual privacy risk scoring.
 See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write anonymization previews.
 See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for deterministic date-shift research sharing.
 See [docs/linkable-research-profile.md](docs/linkable-research-profile.md) for deterministic patient pseudonymization in longitudinal research demos.
@@ -184,7 +187,7 @@ ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out 
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-confidentiality` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `profile-conformance` `dcmodify` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-confidentiality` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `profile-conformance` `dcmodify` `pixel-risk` `residual-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## Repository Structure
 
@@ -220,7 +223,8 @@ objective completion audit, release-readiness checks, and local evidence bundle 
 package verification receipts, profile comparison reports,
 profile lint checks, policy registry exports, capability matrix reports, static
 review dashboards, de-identification comparison reports, de-identification
-certificates, and pixel review reports, plus share-readiness gates.
+certificates, residual privacy risk score reports, and pixel review reports,
+plus share-readiness gates.
 
 ## License
 

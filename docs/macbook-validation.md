@@ -86,6 +86,10 @@ ddpt quality gate workflow-run \
   --workflow-report workflow-run/reports/workflow-run.json \
   --json workflow-run/reports/quality-gate.json \
   --html workflow-run/reports/quality-gate.html
+
+ddpt risk score workflow-run \
+  --json workflow-run/reports/residual-risk.json \
+  --html workflow-run/reports/residual-risk.html
 ```
 
 Expected:
@@ -102,8 +106,11 @@ Expected:
 - `workflow-run/reports/pixel-risk.html` exists
 - `workflow-run/reports/quality-gate.json` exists
 - `workflow-run/reports/quality-gate.html` exists
+- `workflow-run/reports/residual-risk.json` exists
+- `workflow-run/reports/residual-risk.html` exists
 - overall workflow status is `PASS`
 - workflow quality gate status is `PASS`
+- residual privacy risk score status is `PASS`
 
 ## 7. Generate Multi-File Synthetic Study
 
@@ -250,6 +257,7 @@ Expected:
 - `evidence-run/workflow-run/reports/dcmodify-plan.html` exists
 - `evidence-run/workflow-run/reports/confidentiality-alignment.html` exists
 - `evidence-run/workflow-run/reports/profile-conformance.html` exists
+- `evidence-run/workflow-run/reports/residual-risk.html` exists
 - `evidence-run/demo-run/reports/demo-summary.html` exists
 - `evidence-run/demo-run/reports/deid-comparison.html` exists
 - `evidence-run/demo-run/reports/confidentiality-alignment.html` exists
@@ -289,6 +297,7 @@ workflow-run/reports/filename-privacy.html
 workflow-run/reports/dicom-json.html
 workflow-run/reports/confidentiality-alignment.html
 workflow-run/reports/dcmodify-plan.html
+workflow-run/reports/residual-risk.html
 demo-run/reports/deid-comparison.html
 demo-run/reports/confidentiality-alignment.html
 demo-run/reports/profile-conformance.html

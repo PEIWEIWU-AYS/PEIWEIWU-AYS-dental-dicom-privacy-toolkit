@@ -22,6 +22,14 @@ workflow-run/reports/quality-gate.json
 workflow-run/reports/quality-gate.html
 ```
 
+After this stage, the built-in recipe runs `risk-score` to aggregate the
+generated evidence into:
+
+```text
+workflow-run/reports/residual-risk.json
+workflow-run/reports/residual-risk.html
+```
+
 ## What It Checks
 
 The gate checks:

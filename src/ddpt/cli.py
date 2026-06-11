@@ -75,11 +75,13 @@ from ddpt.reports import (
     write_profile_conformance_html,
     write_profile_lint_html,
     write_release_audit_html,
+    write_residual_risk_html,
     write_review_dashboard_html,
     write_share_readiness_html,
     write_workflow_html,
     write_workflow_quality_gate_html,
 )
+from ddpt.residual_risk import score_residual_privacy_risk
 from ddpt.safety import scan_repository_safety
 from ddpt.share_readiness import run_share_readiness
 from ddpt.sharing import create_package, create_verification_receipt, decrypt_package
@@ -114,6 +116,7 @@ compare_app = typer.Typer(help="Compare DICOM privacy outputs.")
 share_app = typer.Typer(help="Check sharing readiness gates.")
 quality_app = typer.Typer(help="Run workflow quality gates.")
 remediation_app = typer.Typer(help="Build privacy remediation plans.")
+risk_app = typer.Typer(help="Score residual privacy risk from generated evidence.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(confidentiality_app, name="confidentiality")
@@ -138,6 +141,7 @@ app.add_typer(compare_app, name="compare")
 app.add_typer(share_app, name="share")
 app.add_typer(quality_app, name="quality")
 app.add_typer(remediation_app, name="remediation")
+app.add_typer(risk_app, name="risk")
 console = Console()
 
 
@@ -734,6 +738,49 @@ def quality_gate(
     console.print(table)
     console.print(f"Required checks: {report.passed_checks}/{report.required_checks}")
     console.print(f"Failed required checks: {report.failed_checks}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@risk_app.command("score")
+def residual_risk_score(
+    root_dir: Annotated[
+        Path,
+        typer.Argument(help="Demo or workflow output directory with reports."),
+    ],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write residual risk JSON.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write residual risk HTML.")
+    ] = None,
+) -> None:
+    report = score_residual_privacy_risk(root_dir)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_residual_risk_html(html_output, report)
+
+    table = Table(title="Dental DICOM Residual Privacy Risk")
+    table.add_column("Status")
+    table.add_column("Component")
+    table.add_column("Category")
+    table.add_column("Score")
+    table.add_column("Message")
+    for component in report.components:
+        table.add_row(
+            component.status.upper(),
+            component.id,
+            component.category,
+            f"{component.score}/{component.weight}",
+            component.message,
+        )
+    console.print(table)
+    console.print(f"Score: {report.score}/{report.max_score}")
+    console.print(f"Residual risk: {report.residual_risk}")
+    console.print(f"Blocking findings: {report.blocking_findings}")
+    console.print(f"Warning findings: {report.warning_findings}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)

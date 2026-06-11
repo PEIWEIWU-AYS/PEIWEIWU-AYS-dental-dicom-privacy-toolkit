@@ -353,6 +353,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "deid-certificate.html").exists()
     assert (workflow_dir / "reports" / "quality-gate.json").exists()
     assert (workflow_dir / "reports" / "quality-gate.html").exists()
+    assert (workflow_dir / "reports" / "residual-risk.json").exists()
+    assert (workflow_dir / "reports" / "residual-risk.html").exists()
     report = json.loads(workflow_json.read_text())
     assert report["passed"] is True
     assert [step["id"] for step in report["steps"]] == [
@@ -379,6 +381,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "share-readiness",
         "deid-certificate",
         "workflow-quality-gate",
+        "residual-risk-score",
     ]
     certificate = json.loads((workflow_dir / "reports" / "deid-certificate.json").read_text())
     assert certificate["passed"] is True
@@ -389,6 +392,22 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     quality_check_ids = {item["id"] for item in quality_gate["checks"]}
     assert "confidentiality-alignment-report" in quality_check_ids
     assert "profile-conformance-report" in quality_check_ids
+    residual_risk = json.loads((workflow_dir / "reports" / "residual-risk.json").read_text())
+    assert residual_risk["passed"] is True
+    assert residual_risk["score"] == residual_risk["max_score"]
+    assert residual_risk["residual_risk"] == "low"
+    assert residual_risk["blocking_findings"] == 0
+    component_ids = {item["id"] for item in residual_risk["components"]}
+    assert "deid-comparison" in component_ids
+    assert "profile-conformance" in component_ids
+    assert "confidentiality-alignment" in component_ids
+    assert "pixel-evidence" in component_ids
+    assert "filename-privacy" in component_ids
+    assert "package-sharing" in component_ids
+    assert "workflow-quality-gate" in component_ids
+    assert "Dental DICOM Residual Privacy Risk" in (
+        workflow_dir / "reports" / "residual-risk.html"
+    ).read_text()
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
@@ -401,6 +420,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert "pixel-risk-scan" in html
     assert "deid-certificate" in html
     assert "workflow-quality-gate" in html
+    assert "residual-risk-score" in html
 
 
 def test_workflow_recipe_accepts_relative_root(
@@ -1090,6 +1110,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "static-review-dashboard" in capability_ids
     assert "share-readiness-gate" in capability_ids
     assert "workflow-quality-gate" in capability_ids
+    assert "residual-risk-score" in capability_ids
     assert "deid-certificate" in capability_ids
     assert "secure-sharing" in capability_ids
     assert "competitor-coverage-report" in capability_ids
@@ -1176,6 +1197,7 @@ def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) ->
     assert "study-dcmtk-dcmodify" in item_ids
     assert "study-pydicom-example" in item_ids
     assert "shareable-proof-package" in item_ids
+    assert "residual-risk-score" in item_ids
     assert "deid-certificate-handoff" in item_ids
     assert "profile-conformance-proof" in item_ids
     assert "dicom-confidentiality-alignment" in item_ids
@@ -1220,6 +1242,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "workflow-run" / "reports" / "dcmodify-plan.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "profile-conformance.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "pixel-risk.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "residual-risk.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
     assert (output_dir / "demo-run" / "reports" / "deid-comparison.html").exists()
     assert (output_dir / "demo-run" / "reports" / "confidentiality-alignment.html").exists()
@@ -1251,6 +1274,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "workflow-run/reports/dcmodify-plan.html" in artifact_paths
     assert "workflow-run/reports/profile-conformance.html" in artifact_paths
     assert "workflow-run/reports/pixel-risk.html" in artifact_paths
+    assert "workflow-run/reports/residual-risk.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
     assert "demo-run/reports/deid-comparison.html" in artifact_paths
     assert "demo-run/reports/confidentiality-alignment.html" in artifact_paths
@@ -1269,6 +1293,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Release audit HTML" in html
     assert "De-identification certificate HTML" in html
     assert "Workflow quality gate HTML" in html
+    assert "Residual privacy risk HTML" in html
     assert "Filename privacy scan HTML" in html
     assert "DICOM JSON export HTML" in html
     assert "Privacy remediation plan HTML" in html
@@ -1401,6 +1426,8 @@ def test_quality_gate_command_checks_workflow_evidence(tmp_path: Path) -> None:
     workflow_json = workflow_dir / "reports" / "workflow-run.json"
     quality_json = tmp_path / "reports" / "quality-gate.json"
     quality_html = tmp_path / "reports" / "quality-gate.html"
+    residual_json = tmp_path / "reports" / "residual-risk.json"
+    residual_html = tmp_path / "reports" / "residual-risk.html"
 
     workflow_result = runner.invoke(
         app,
@@ -1445,6 +1472,28 @@ def test_quality_gate_command_checks_workflow_evidence(tmp_path: Path) -> None:
     assert "share-readiness" in check_ids
     html = quality_html.read_text()
     assert "Dental DICOM Workflow Quality Gate" in html
+
+    result = runner.invoke(
+        app,
+        [
+            "risk",
+            "score",
+            str(workflow_dir),
+            "--json",
+            str(residual_json),
+            "--html",
+            str(residual_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert residual_json.exists()
+    assert residual_html.exists()
+    residual = json.loads(residual_json.read_text())
+    assert residual["passed"] is True
+    assert residual["residual_risk"] == "low"
+    assert residual["score"] == residual["max_score"]
+    assert "Dental DICOM Residual Privacy Risk" in residual_html.read_text()
 
 
 def test_remediation_plan_command_builds_profile_aware_action_plan(tmp_path: Path) -> None:

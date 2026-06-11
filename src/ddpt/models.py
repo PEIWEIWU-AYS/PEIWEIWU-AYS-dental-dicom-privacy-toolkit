@@ -707,6 +707,32 @@ class WorkflowQualityGateReport(BaseModel):
     )
 
 
+class ResidualRiskComponent(BaseModel):
+    id: str
+    category: str
+    weight: int
+    score: int
+    status: Literal["pass", "warn", "fail", "missing"]
+    message: str
+    evidence: list[str] = Field(default_factory=list)
+    recommended_actions: list[str] = Field(default_factory=list)
+
+
+class ResidualRiskReport(BaseModel):
+    root_dir: str
+    passed: bool
+    score: int
+    max_score: int
+    residual_risk: Literal["low", "medium", "high"]
+    blocking_findings: int
+    warning_findings: int
+    components: list[ResidualRiskComponent]
+    boundary_notes: list[str] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class PrivacyRemediationItem(BaseModel):
     tag: str
     keyword: str

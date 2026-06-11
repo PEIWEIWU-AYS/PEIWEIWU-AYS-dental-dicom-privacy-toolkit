@@ -283,6 +283,30 @@ OBJECTIVE_REQUIREMENTS = [
         ),
     ),
     ObjectiveRequirement(
+        id="residual-risk-score",
+        category="differentiation",
+        requirement=(
+            "Aggregate generated evidence into a residual privacy risk score "
+            "for MacBook demos and reviewer decision support."
+        ),
+        evidence_files=(
+            "docs/residual-risk-score.md",
+            "src/ddpt/residual_risk.py",
+            "recipes/dental-demo-workflow.yml",
+        ),
+        capability_ids=("residual-risk-score",),
+        evidence_terms=(
+            ("docs/residual-risk-score.md", "ddpt risk score"),
+            ("docs/residual-risk-score.md", "Residual Privacy Risk"),
+            ("recipes/dental-demo-workflow.yml", "action: risk-score"),
+        ),
+        note=(
+            "Combines metadata, profile, DICOM confidentiality alignment, pixel, "
+            "filename, package, and quality-gate evidence into a single score "
+            "without overclaiming certification."
+        ),
+    ),
+    ObjectiveRequirement(
         id="deid-certificate-handoff",
         category="differentiation",
         requirement=(

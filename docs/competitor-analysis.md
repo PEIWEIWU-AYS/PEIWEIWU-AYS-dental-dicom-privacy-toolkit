@@ -70,6 +70,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - RSNA CTP-inspired YAML workflow recipes
 - workflow-level de-identification certificate generation
 - workflow quality gate for public review evidence
+- residual privacy risk score that aggregates generated workflow evidence
 - HTML workflow reports for staged pipeline review
 - anonymization dry-run previews before writing DICOM files
 - before/after de-identification comparison reports
@@ -130,6 +131,7 @@ The project should add:
 - multi-stage YAML workflow runner with step-level artifacts
 - human-readable HTML report for workflow execution
 - JSON/HTML workflow quality gate for reproducibility evidence
+- JSON/HTML residual privacy risk score across metadata, profile, pixel, path, package, and quality evidence
 - pre-write anonymization dry-run reports for safer profile review
 - research-sharing profile with deterministic date shifting and audited date-shift actions
 - profile lint JSON and HTML reports for custom configuration review

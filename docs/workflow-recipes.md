@@ -37,6 +37,8 @@ Expected outputs:
 - `workflow-run/reports/deid-certificate.html`
 - `workflow-run/reports/quality-gate.json`
 - `workflow-run/reports/quality-gate.html`
+- `workflow-run/reports/residual-risk.json`
+- `workflow-run/reports/residual-risk.html`
 - `workflow-run/reports/workflow-run.json`
 - `workflow-run/reports/workflow-run.html`
 
@@ -65,13 +67,16 @@ Expected outputs:
 - `share-readiness`
 - `certificate`
 - `quality-gate`
+- `risk-score`
 
 ## Safety Boundary
 
 Workflow recipes are automation, not privacy certification. The `certificate`
 action creates a project evidence certificate for synthetic handoff review. The
 `quality-gate` action verifies the generated evidence chain for reproducibility.
-Neither action is legal, clinical, regulatory, or security certification.
+The `risk-score` action aggregates the generated reports into a residual privacy
+risk score. These actions are not legal, clinical, regulatory, or security
+certification.
 Recipes should be used with synthetic or explicitly approved test DICOM files.
 Generated `workflow-run/` and `workflow-*` folders are ignored by Git and by the
 public repository safety scan.

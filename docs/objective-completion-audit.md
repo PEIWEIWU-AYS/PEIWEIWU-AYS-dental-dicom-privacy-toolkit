@@ -38,6 +38,7 @@ The audit checks evidence for:
 - post-anonymization profile conformance evidence
 - DICOM PS3.15-inspired confidentiality alignment evidence
 - portable proof artifacts for MacBook demos and collaborator review
+- residual privacy risk score evidence for reviewer decision support
 - de-identification certificate evidence for synthetic sharing handoff
 - competitor coverage evidence for reference-tool mapping and safety boundaries
 

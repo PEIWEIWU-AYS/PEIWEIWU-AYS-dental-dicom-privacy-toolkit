@@ -45,6 +45,7 @@ jobs:
           test -f docs/evidence-bundle.md
           test -f docs/workflow-recipes.md
           test -f docs/quality-gate.md
+          test -f docs/residual-risk-score.md
           test -f docs/anonymization-dry-run.md
           test -f docs/macbook-validation.md
           test -f docs/safety-scan.md
@@ -140,6 +141,9 @@ jobs:
 
       - name: Run workflow quality gate
         run: python -m ddpt quality gate evidence-run/demo-run --json quality-gate.json --html quality-gate.html
+
+      - name: Run residual privacy risk score
+        run: python -m ddpt risk score evidence-run/workflow-run --json residual-risk.json --html residual-risk.html
 
       - name: Build local review dashboard
         run: python -m ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json

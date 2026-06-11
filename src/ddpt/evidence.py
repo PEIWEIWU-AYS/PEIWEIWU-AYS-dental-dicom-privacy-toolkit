@@ -351,6 +351,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "residual-risk.html",
+            "Residual privacy risk HTML",
+            "risk-score",
+            "100-point residual privacy risk summary from the staged workflow.",
+        ),
+        _artifact(
+            output_dir,
             evidence_json,
             "Evidence bundle JSON",
             "evidence",

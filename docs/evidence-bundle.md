@@ -43,6 +43,7 @@ The bundle includes:
 - share-readiness JSON and HTML gate
 - de-identification certificate JSON and HTML
 - workflow quality gate JSON and HTML
+- residual privacy risk score JSON and HTML from the workflow recipe
 - tamper-evident demo audit chain
 - YAML workflow JSON and HTML report
 - static review dashboard JSON and HTML
@@ -101,6 +102,7 @@ evidence-run/
       dcmodify-plan.sh
       profile-conformance.html
       pixel-risk.html
+      residual-risk.html
     share/
 ```
 

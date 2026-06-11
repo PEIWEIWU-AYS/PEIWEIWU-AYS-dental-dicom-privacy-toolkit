@@ -150,3 +150,9 @@ steps:
     root: .
     json: reports/quality-gate.json
     html: reports/quality-gate.html
+
+  - id: residual-risk-score
+    action: risk-score
+    root: .
+    json: reports/residual-risk.json
+    html: reports/residual-risk.html

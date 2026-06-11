@@ -30,6 +30,7 @@ from ddpt.models import (
     ProfileConformanceReport,
     ProfileLintReport,
     ReleaseAuditReport,
+    ResidualRiskReport,
     ReviewDashboardReport,
     ShareReadinessReport,
     WorkflowQualityGateReport,
@@ -750,6 +751,99 @@ WORKFLOW_QUALITY_GATE_TEMPLATE = Template(
         <td>
           {% for item in check.evidence %}
           <code>{{ item }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
+RESIDUAL_RISK_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Residual Privacy Risk</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .pass, .low { color: #1f6f43; font-weight: 700; }
+    .warn, .medium, .missing { color: #8a5a00; font-weight: 700; }
+    .fail, .high { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Residual Privacy Risk</h1>
+  <p class="warning">
+    This score summarizes already-generated synthetic workflow evidence. It is
+    not clinical, legal, regulatory, security, or DICOM conformance certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Root directory: <code>{{ report.root_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "pass" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Score: {{ report.score }} / {{ report.max_score }}</li>
+    <li>
+      Residual risk:
+      <span class="{{ report.residual_risk }}">{{ report.residual_risk }}</span>
+    </li>
+    <li>Blocking findings: {{ report.blocking_findings }}</li>
+    <li>Warning findings: {{ report.warning_findings }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Boundary Notes</h2>
+  <ul>
+    {% for note in report.boundary_notes %}
+    <li>{{ note }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Risk Components</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Component</th>
+        <th>Category</th>
+        <th>Score</th>
+        <th>Message</th>
+        <th>Evidence</th>
+        <th>Recommended Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for component in report.components %}
+      <tr>
+        <td class="{{ component.status }}">{{ component.status }}</td>
+        <td>{{ component.id }}</td>
+        <td>{{ component.category }}</td>
+        <td>{{ component.score }} / {{ component.weight }}</td>
+        <td>{{ component.message }}</td>
+        <td>
+          {% for item in component.evidence %}
+          <code>{{ item }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% for action in component.recommended_actions %}
+          {{ action }}{% if not loop.last %}<br>{% endif %}
           {% endfor %}
         </td>
       </tr>
@@ -2541,6 +2635,10 @@ def write_workflow_quality_gate_html(
     _write_html(path, WORKFLOW_QUALITY_GATE_TEMPLATE.render(report=report))
 
 
+def write_residual_risk_html(path: Path, report: ResidualRiskReport) -> None:
+    _write_html(path, RESIDUAL_RISK_TEMPLATE.render(report=report))
+
+
 def write_filename_privacy_html(path: Path, report: FilenamePrivacyScanReport) -> None:
     _write_html(path, FILENAME_PRIVACY_TEMPLATE.render(report=report))
 
@@ -2610,6 +2708,7 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
         "Capability matrix HTML",
         "Objective completion audit HTML",
         "Release audit HTML",
+        "Residual privacy risk HTML",
         "Pixel review HTML",
         "Package verification receipt",
     }

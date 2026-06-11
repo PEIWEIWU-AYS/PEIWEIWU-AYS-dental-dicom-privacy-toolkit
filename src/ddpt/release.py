@@ -42,6 +42,7 @@ REQUIRED_FILES = [
     "docs/product-requirements.md",
     "docs/quality-gate.md",
     "docs/remediation-plan.md",
+    "docs/residual-risk-score.md",
     "docs/project-blueprint.md",
     "docs/release-audit.md",
     "docs/research-sharing-profile.md",
@@ -78,6 +79,7 @@ README_KEYWORDS = [
     "local browser workbench",
     "objective completion audit",
     "workflow quality gate",
+    "residual privacy risk score",
     "encrypted DICOM sharing",
     "CBCT",
     "牙科DICOM",
@@ -86,6 +88,7 @@ README_KEYWORDS = [
     "DICOM伪名化",
     "本地工作台",
     "原始目标完成度审计",
+    "残余隐私风险评分",
     "患者隐私保护",
     "Suggested GitHub Topics",
     "synthetic",
@@ -107,6 +110,7 @@ DOCUMENTED_COMMANDS = [
     "ddpt dicom-json export",
     "ddpt remediation plan",
     "ddpt quality gate",
+    "ddpt risk score",
     "ddpt compare deid",
     "ddpt certificate create",
     "ddpt share readiness",
@@ -166,6 +170,7 @@ REQUIRED_SOURCE_MODULES = [
     "src/ddpt/remediation.py",
     "src/ddpt/release.py",
     "src/ddpt/reports.py",
+    "src/ddpt/residual_risk.py",
     "src/ddpt/safety.py",
     "src/ddpt/share_readiness.py",
     "src/ddpt/sharing.py",
@@ -211,6 +216,7 @@ CI_TERMS = [
     "python -m ddpt remediation plan",
     "python -m ddpt pixel-risk scan",
     "python -m ddpt quality gate",
+    "python -m ddpt risk score",
     "ruff check .",
     "pytest",
 ]
@@ -238,6 +244,7 @@ WORKFLOW_ACTIONS = {
     "share-readiness",
     "certificate",
     "quality-gate",
+    "risk-score",
 }
 
 PROFILE_COVERAGE_FILES = [
