@@ -38,6 +38,7 @@ Expected key artifacts:
 - `demo-run/reports/anonymized-preview.png`
 - `demo-run/reports/redacted-preview.png`
 - `demo-run/reports/pixel-review.html`
+- `demo-run/reports/deid-comparison.html`
 - `demo-run/reports/pixel-review/pixel-review-overlay.png`
 - `demo-run/reports/audit.html`
 - `demo-run/reports/audit-chain.json`
@@ -98,6 +99,11 @@ ddpt profile show dental-research-sharing
 ddpt profile compare dental-basic dental-research-sharing \
   --json demo-run/reports/profile-comparison.json \
   --html demo-run/reports/profile-comparison.html
+ddpt compare deid \
+  demo-run/input/sample.synthetic.dcm \
+  demo-run/outputs/sample.anonymized.dcm \
+  --json demo-run/reports/deid-comparison.json \
+  --html demo-run/reports/deid-comparison.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm \
   --profile dental-research-sharing \
   --dry-run \
@@ -111,6 +117,7 @@ Expected:
 - profile lint report passes without errors
 - the profile output lists date-shift keywords
 - the profile comparison report shows date fields changed from `blank` to `date_shift`
+- the de-identification comparison report passes and shows direct identifiers changed
 - dry-run audit includes `date_shift` actions for study-level date fields
 - no DICOM output is written during dry run
 
@@ -158,6 +165,7 @@ Expected:
 - `evidence-run/reports/release-audit.html` exists
 - `evidence-run/reports/workflow-run.html` exists
 - `evidence-run/demo-run/reports/demo-summary.html` exists
+- `evidence-run/demo-run/reports/deid-comparison.html` exists
 - `evidence-run/demo-run/reports/pixel-review.html` exists
 - `evidence-run/demo-run/reports/package-receipt.html` exists
 
@@ -172,6 +180,7 @@ evidence-run/reports/evidence-bundle.html
 evidence-run/reports/review-dashboard.html
 demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
+demo-run/reports/deid-comparison.html
 demo-run/reports/inspect.html
 demo-run/reports/audit.html
 ```

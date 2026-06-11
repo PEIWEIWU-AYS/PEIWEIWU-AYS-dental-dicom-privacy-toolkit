@@ -28,6 +28,8 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     anonymized = tmp_path / "outputs" / "sample.anonymized.dcm"
     audit_json = tmp_path / "reports" / "audit.json"
     audit_html = tmp_path / "reports" / "audit.html"
+    compare_json = tmp_path / "reports" / "deid-comparison.json"
+    compare_html = tmp_path / "reports" / "deid-comparison.html"
     validation_json = tmp_path / "reports" / "validation.json"
     redacted = tmp_path / "outputs" / "sample.redacted.dcm"
     redaction_audit = tmp_path / "reports" / "redaction.json"
@@ -91,6 +93,27 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     assert dataset.SeriesInstanceUID != source_dataset.SeriesInstanceUID
     assert dataset.SOPInstanceUID != source_dataset.SOPInstanceUID
     assert dataset.file_meta.MediaStorageSOPInstanceUID == dataset.SOPInstanceUID
+
+    result = runner.invoke(
+        app,
+        [
+            "compare",
+            "deid",
+            str(source),
+            str(anonymized),
+            "--json",
+            str(compare_json),
+            "--html",
+            str(compare_html),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    comparison = json.loads(compare_json.read_text())
+    assert comparison["passed"] is True
+    assert comparison["residual_high_risk_keywords"] == []
+    assert comparison["private_tags_after"] == 0
+    assert comparison["pixel_data_changed"] is False
+    assert "Dental DICOM De-identification Comparison" in compare_html.read_text()
 
     result = runner.invoke(app, ["validate", str(anonymized), "--json", str(validation_json)])
     assert result.exit_code == 0, result.output
@@ -226,6 +249,8 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "outputs" / "sample.redacted.dcm").exists()
     assert (demo_dir / "reports" / "inspect.html").exists()
     assert (demo_dir / "reports" / "audit.html").exists()
+    assert (demo_dir / "reports" / "deid-comparison.json").exists()
+    assert (demo_dir / "reports" / "deid-comparison.html").exists()
     assert (demo_dir / "reports" / "validation.json").exists()
     assert (demo_dir / "reports" / "pixel-review.json").exists()
     assert (demo_dir / "reports" / "pixel-review.html").exists()
@@ -269,6 +294,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "inspect.html").exists()
     assert (workflow_dir / "outputs" / "sample.anonymized.dcm").exists()
     assert (workflow_dir / "outputs" / "sample.redacted.dcm").exists()
+    assert (workflow_dir / "reports" / "deid-comparison.json").exists()
+    assert (workflow_dir / "reports" / "deid-comparison.html").exists()
     assert (workflow_dir / "reports" / "pixel-review.json").exists()
     assert (workflow_dir / "reports" / "pixel-review.html").exists()
     assert (workflow_dir / "reports" / "pixel-review" / "pixel-review-redacted.png").exists()
@@ -285,6 +312,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "inventory-input",
         "inspect-input",
         "anonymize",
+        "compare-deidentification",
         "validate",
         "preview-anonymized",
         "pixel-review",
@@ -766,6 +794,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "PixelMed DicomCleaner" in reference_names
     assert "Orthanc" in reference_names
     capability_ids = {item["id"] for item in report["items"]}
+    assert "before-after-deid-comparison" in capability_ids
     assert "pixel-review-redaction" in capability_ids
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
@@ -796,6 +825,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "deid-comparison.html").exists()
     assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
     assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
     assert (output_dir / "demo-run" / "share" / "package.ddpt").exists()
@@ -810,6 +840,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
+    assert "demo-run/reports/deid-comparison.html" in artifact_paths
     assert "demo-run/reports/pixel-review.html" in artifact_paths
     assert "demo-run/reports/package-receipt.html" in artifact_paths
     html = evidence_html.read_text()

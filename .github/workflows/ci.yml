@@ -55,6 +55,7 @@ jobs:
           test -f docs/profile-lint.md
           test -f docs/capability-matrix.md
           test -f docs/review-dashboard.md
+          test -f docs/deid-comparison.md
           test -f profiles/dental-pixel-redaction.yml
           test -f profiles/dental-research-sharing.yml
           test -f recipes/dental-demo-workflow.yml
@@ -79,6 +80,9 @@ jobs:
 
       - name: Generate local evidence bundle
         run: python -m ddpt evidence bundle . --out evidence-run
+
+      - name: Run de-identification comparison
+        run: python -m ddpt compare deid evidence-run/demo-run/input/sample.synthetic.dcm evidence-run/demo-run/outputs/sample.anonymized.dcm --json deid-comparison.json --html deid-comparison.html
 
       - name: Build local review dashboard
         run: python -m ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json

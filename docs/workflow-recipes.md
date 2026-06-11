@@ -19,6 +19,7 @@ Expected outputs:
 - `workflow-run/reports/inventory.json`
 - `workflow-run/reports/inspect.html`
 - `workflow-run/outputs/sample.anonymized.dcm`
+- `workflow-run/reports/deid-comparison.html`
 - `workflow-run/reports/pixel-review.html`
 - `workflow-run/outputs/sample.redacted.dcm`
 - `workflow-run/share/package.ddpt`
@@ -33,6 +34,7 @@ Expected outputs:
 - `inventory`
 - `inspect`
 - `anonymize`
+- `compare-deid`
 - `validate`
 - `preview`
 - `pixel-review`

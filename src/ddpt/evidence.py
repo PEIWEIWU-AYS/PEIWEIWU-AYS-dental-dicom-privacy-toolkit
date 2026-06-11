@@ -164,6 +164,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            Path(demo_result.deid_comparison_html),
+            "De-identification comparison HTML",
+            "comparison",
+            "Before/after privacy policy comparison for synthetic DICOM metadata.",
+        ),
+        _artifact(
+            output_dir,
             Path(demo_result.pixel_review_html),
             "Pixel review HTML",
             "pixel-review",

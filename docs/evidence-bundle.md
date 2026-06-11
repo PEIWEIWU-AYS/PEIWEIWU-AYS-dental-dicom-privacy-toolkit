@@ -27,6 +27,7 @@ The bundle includes:
 - built-in profile lint JSON and HTML
 - one-command synthetic demo output
 - demo summary HTML with synthetic PNG previews
+- before/after de-identification comparison JSON and HTML
 - pixel review HTML with original, overlay, and redacted previews
 - encrypted sharing package from anonymized synthetic DICOM files
 - package verification receipt HTML
@@ -59,6 +60,7 @@ evidence-run/
     evidence-bundle.html
   demo-run/
     reports/demo-summary.html
+    reports/deid-comparison.html
     reports/pixel-review.html
     reports/pixel-review/pixel-review-overlay.png
     reports/audit-chain.json

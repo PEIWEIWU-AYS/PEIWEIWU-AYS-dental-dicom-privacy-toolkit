@@ -9,6 +9,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Capability Matrix](capability-matrix.md)
 - [Product Requirements](product-requirements.md)
 - [Policy Registry](policy-registry.md)
+- [De-identification Comparison](deid-comparison.md)
 - [Demo Guide](demo-guide.md)
 - [Workflow Recipes](workflow-recipes.md)
 - [Anonymization Dry Run](anonymization-dry-run.md)

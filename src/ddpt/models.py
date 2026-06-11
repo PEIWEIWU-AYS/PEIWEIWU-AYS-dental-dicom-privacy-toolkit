@@ -292,6 +292,42 @@ class ReviewDashboardReport(BaseModel):
     )
 
 
+class DeidentificationComparisonItem(BaseModel):
+    keyword: str
+    risk: RiskLevel
+    category: str
+    recommended_action: str
+    status: Literal["changed", "unchanged", "removed", "added", "absent"]
+    passed: bool
+    before: str
+    after: str
+    note: str
+
+
+class DeidentificationComparisonReport(BaseModel):
+    source_path: str
+    anonymized_path: str
+    passed: bool
+    total_items: int
+    passed_items: int
+    failed_items: int
+    changed_items: int
+    removed_items: int
+    unchanged_items: int
+    residual_high_risk_keywords: list[str]
+    residual_medium_risk_keywords: list[str]
+    private_tags_before: int
+    private_tags_after: int
+    private_tags_removed: bool
+    pixel_data_before_sha256: str | None = None
+    pixel_data_after_sha256: str | None = None
+    pixel_data_changed: bool | None = None
+    items: list[DeidentificationComparisonItem]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class CompetitorReference(BaseModel):
     name: str
     category: str
@@ -396,6 +432,8 @@ class DemoPipelineResult(BaseModel):
     inspection_html: str
     audit_json: str
     audit_html: str
+    deid_comparison_json: str
+    deid_comparison_html: str
     validation_json: str
     pixel_review_json: str
     pixel_review_html: str

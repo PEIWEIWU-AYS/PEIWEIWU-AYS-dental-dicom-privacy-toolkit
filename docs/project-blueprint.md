@@ -46,6 +46,7 @@ ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --h
 ddpt profile lint dental-research-sharing --json reports/research-profile-lint.json --html reports/research-profile-lint.html
 ddpt profile compare dental-basic dental-research-sharing --json reports/profile-comparison.json --html reports/profile-comparison.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out outputs/sample.anonymized.dcm --audit reports/audit.json
+ddpt compare deid examples/synthetic-dicom/sample.dcm outputs/sample.anonymized.dcm --json reports/deid-comparison.json --html reports/deid-comparison.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-research-sharing --dry-run --audit reports/research-dry-run.json
 ddpt pixel-review outputs/sample.anonymized.dcm --out-dir reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json reports/pixel-review.json --html reports/pixel-review.html
 ddpt package outputs/ --encrypt --key-out share/package.key --manifest reports/manifest.json --out share/dental-dicom-package.ddpt
@@ -74,7 +75,9 @@ Best for:
 
 ### 2. Static HTML Report
 
-The HTML report translates DICOM privacy risk into a readable artifact. It can show file summary, risky tags, applied anonymization actions, checksums, and audit events.
+The HTML report translates DICOM privacy risk into a readable artifact. It can
+show file summary, risky tags, before/after de-identification changes, applied
+anonymization actions, checksums, and audit events.
 
 Best for:
 
@@ -297,6 +300,7 @@ dental-dicom-privacy-toolkit/
 - Replace or remove risky tags
 - Remove private tags by default
 - Validate that known sensitive fields are absent or replaced
+- Compare original and anonymized files with side-by-side policy evidence
 
 ### Phase 5: Encrypted Sharing Package
 

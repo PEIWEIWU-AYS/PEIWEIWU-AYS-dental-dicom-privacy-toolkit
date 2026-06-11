@@ -7,6 +7,7 @@ import yaml
 
 from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
+from ddpt.deid_compare import compare_deidentification
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import WorkflowRunReport, WorkflowStepResult
@@ -16,6 +17,7 @@ from ddpt.preview import render_dicom_preview
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
+    write_deid_comparison_html,
     write_inspection_html,
     write_inventory_html,
     write_package_receipt_html,
@@ -147,6 +149,24 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             artifacts.append(json_path)
         if not report.passed:
             raise ValueError("Validation failed")
+        return artifacts
+
+    if action == "compare-deid":
+        report = compare_deidentification(
+            _path(root_dir, step["source"]),
+            _path(root_dir, step["anonymized"]),
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_deid_comparison_html(html_path, report)
+            artifacts.append(html_path)
+        if not report.passed:
+            raise ValueError("De-identification comparison failed")
         return artifacts
 
     if action == "preview":

@@ -26,6 +26,13 @@ steps:
     audit: reports/audit.json
     html: reports/audit.html
 
+  - id: compare-deidentification
+    action: compare-deid
+    source: input/sample.synthetic.dcm
+    anonymized: outputs/sample.anonymized.dcm
+    json: reports/deid-comparison.json
+    html: reports/deid-comparison.html
+
   - id: validate
     action: validate
     input: outputs/sample.anonymized.dcm

@@ -23,21 +23,22 @@ Version 0.1 is successful when a new user can:
 13. Lint anonymization profiles before running workflows.
 14. Compare anonymization profiles with JSON and HTML reports.
 15. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
-16. Confirm direct identifiers were replaced or removed.
-17. Generate an audit event JSON file.
-18. Validate anonymized output with a pass/fail report.
-19. Generate pixel review reports for known burned-in annotation regions.
-20. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-21. Package anonymized files with checksums.
-22. Encrypt the package.
-23. Verify or decrypt the package.
-24. Generate package verification receipts for receiver-side sharing evidence.
-25. Run local REST API workflow demos for integration testing.
-26. Run a release-readiness audit before public GitHub publishing.
-27. Run a competitor-informed capability matrix that maps features to repository evidence.
-28. Generate a static local review dashboard for non-programmer walkthroughs.
-29. Generate a local evidence bundle for MacBook validation and public demonstrations.
-30. Run automated tests locally and in GitHub Actions.
+16. Generate before/after de-identification comparison reports.
+17. Confirm direct identifiers were replaced or removed.
+18. Generate an audit event JSON file.
+19. Validate anonymized output with a pass/fail report.
+20. Generate pixel review reports for known burned-in annotation regions.
+21. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+22. Package anonymized files with checksums.
+23. Encrypt the package.
+24. Verify or decrypt the package.
+25. Generate package verification receipts for receiver-side sharing evidence.
+26. Run local REST API workflow demos for integration testing.
+27. Run a release-readiness audit before public GitHub publishing.
+28. Run a competitor-informed capability matrix that maps features to repository evidence.
+29. Generate a static local review dashboard for non-programmer walkthroughs.
+30. Generate a local evidence bundle for MacBook validation and public demonstrations.
+31. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -50,6 +51,7 @@ Required:
 - PNG previews
 - metadata inspection
 - anonymization
+- before/after de-identification comparison
 - validation
 - pixel review report
 - manual pixel redaction
@@ -139,6 +141,23 @@ Required:
 - optional HTML report
 - non-zero exit status when capability evidence is missing
 
+### `ddpt compare deid`
+
+Compare a source DICOM file with an anonymized DICOM file.
+
+Required:
+
+- source DICOM path
+- anonymized DICOM path
+- terminal pass/fail table
+- JSON report
+- optional HTML report
+- compare high-risk and medium-risk policy items
+- show changed, removed, unchanged, added, and absent statuses
+- report private tag counts before and after
+- report PixelData SHA-256 before and after when present
+- non-zero exit status when tracked high-risk or medium-risk policy items remain unsafe
+
 ### `ddpt dashboard build`
 
 Build a static local review dashboard from an evidence bundle.
@@ -168,6 +187,7 @@ Required:
 - artifacts list per step
 - non-zero exit status when any step fails
 - support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, and audit chain verification stages
+- support before/after de-identification comparison stages
 
 ### `ddpt inventory`
 
@@ -556,6 +576,7 @@ To call Version 0.1 complete, we need:
 - a one-command demo pipeline that generates all core artifacts
 - a release-readiness audit command with JSON and HTML outputs
 - a capability matrix command with JSON and HTML outputs
+- a before/after de-identification comparison command with JSON and HTML outputs
 - a static review dashboard command with JSON and HTML outputs
 - a local evidence bundle command with JSON and HTML index outputs
 - README demo commands updated

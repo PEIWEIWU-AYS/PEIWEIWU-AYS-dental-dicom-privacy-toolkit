@@ -9,6 +9,7 @@ from ddpt.models import (
     AnonymizationAudit,
     BatchSummary,
     CapabilityMatrixReport,
+    DeidentificationComparisonReport,
     DemoPipelineResult,
     EvidenceBundleResult,
     InspectionReport,
@@ -228,6 +229,10 @@ DEMO_SUMMARY_TEMPLATE = Template(
       <tr><td>Pixel-redacted DICOM</td><td><code>{{ result.redacted_dicom }}</code></td></tr>
       <tr><td>Inspection HTML</td><td><code>{{ result.inspection_html }}</code></td></tr>
       <tr><td>Anonymization audit HTML</td><td><code>{{ result.audit_html }}</code></td></tr>
+      <tr>
+        <td>De-identification comparison HTML</td>
+        <td><code>{{ result.deid_comparison_html }}</code></td>
+      </tr>
       <tr><td>Validation JSON</td><td><code>{{ result.validation_json }}</code></td></tr>
       <tr><td>Pixel review JSON</td><td><code>{{ result.pixel_review_json }}</code></td></tr>
       <tr><td>Pixel review HTML</td><td><code>{{ result.pixel_review_html }}</code></td></tr>
@@ -867,6 +872,100 @@ REVIEW_DASHBOARD_TEMPLATE = Template(
 """
 )
 
+DEID_COMPARISON_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM De-identification Comparison</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .high { color: #b00020; font-weight: 700; }
+    .medium { color: #8a5a00; font-weight: 700; }
+    .low { color: #1f6f43; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM De-identification Comparison</h1>
+  <p class="warning">
+    Before/after comparison for synthetic-data de-identification review. This
+    report explains observed metadata changes and residual policy items. It is
+    not legal, regulatory, clinical, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Source: <code>{{ report.source_path }}</code></li>
+    <li>Anonymized: <code>{{ report.anonymized_path }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Passed policy items: {{ report.passed_items }} / {{ report.total_items }}</li>
+    <li>Changed items: {{ report.changed_items }}</li>
+    <li>Removed items: {{ report.removed_items }}</li>
+    <li>Unchanged items: {{ report.unchanged_items }}</li>
+    <li>Private tags before: {{ report.private_tags_before }}</li>
+    <li>Private tags after: {{ report.private_tags_after }}</li>
+    <li>Pixel data changed: {{ report.pixel_data_changed }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  {% if report.residual_high_risk_keywords or report.residual_medium_risk_keywords %}
+  <h2>Residual Risk Keywords</h2>
+  <ul>
+    <li>High risk: {{ report.residual_high_risk_keywords|join(", ") }}</li>
+    <li>Medium risk: {{ report.residual_medium_risk_keywords|join(", ") }}</li>
+  </ul>
+  {% endif %}
+  <h2>Policy Item Comparison</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Pass</th>
+        <th>Risk</th>
+        <th>Keyword</th>
+        <th>Recommended</th>
+        <th>Before</th>
+        <th>After</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.items %}
+      <tr>
+        <td>{{ item.status }}</td>
+        <td class="{{ "ok" if item.passed else "fail" }}">
+          {{ "yes" if item.passed else "no" }}
+        </td>
+        <td class="{{ item.risk }}">{{ item.risk }}</td>
+        <td><code>{{ item.keyword }}</code></td>
+        <td>{{ item.recommended_action }}</td>
+        <td>{{ item.before }}</td>
+        <td>{{ item.after }}</td>
+        <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 PACKAGE_RECEIPT_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -1320,6 +1419,7 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
         "Review dashboard HTML",
         "Evidence bundle HTML",
         "Demo summary HTML",
+        "De-identification comparison HTML",
         "Capability matrix HTML",
         "Release audit HTML",
         "Pixel review HTML",
@@ -1335,6 +1435,13 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
             quick_links=quick_links,
         ),
     )
+
+
+def write_deid_comparison_html(
+    path: Path,
+    report: DeidentificationComparisonReport,
+) -> None:
+    _write_html(path, DEID_COMPARISON_TEMPLATE.render(report=report))
 
 
 def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) -> None:

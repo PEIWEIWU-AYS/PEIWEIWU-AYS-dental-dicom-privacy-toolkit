@@ -159,6 +159,23 @@ CAPABILITY_SPECS = [
         note="Catches unknown DICOM keywords, conflicting actions, and policy coverage gaps.",
     ),
     CapabilitySpec(
+        id="before-after-deid-comparison",
+        capability="Before/after de-identification comparison reports",
+        source_tools=("DicomCleaner", "RSNA DICOM Anonymizer", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/deid_compare.py",
+            "docs/deid-comparison.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt compare deid input.dcm output.dcm --json deid-comparison.json "
+            "--html deid-comparison.html"
+        ),
+        differentiator="Side-by-side privacy policy evidence shows what changed and what remains.",
+        note="Complements audit logs with a reviewer-friendly before/after report.",
+    ),
+    CapabilitySpec(
         id="pixel-review-redaction",
         capability="Burned-in pixel annotation review and rectangular redaction",
         source_tools=("PixelMed DicomCleaner",),

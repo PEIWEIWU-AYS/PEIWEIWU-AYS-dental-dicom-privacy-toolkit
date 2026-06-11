@@ -36,6 +36,7 @@
 - CLI prototype
 - Synthetic end-to-end example
 - Pixel review reports
+- Before/after de-identification comparison reports
 - Release-readiness audit
 - Local evidence bundle
 - Competitor-informed capability matrix

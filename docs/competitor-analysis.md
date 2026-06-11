@@ -64,6 +64,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - RSNA CTP-inspired YAML workflow recipes
 - HTML workflow reports for staged pipeline review
 - anonymization dry-run previews before writing DICOM files
+- before/after de-identification comparison reports
 - deterministic date shifting for research-sharing profiles
 - profile lint checks for custom YAML configuration quality
 - profile comparison reports for transparent configuration review
@@ -129,6 +130,7 @@ The project should add:
 - release-readiness audit with JSON and HTML output before public GitHub milestones
 - capability matrix with JSON and HTML output for competitor-informed project review
 - static review dashboard that gathers report links and synthetic PNG previews
+- side-by-side de-identification comparison HTML for reviewer-friendly evidence
 - evidence bundle with JSON and HTML index for MacBook validation and public demonstrations
 - encrypted sharing package with manifest and checksums
 - package verification receipts with JSON and HTML outputs

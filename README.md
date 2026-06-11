@@ -22,6 +22,7 @@ Core goals:
 - Profile lint checks for custom anonymization YAML safety
 - DICOM privacy policy registry export in JSON, CSV, and HTML
 - Competitor-informed capability matrix with repository evidence
+- Before/after de-identification comparison reports
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
 - Pixel review reports with original, overlay, and redacted PNG previews
@@ -56,6 +57,7 @@ ddpt demo demo-run
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
+ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
 ddpt pixel-review demo-run/outputs/sample.anonymized.dcm --out-dir demo-run/reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json demo-run/reports/pixel-review.json --html demo-run/reports/pixel-review.html
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
@@ -93,6 +95,7 @@ See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for det
 See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile configuration checks.
 See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
+See [docs/deid-comparison.md](docs/deid-comparison.md) for before/after de-identification comparison reports.
 See [docs/capability-matrix.md](docs/capability-matrix.md) for competitor-informed capability evidence.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
@@ -156,7 +159,8 @@ encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
 research-sharing date shifting, release-readiness checks, and local evidence
 bundle generation, package verification receipts, profile comparison reports,
 profile lint checks, policy registry exports, capability matrix reports, static
-review dashboards, and pixel review reports.
+review dashboards, de-identification comparison reports, and pixel review
+reports.
 
 ## License
 

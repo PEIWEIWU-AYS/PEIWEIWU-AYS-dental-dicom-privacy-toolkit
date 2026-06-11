@@ -70,6 +70,7 @@ ddpt doctor
 ddpt safety scan .
 ddpt release audit . --json release-audit.json --html release-audit.html
 ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
+ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
 ddpt evidence bundle . --out evidence-run
 ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html
 ruff check .
