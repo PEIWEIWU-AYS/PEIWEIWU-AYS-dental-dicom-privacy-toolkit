@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, deterministic pseudonymization, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM伪名化, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, deterministic pseudonymization, local browser workbench, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM伪名化, 本地工作台, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -29,6 +29,7 @@ Core goals:
 - Pixel review reports with original, overlay, and redacted PNG previews
 - YAML workflow recipes for reproducible staged pipelines
 - Local REST API for integration demos
+- Local browser workbench for synthetic workflow review
 - Static local review dashboard for non-programmer walkthroughs
 - Release-readiness audit for public GitHub publishing
 - Local evidence bundle for MacBook validation and project demonstrations
@@ -76,6 +77,7 @@ ddpt profile coverage dental-linkable-research
 ddpt profile compare dental-basic dental-research-sharing --json demo-run/reports/profile-comparison.json --html demo-run/reports/profile-comparison.html
 ddpt profile compare dental-basic dental-linkable-research --json demo-run/reports/linkable-profile-comparison.json --html demo-run/reports/linkable-profile-comparison.html
 ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
+ddpt api serve demo-run --host 127.0.0.1 --port 8765
 ddpt profile init profiles/my-dental-profile.yml
 ddpt batch demo-run/input --out demo-run/batch-output
 ddpt audit verify demo-run/reports/audit-chain.json
@@ -85,6 +87,12 @@ To inspect the local REST API docs, run this as a separate long-running command:
 
 ```bash
 ddpt api serve demo-run
+```
+
+Then open the local browser workbench:
+
+```text
+http://127.0.0.1:8765/workbench
 ```
 
 The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, PNG previews, JSON reports, HTML reports, an encrypted package, a verification receipt, and a summary page to `demo-run/`.
@@ -113,6 +121,7 @@ See [docs/review-dashboard.md](docs/review-dashboard.md) for the static local re
 See [docs/package-verification-receipts.md](docs/package-verification-receipts.md) for receiver-side sharing receipts.
 See [docs/share-readiness.md](docs/share-readiness.md) for the final synthetic sharing gate.
 See [docs/local-api.md](docs/local-api.md) for the local REST API demo.
+See [docs/local-workbench.md](docs/local-workbench.md) for the local browser workbench.
 
 ## Manual Step-by-Step Demo
 
@@ -135,7 +144,7 @@ ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out 
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `pseudonymization` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## Repository Structure
 
@@ -166,7 +175,7 @@ Sensitive local materials should stay outside the repository, for example:
 Version 0.1 local prototype in active development. The current workflow supports
 synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
-research-sharing date shifting, linkable research pseudonymization,
+local browser workbench, research-sharing date shifting, linkable research pseudonymization,
 release-readiness checks, and local evidence bundle generation,
 package verification receipts, profile comparison reports,
 profile lint checks, policy registry exports, capability matrix reports, static

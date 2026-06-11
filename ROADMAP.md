@@ -41,5 +41,6 @@
 - Release-readiness audit
 - Local evidence bundle
 - Competitor-informed capability matrix
+- Local browser workbench
 - Static local review dashboard
 - Documentation for paper and open-source release

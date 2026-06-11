@@ -263,6 +263,26 @@ CAPABILITY_SPECS = [
         note="Keeps the first release lightweight while still enabling integration testing.",
     ),
     CapabilitySpec(
+        id="local-browser-workbench",
+        capability="Local browser workbench for synthetic DICOM workflow review",
+        source_tools=("RSNA DICOM Anonymizer", "PixelMed DicomCleaner", "Orthanc"),
+        evidence_files=(
+            "src/ddpt/api.py",
+            "src/ddpt/workbench.py",
+            "docs/local-workbench.md",
+            "tests/test_cli_workflow.py",
+        ),
+        command="ddpt api serve demo-run --host 127.0.0.1 --port 8765",
+        differentiator=(
+            "GUI-style browser controls run against the local API without adding "
+            "a production PACS or cloud upload path."
+        ),
+        note=(
+            "Workbench exposes health, demo, inventory, inspect, anonymize, "
+            "validate, preview, and safe file links for synthetic workflows."
+        ),
+    ),
+    CapabilitySpec(
         id="static-review-dashboard",
         capability="Static local review dashboard for non-programmer walkthroughs",
         source_tools=("RSNA DICOM Anonymizer", "PixelMed DicomCleaner", "Orthanc"),

@@ -221,12 +221,16 @@ Open:
 
 ```text
 http://127.0.0.1:8765/docs
+http://127.0.0.1:8765/workbench
 ```
 
 Expected:
 
 - the API docs page loads locally
+- the local browser workbench loads locally
 - `/health`, `/inventory`, `/inspect`, `/anonymize`, `/validate`, and `/preview` are listed
+- the workbench profile selector includes `dental-linkable-research`
+- the workbench buttons can run against synthetic files inside the API root
 
 ## Safety Boundary
 

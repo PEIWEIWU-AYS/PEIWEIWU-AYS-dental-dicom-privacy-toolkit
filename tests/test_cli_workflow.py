@@ -651,6 +651,15 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     assert response.status_code == 200
     assert response.json()["ok"] is True
 
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "/workbench" in response.json()["endpoints"]
+
+    response = client.get("/workbench")
+    assert response.status_code == 200
+    assert "Dental DICOM Local Workbench" in response.text
+    assert "dental-linkable-research" in response.text
+
     response = client.post("/inventory", json={"path": "input"})
     assert response.status_code == 200
     inventory = response.json()
@@ -686,8 +695,24 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     assert response.status_code == 200
     assert (tmp_path / preview_png).exists()
 
+    response = client.get(f"/files/{preview_png}")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("image/png")
+
+    response = client.post(
+        "/demo",
+        json={"output_dir": "api-workbench-demo", "profile": "dental-linkable-research"},
+    )
+    assert response.status_code == 200
+    demo = response.json()
+    assert demo["validation_passed"] is True
+    assert (tmp_path / "api-workbench-demo" / "reports" / "demo-summary.html").exists()
+
     response = client.post("/inspect", json={"path": "../outside.dcm"})
     assert response.status_code == 400
+
+    response = client.get("/files/../outside.png")
+    assert response.status_code == 404
 
 
 def test_doctor_command_reports_environment(tmp_path: Path) -> None:

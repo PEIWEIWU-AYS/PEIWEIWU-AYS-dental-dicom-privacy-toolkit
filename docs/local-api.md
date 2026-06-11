@@ -14,11 +14,15 @@ Open:
 
 ```text
 http://127.0.0.1:8765/docs
+http://127.0.0.1:8765/workbench
 ```
 
 ## Endpoints
 
 - `GET /health`
+- `GET /workbench`
+- `GET /files/{path}`
+- `POST /demo`
 - `POST /inventory`
 - `POST /inspect`
 - `POST /anonymize`
@@ -36,6 +40,12 @@ curl -X POST http://127.0.0.1:8765/inspect \
 ## Path Safety
 
 All paths are resolved inside the API root directory. Requests such as `../outside.dcm` are rejected.
+
+## Local Workbench
+
+The `/workbench` page provides browser controls for synthetic demo generation,
+inventory, inspection, anonymization, validation, and preview. It is a GUI-style
+entrypoint for MacBook demonstrations, not a production viewer.
 
 ## Safety Boundary
 

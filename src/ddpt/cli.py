@@ -236,6 +236,7 @@ def api_serve(
 
     application = create_api_app(root_dir)
     console.print(f"Serving local DDPT API at http://{host}:{port}")
+    console.print(f"Workbench: http://{host}:{port}/workbench")
     console.print("Synthetic or explicitly approved test DICOM files only.")
     uvicorn.run(application, host=host, port=port)
 

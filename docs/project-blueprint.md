@@ -57,6 +57,7 @@ ddpt verify share/dental-dicom-package.ddpt --key share/package.key --receipt re
 ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
 ddpt decrypt share/dental-dicom-package.ddpt --key share/package.key --out restored/
 ddpt api serve demo-run
+open http://127.0.0.1:8765/workbench
 ddpt release audit . --json release-audit.json --html release-audit.html
 ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ddpt evidence bundle . --out evidence-run
@@ -111,7 +112,20 @@ Best for:
 - future web dashboard experiments
 - showing Orthanc-inspired REST design in a lightweight way
 
-### 5. Evidence Bundle
+### 5. Local Browser Workbench
+
+The local browser workbench provides GUI-style controls on top of the local API.
+It helps reviewers run synthetic demos, inspect files, anonymize outputs,
+validate results, and generate previews without memorizing every CLI command.
+
+Best for:
+
+- MacBook walkthroughs
+- non-programmer demos
+- showing GUI/Web UI lessons from RSNA Anonymizer, DicomCleaner, and Orthanc
+- keeping review local without adding cloud upload or production PACS scope
+
+### 6. Evidence Bundle
 
 The evidence bundle collects environment, safety, release, demo, workflow, audit,
 and encrypted sharing proof into one local folder with a human-readable index.
@@ -123,7 +137,7 @@ Best for:
 - paper method appendices
 - collaborator review without real patient data
 
-### 6. Capability Matrix
+### 7. Capability Matrix
 
 The capability matrix turns competitor learning into a repository-evidence
 report. It maps reference tools and inherited capabilities to local files,
@@ -136,7 +150,7 @@ Best for:
 - explaining why this toolkit is dental-specific
 - checking that public claims are backed by evidence
 
-### 7. Linkable Research Profile
+### 8. Linkable Research Profile
 
 The linkable research profile demonstrates deterministic pseudonymization for
 synthetic longitudinal studies. It keeps repeated synthetic `PatientID` values
@@ -149,7 +163,7 @@ Best for:
 - explaining the difference between one-time anonymization and linkable pseudonyms
 - showing profile lint and comparison as safety controls
 
-### 8. Static Review Dashboard
+### 9. Static Review Dashboard
 
 The dashboard gathers the strongest evidence bundle reports and synthetic PNG
 previews into one local static HTML entrypoint.
