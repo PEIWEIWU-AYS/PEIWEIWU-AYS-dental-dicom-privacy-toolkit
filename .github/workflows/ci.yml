@@ -43,6 +43,7 @@ jobs:
           test -f docs/safety-scan.md
           test -f docs/release-audit.md
           test -f docs/research-sharing-profile.md
+          test -f docs/linkable-research-profile.md
           test -f docs/inventory.md
           test -f docs/preview.md
           test -f docs/pixel-review.md
@@ -58,6 +59,7 @@ jobs:
           test -f docs/deid-comparison.md
           test -f docs/share-readiness.md
           test -f profiles/dental-pixel-redaction.yml
+          test -f profiles/dental-linkable-research.yml
           test -f profiles/dental-research-sharing.yml
           test -f recipes/dental-demo-workflow.yml
           test -f scripts/generate_demo_assets.py
@@ -75,6 +77,7 @@ jobs:
         run: |
           python -m ddpt profile lint dental-basic --json profile-lint-basic.json
           python -m ddpt profile lint dental-research-sharing --json profile-lint-research.json
+          python -m ddpt profile lint dental-linkable-research --json profile-lint-linkable.json
 
       - name: Run public repository safety scan
         run: python -m ddpt safety scan . --json safety-scan.json

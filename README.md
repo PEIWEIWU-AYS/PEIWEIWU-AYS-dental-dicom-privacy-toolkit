@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, deterministic pseudonymization, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM伪名化, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -18,6 +18,7 @@ Core goals:
 - Directory inventory and privacy risk preflight
 - DICOM anonymization profiles for dental imaging
 - Research-sharing profile with deterministic date shifting
+- Linkable research profile with deterministic patient pseudonymization
 - Profile comparison reports for transparent anonymization configuration review
 - Profile lint checks for custom anonymization YAML safety
 - DICOM privacy policy registry export in JSON, CSV, and HTML
@@ -66,10 +67,14 @@ ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-du
 ddpt policy export --json demo-run/reports/policy-registry.json --csv demo-run/reports/policy-registry.csv --html demo-run/reports/policy-registry.html
 ddpt profile show dental-basic
 ddpt profile show dental-research-sharing
+ddpt profile show dental-linkable-research
 ddpt profile lint dental-basic --json demo-run/reports/profile-lint.json --html demo-run/reports/profile-lint.html
+ddpt profile lint dental-linkable-research --json demo-run/reports/linkable-profile-lint.json --html demo-run/reports/linkable-profile-lint.html
 ddpt profile coverage dental-basic
 ddpt profile coverage dental-research-sharing
+ddpt profile coverage dental-linkable-research
 ddpt profile compare dental-basic dental-research-sharing --json demo-run/reports/profile-comparison.json --html demo-run/reports/profile-comparison.html
+ddpt profile compare dental-basic dental-linkable-research --json demo-run/reports/linkable-profile-comparison.json --html demo-run/reports/linkable-profile-comparison.html
 ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
 ddpt profile init profiles/my-dental-profile.yml
 ddpt batch demo-run/input --out demo-run/batch-output
@@ -94,6 +99,7 @@ See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and ex
 See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
 See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write anonymization previews.
 See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for deterministic date-shift research sharing.
+See [docs/linkable-research-profile.md](docs/linkable-research-profile.md) for deterministic patient pseudonymization in longitudinal research demos.
 See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile configuration checks.
 See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
@@ -129,7 +135,7 @@ ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out 
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `pseudonymization` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## Repository Structure
 
@@ -160,8 +166,9 @@ Sensitive local materials should stay outside the repository, for example:
 Version 0.1 local prototype in active development. The current workflow supports
 synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
-research-sharing date shifting, release-readiness checks, and local evidence
-bundle generation, package verification receipts, profile comparison reports,
+research-sharing date shifting, linkable research pseudonymization,
+release-readiness checks, and local evidence bundle generation,
+package verification receipts, profile comparison reports,
 profile lint checks, policy registry exports, capability matrix reports, static
 review dashboards, de-identification comparison reports, and pixel review
 reports, plus share-readiness gates.

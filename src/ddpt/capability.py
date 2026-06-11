@@ -159,6 +159,30 @@ CAPABILITY_SPECS = [
         note="Catches unknown DICOM keywords, conflicting actions, and policy coverage gaps.",
     ),
     CapabilitySpec(
+        id="linkable-pseudonymization",
+        capability="Deterministic pseudonymization for synthetic longitudinal research demos",
+        source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/anonymize.py",
+            "src/ddpt/profiles.py",
+            "profiles/dental-linkable-research.yml",
+            "docs/linkable-research-profile.md",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt anonymize input.dcm --profile dental-linkable-research "
+            "--out output.dcm --audit audit.json"
+        ),
+        differentiator=(
+            "The same synthetic patient can stay linkable across studies without "
+            "exposing the original PatientName or PatientID."
+        ),
+        note=(
+            "Adds research-oriented linkage evidence while keeping public demos "
+            "synthetic-data-only."
+        ),
+    ),
+    CapabilitySpec(
         id="before-after-deid-comparison",
         capability="Before/after de-identification comparison reports",
         source_tools=("DicomCleaner", "RSNA DICOM Anonymizer", "pydicom anonymization example"),

@@ -102,8 +102,74 @@ RESEARCH_SHARING_PROFILE = {
     "remove_private_tags": True,
 }
 
+LINKABLE_RESEARCH_PROFILE = {
+    "name": "dental-linkable-research",
+    "description": (
+        "Dental research profile with deterministic patient pseudonyms for "
+        "synthetic longitudinal demos."
+    ),
+    "pseudonymize": {
+        "PatientName": {
+            "source": "PatientID",
+            "prefix": "ANONYMIZED^",
+            "length": 12,
+            "namespace": "ddpt-linkable-research-v1",
+        },
+        "PatientID": {
+            "source": "PatientID",
+            "prefix": "DDPT-LINK-",
+            "length": 12,
+            "namespace": "ddpt-linkable-research-v1",
+        },
+    },
+    "replace": {
+        "AccessionNumber": "DDPT-LINK-ACC",
+        "StudyDescription": "Linkable Research Dental Imaging Study",
+        "SeriesDescription": "Linkable Research Dental Imaging Series",
+        "InstitutionName": "Linkable Research Dental Institution",
+    },
+    "blank": [
+        "PatientBirthDate",
+        "PatientAddress",
+        "PatientTelephoneNumbers",
+        "OtherPatientIDs",
+        "OtherPatientNames",
+        "PatientMotherBirthName",
+        "ReferringPhysicianName",
+        "RequestingPhysician",
+        "OperatorsName",
+        "PhysiciansOfRecord",
+        "PerformingPhysicianName",
+        "InstitutionAddress",
+        "DeviceSerialNumber",
+        "StationName",
+        "ProtocolName",
+        "StudyTime",
+        "SeriesTime",
+        "AcquisitionTime",
+        "ContentTime",
+    ],
+    "date_shift": {
+        "offset_days": -3650,
+        "keywords": [
+            "StudyDate",
+            "SeriesDate",
+            "AcquisitionDate",
+            "ContentDate",
+        ],
+    },
+    "regenerate_uids": [
+        "StudyInstanceUID",
+        "SeriesInstanceUID",
+        "SOPInstanceUID",
+        "FrameOfReferenceUID",
+    ],
+    "remove_private_tags": True,
+}
+
 BUILT_IN_PROFILE_MAP = {
     "dental-basic": DEFAULT_PROFILE,
+    "dental-linkable-research": LINKABLE_RESEARCH_PROFILE,
     "dental-research-sharing": RESEARCH_SHARING_PROFILE,
 }
 
@@ -138,6 +204,7 @@ def describe_profile(name_or_path: str) -> dict[str, Any]:
     date_shift = profile.get("date_shift", {})
     return {
         "name": profile.get("name", name_or_path),
+        "pseudonymize_keywords": sorted(profile.get("pseudonymize", {}).keys()),
         "replace_keywords": sorted(profile.get("replace", {}).keys()),
         "blank_keywords": sorted(profile.get("blank", [])),
         "date_shift_keywords": sorted(date_shift.get("keywords", [])),
@@ -186,6 +253,7 @@ def lint_profile(name_or_path: str) -> ProfileLintReport:
         return _profile_lint_report(profile_name, findings, None)
 
     _lint_replace(profile, findings)
+    _lint_pseudonymize(profile, findings)
     _lint_keyword_list(profile, "blank", findings)
     _lint_keyword_list(profile, "regenerate_uids", findings)
     _lint_date_shift(profile, findings)
@@ -254,6 +322,98 @@ def _lint_replace(profile: dict[str, Any], findings: list[ProfileLintFinding]) -
                     rule_id="replace-long-value",
                     keyword=str(keyword),
                     message="Replacement value is longer than 64 characters.",
+                )
+            )
+
+
+def _lint_pseudonymize(profile: dict[str, Any], findings: list[ProfileLintFinding]) -> None:
+    pseudonymize = profile.get("pseudonymize", {})
+    if pseudonymize in (None, ""):
+        return
+    if not isinstance(pseudonymize, dict):
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="pseudonymize-shape",
+                message=(
+                    "pseudonymize must be a mapping of target DICOM keyword to "
+                    "source keyword or configuration."
+                ),
+            )
+        )
+        return
+
+    allowed_keys = {"source", "prefix", "length", "namespace"}
+    for keyword, config in pseudonymize.items():
+        _lint_keyword(keyword, findings)
+        if isinstance(config, str):
+            _lint_keyword(config, findings)
+            continue
+        if not isinstance(config, dict):
+            findings.append(
+                ProfileLintFinding(
+                    severity="error",
+                    rule_id="pseudonymize-config-shape",
+                    keyword=str(keyword),
+                    message="pseudonymize values must be a source keyword or mapping.",
+                )
+            )
+            continue
+
+        unknown_keys = sorted(set(config) - allowed_keys)
+        for unknown_key in unknown_keys:
+            findings.append(
+                ProfileLintFinding(
+                    severity="warning",
+                    rule_id="pseudonymize-unknown-key",
+                    keyword=str(keyword),
+                    message=f"Unknown pseudonymize option: {unknown_key}",
+                )
+            )
+
+        source = config.get("source")
+        if not isinstance(source, str) or not source:
+            findings.append(
+                ProfileLintFinding(
+                    severity="error",
+                    rule_id="pseudonymize-source",
+                    keyword=str(keyword),
+                    message="pseudonymize.source must be a DICOM keyword.",
+                )
+            )
+        else:
+            _lint_keyword(source, findings)
+
+        prefix = config.get("prefix", "")
+        if not isinstance(prefix, str):
+            findings.append(
+                ProfileLintFinding(
+                    severity="error",
+                    rule_id="pseudonymize-prefix",
+                    keyword=str(keyword),
+                    message="pseudonymize.prefix must be a string.",
+                )
+            )
+
+        namespace = config.get("namespace", "")
+        if not isinstance(namespace, str):
+            findings.append(
+                ProfileLintFinding(
+                    severity="error",
+                    rule_id="pseudonymize-namespace",
+                    keyword=str(keyword),
+                    message="pseudonymize.namespace must be a string.",
+                )
+            )
+
+        length = config.get("length", 12)
+        if not isinstance(length, int) or length < 6 or length > 48:
+            findings.append(
+                ProfileLintFinding(
+                    severity="error",
+                    rule_id="pseudonymize-length",
+                    keyword=str(keyword),
+                    message="pseudonymize.length must be an integer from 6 to 48.",
                 )
             )
 
@@ -354,6 +514,10 @@ def _lint_action_conflicts(
     if isinstance(replace, dict):
         for keyword in replace.keys():
             action_map.setdefault(str(keyword), []).append("replace")
+    pseudonymize = profile.get("pseudonymize", {}) or {}
+    if isinstance(pseudonymize, dict):
+        for keyword in pseudonymize.keys():
+            action_map.setdefault(str(keyword), []).append("pseudonymize")
     for field in ("blank", "regenerate_uids"):
         values = profile.get(field, []) or []
         if isinstance(values, list):

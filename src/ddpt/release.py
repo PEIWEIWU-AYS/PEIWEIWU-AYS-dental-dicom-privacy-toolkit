@@ -22,6 +22,7 @@ REQUIRED_FILES = [
     "docs/demo-guide.md",
     "docs/discoverability.md",
     "docs/evidence-bundle.md",
+    "docs/linkable-research-profile.md",
     "docs/macbook-validation.md",
     "docs/package-verification-receipts.md",
     "docs/profile-comparison.md",
@@ -35,6 +36,7 @@ REQUIRED_FILES = [
     "docs/deid-comparison.md",
     "docs/share-readiness.md",
     "profiles/dental-basic.yml",
+    "profiles/dental-linkable-research.yml",
     "profiles/dental-pixel-redaction.yml",
     "profiles/dental-research-sharing.yml",
     "recipes/dental-demo-workflow.yml",
@@ -49,10 +51,12 @@ README_KEYWORDS = [
     "dental DICOM",
     "DICOM anonymization",
     "DICOM de-identification",
+    "deterministic pseudonymization",
     "encrypted DICOM sharing",
     "CBCT",
     "牙科DICOM",
     "DICOM脱敏",
+    "DICOM伪名化",
     "患者隐私保护",
     "Suggested GitHub Topics",
     "synthetic",
@@ -135,6 +139,7 @@ CI_TERMS = [
     "python -m ddpt release audit",
     "python -m ddpt capability matrix",
     "python -m ddpt profile lint",
+    "python -m ddpt profile lint dental-linkable-research",
     "python -m ddpt evidence bundle",
     "python -m ddpt compare deid",
     "python -m ddpt share readiness",
@@ -158,6 +163,12 @@ WORKFLOW_ACTIONS = {
     "audit-verify",
     "share-readiness",
 }
+
+PROFILE_COVERAGE_FILES = [
+    "profiles/dental-basic.yml",
+    "profiles/dental-research-sharing.yml",
+    "profiles/dental-linkable-research.yml",
+]
 
 
 def run_release_audit(root_dir: Path) -> ReleaseAuditReport:
@@ -333,30 +344,42 @@ def _workflow_recipe_check(root_dir: Path) -> ReleaseAuditCheck:
 
 
 def _profile_coverage_check(root_dir: Path) -> ReleaseAuditCheck:
-    profile_path = root_dir / "profiles" / "dental-basic.yml"
-    if not profile_path.is_file():
+    missing = [path for path in PROFILE_COVERAGE_FILES if not (root_dir / path).is_file()]
+    if missing:
         return _check(
             "profile-coverage",
             "privacy-profile",
             False,
-            "dental-basic profile file is missing.",
-            [str(profile_path)],
+            "One or more built-in profile files are missing.",
+            missing,
         )
-    coverage = profile_coverage(str(profile_path))
-    if coverage.high_risk_uncovered or coverage.medium_risk_uncovered:
+
+    coverage_reports = [
+        profile_coverage(str(root_dir / path)) for path in PROFILE_COVERAGE_FILES
+    ]
+    uncovered = [
+        f"{report.profile}: {keyword}"
+        for report in coverage_reports
+        for keyword in report.high_risk_uncovered + report.medium_risk_uncovered
+    ]
+    if uncovered:
         return _check(
             "profile-coverage",
             "privacy-profile",
             False,
-            "dental-basic does not cover all high/medium risk policy items.",
-            coverage.high_risk_uncovered + coverage.medium_risk_uncovered,
+            "One or more built-in profiles do not cover all high/medium risk policy items.",
+            uncovered,
         )
+    evidence = [
+        f"{report.profile}: {report.covered_items}/{report.total_items} covered"
+        for report in coverage_reports
+    ]
     return _check(
         "profile-coverage",
         "privacy-profile",
         True,
-        f"dental-basic covers {coverage.covered_items}/{coverage.total_items} policy items.",
-        [f"{coverage.covered_items}/{coverage.total_items} covered"],
+        "Built-in profiles cover all high/medium risk policy items.",
+        evidence,
     )
 
 

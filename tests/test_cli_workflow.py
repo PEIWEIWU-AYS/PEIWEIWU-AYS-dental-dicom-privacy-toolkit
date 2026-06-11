@@ -799,6 +799,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "PixelMed DicomCleaner" in reference_names
     assert "Orthanc" in reference_names
     capability_ids = {item["id"] for item in report["items"]}
+    assert "linkable-pseudonymization" in capability_ids
     assert "before-after-deid-comparison" in capability_ids
     assert "pixel-review-redaction" in capability_ids
     assert "pipeline-recipes" in capability_ids
@@ -829,6 +830,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "policy-registry.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-basic.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
+    assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
     assert (output_dir / "demo-run" / "reports" / "deid-comparison.html").exists()
@@ -845,6 +847,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/policy-registry.html" in artifact_paths
     assert "reports/profile-lint-dental-basic.html" in artifact_paths
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
+    assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
     assert "demo-run/reports/deid-comparison.html" in artifact_paths
@@ -1043,6 +1046,7 @@ def test_profile_commands(tmp_path: Path) -> None:
     result = runner.invoke(app, ["profile", "list"])
     assert result.exit_code == 0, result.output
     assert "dental-basic" in result.output
+    assert "dental-linkable-research" in result.output
     assert "dental-research-sharing" in result.output
 
     result = runner.invoke(app, ["profile", "show", "dental-basic", "--json", str(profile_json)])
@@ -1078,6 +1082,14 @@ def test_profile_commands(tmp_path: Path) -> None:
     assert coverage["high_risk_uncovered"] == []
     assert coverage["medium_risk_uncovered"] == []
     assert coverage["covered_items"] == coverage["total_items"]
+
+    result = runner.invoke(
+        app,
+        ["profile", "show", "dental-linkable-research", "--json", str(tmp_path / "linkable.json")],
+    )
+    assert result.exit_code == 0, result.output
+    linkable_profile = json.loads((tmp_path / "linkable.json").read_text())
+    assert "PatientID" in linkable_profile["pseudonymize_keywords"]
 
     result = runner.invoke(app, ["profile", "init", str(custom_profile)])
     assert result.exit_code == 0, result.output
@@ -1123,6 +1135,13 @@ date_shift:
   offset_days: not-an-int
   keywords:
     - StudyTime
+pseudonymize:
+  PatientID:
+    source: NotARealDicomKeyword
+    prefix: 123
+    length: 3
+  PatientName:
+    unexpected: true
 remove_private_tags: "yes"
 """,
         encoding="utf-8",
@@ -1142,6 +1161,10 @@ remove_private_tags: "yes"
     assert "conflicting-actions" in rule_ids
     assert "date-shift-offset" in rule_ids
     assert "date-shift-non-date-keyword" in rule_ids
+    assert "pseudonymize-source" in rule_ids
+    assert "pseudonymize-prefix" in rule_ids
+    assert "pseudonymize-length" in rule_ids
+    assert "pseudonymize-unknown-key" in rule_ids
     assert "remove-private-tags-shape" in rule_ids
 
 
@@ -1231,6 +1254,129 @@ def test_research_sharing_profile_shifts_dates_and_reports_actions(tmp_path: Pat
     result = runner.invoke(
         app,
         ["validate", str(research_output), "--json", str(validation_json)],
+    )
+    assert result.exit_code == 0, result.output
+    assert json.loads(validation_json.read_text())["passed"] is True
+
+
+def test_linkable_research_profile_pseudonymizes_consistently(tmp_path: Path) -> None:
+    first = tmp_path / "first.dcm"
+    second = tmp_path / "second.dcm"
+    third = tmp_path / "third.dcm"
+    first_output = tmp_path / "outputs" / "first.linkable.dcm"
+    second_output = tmp_path / "outputs" / "second.linkable.dcm"
+    third_output = tmp_path / "outputs" / "third.linkable.dcm"
+    audit_json = tmp_path / "reports" / "linkable-audit.json"
+    coverage_json = tmp_path / "reports" / "linkable-coverage.json"
+    compare_json = tmp_path / "reports" / "linkable-profile-comparison.json"
+    validation_json = tmp_path / "reports" / "linkable-validation.json"
+
+    assert runner.invoke(
+        app,
+        ["synthetic", str(first), "--patient-name", "ALPHA^ONE", "--patient-id", "CLINIC-123"],
+    ).exit_code == 0
+    assert runner.invoke(
+        app,
+        ["synthetic", str(second), "--patient-name", "BETA^TWO", "--patient-id", "CLINIC-123"],
+    ).exit_code == 0
+    assert runner.invoke(
+        app,
+        ["synthetic", str(third), "--patient-name", "GAMMA^THREE", "--patient-id", "CLINIC-999"],
+    ).exit_code == 0
+
+    result = runner.invoke(
+        app,
+        [
+            "anonymize",
+            str(first),
+            "--profile",
+            "dental-linkable-research",
+            "--out",
+            str(first_output),
+            "--audit",
+            str(audit_json),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert runner.invoke(
+        app,
+        [
+            "anonymize",
+            str(second),
+            "--profile",
+            "dental-linkable-research",
+            "--out",
+            str(second_output),
+        ],
+    ).exit_code == 0
+    assert runner.invoke(
+        app,
+        [
+            "anonymize",
+            str(third),
+            "--profile",
+            "dental-linkable-research",
+            "--out",
+            str(third_output),
+        ],
+    ).exit_code == 0
+
+    first_dataset = pydicom.dcmread(first_output)
+    second_dataset = pydicom.dcmread(second_output)
+    third_dataset = pydicom.dcmread(third_output)
+
+    assert first_dataset.PatientID.startswith("DDPT-LINK-")
+    assert str(first_dataset.PatientName).startswith("ANONYMIZED^")
+    assert first_dataset.PatientID == second_dataset.PatientID
+    assert str(first_dataset.PatientName) == str(second_dataset.PatientName)
+    assert first_dataset.PatientID != third_dataset.PatientID
+    assert str(first_dataset.PatientName) != str(third_dataset.PatientName)
+    assert "CLINIC-123" not in first_dataset.PatientID
+    assert "ALPHA" not in str(first_dataset.PatientName)
+
+    audit = json.loads(audit_json.read_text())
+    pseudonymize_actions = [
+        item for item in audit["actions"] if item["action"] == "pseudonymize"
+    ]
+    assert {item["keyword"] for item in pseudonymize_actions} == {
+        "PatientName",
+        "PatientID",
+    }
+
+    result = runner.invoke(
+        app,
+        ["profile", "coverage", "dental-linkable-research", "--json", str(coverage_json)],
+    )
+    assert result.exit_code == 0, result.output
+    coverage = json.loads(coverage_json.read_text())
+    assert coverage["high_risk_uncovered"] == []
+    assert coverage["medium_risk_uncovered"] == []
+    patient_id = next(item for item in coverage["items"] if item["keyword"] == "PatientID")
+    assert patient_id["profile_action"] == "pseudonymize"
+    assert patient_id["covered"] is True
+
+    result = runner.invoke(
+        app,
+        [
+            "profile",
+            "compare",
+            "dental-basic",
+            "dental-linkable-research",
+            "--json",
+            str(compare_json),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    comparison = json.loads(compare_json.read_text())
+    patient_name = next(
+        item for item in comparison["items"] if item["keyword"] == "PatientName"
+    )
+    assert patient_name["candidate_action"] == "pseudonymize"
+    assert "deterministic pseudonym" in patient_name["note"]
+
+    result = runner.invoke(
+        app,
+        ["validate", str(first_output), "--json", str(validation_json)],
     )
     assert result.exit_code == 0, result.output
     assert json.loads(validation_json.read_text())["passed"] is True

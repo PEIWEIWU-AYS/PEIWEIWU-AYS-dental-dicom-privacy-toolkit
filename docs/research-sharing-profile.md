@@ -12,6 +12,10 @@ default. Its extra behavior is deterministic date shifting for study-level dates
 它和 `dental-basic` 一样会替换或清空直接标识符、重建 UID、默认移除 private tags。
 额外能力是对研究常用日期做确定性偏移。
 
+For longitudinal demos that need the same synthetic subject to stay linkable
+across files, use `dental-linkable-research` instead. That profile adds
+deterministic pseudonymization for `PatientName` and `PatientID`.
+
 ## Why Date Shifting
 
 Some research workflows need relative timing while reducing direct

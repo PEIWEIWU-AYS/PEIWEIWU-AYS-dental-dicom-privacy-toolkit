@@ -1,0 +1,51 @@
+name: dental-linkable-research
+description: Dental research profile with deterministic patient pseudonyms for synthetic longitudinal demos.
+pseudonymize:
+  PatientName:
+    source: PatientID
+    prefix: ANONYMIZED^
+    length: 12
+    namespace: ddpt-linkable-research-v1
+  PatientID:
+    source: PatientID
+    prefix: DDPT-LINK-
+    length: 12
+    namespace: ddpt-linkable-research-v1
+replace:
+  AccessionNumber: DDPT-LINK-ACC
+  StudyDescription: Linkable Research Dental Imaging Study
+  SeriesDescription: Linkable Research Dental Imaging Series
+  InstitutionName: Linkable Research Dental Institution
+blank:
+  - PatientBirthDate
+  - PatientAddress
+  - PatientTelephoneNumbers
+  - OtherPatientIDs
+  - OtherPatientNames
+  - PatientMotherBirthName
+  - ReferringPhysicianName
+  - RequestingPhysician
+  - OperatorsName
+  - PhysiciansOfRecord
+  - PerformingPhysicianName
+  - InstitutionAddress
+  - DeviceSerialNumber
+  - StationName
+  - ProtocolName
+  - StudyTime
+  - SeriesTime
+  - AcquisitionTime
+  - ContentTime
+date_shift:
+  offset_days: -3650
+  keywords:
+    - StudyDate
+    - SeriesDate
+    - AcquisitionDate
+    - ContentDate
+regenerate_uids:
+  - StudyInstanceUID
+  - SeriesInstanceUID
+  - SOPInstanceUID
+  - FrameOfReferenceUID
+remove_private_tags: true

@@ -41,6 +41,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     capability_report = build_capability_matrix(repository_root)
     basic_lint_report = lint_profile("dental-basic")
     research_lint_report = lint_profile("dental-research-sharing")
+    linkable_lint_report = lint_profile("dental-linkable-research")
 
     doctor_json = reports_dir / "doctor.json"
     safety_json = reports_dir / "safety-scan.json"
@@ -55,6 +56,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     basic_lint_html = reports_dir / "profile-lint-dental-basic.html"
     research_lint_json = reports_dir / "profile-lint-dental-research-sharing.json"
     research_lint_html = reports_dir / "profile-lint-dental-research-sharing.html"
+    linkable_lint_json = reports_dir / "profile-lint-dental-linkable-research.json"
+    linkable_lint_html = reports_dir / "profile-lint-dental-linkable-research.html"
     write_json(doctor_json, model_to_dict(doctor_report))
     write_json(safety_json, model_to_dict(safety_report))
     write_json(release_json, model_to_dict(release_report))
@@ -68,6 +71,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_profile_lint_html(basic_lint_html, basic_lint_report)
     write_json(research_lint_json, model_to_dict(research_lint_report))
     write_profile_lint_html(research_lint_html, research_lint_report)
+    write_json(linkable_lint_json, model_to_dict(linkable_lint_report))
+    write_profile_lint_html(linkable_lint_html, linkable_lint_report)
 
     demo_result = run_demo_pipeline(demo_dir)
 
@@ -147,6 +152,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "Research profile lint HTML",
             "profile",
             "Configuration lint report for dental-research-sharing.",
+        ),
+        _artifact(
+            output_dir,
+            linkable_lint_html,
+            "Linkable research profile lint HTML",
+            "profile",
+            "Configuration lint report for dental-linkable-research.",
         ),
         _artifact(
             output_dir,
@@ -237,6 +249,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             and capability_report.passed
             and basic_lint_report.passed
             and research_lint_report.passed
+            and linkable_lint_report.passed
             and demo_result.validation_passed
             and demo_result.audit_chain_passed
             and workflow_report.passed

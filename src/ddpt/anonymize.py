@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,12 @@ def anonymize_dicom(input_path: Path, output_path: Path, profile_name: str) -> A
     dataset = pydicom.dcmread(input_path)
     profile = load_profile(profile_name)
     actions: list[AnonymizationAction] = []
+
+    for keyword, config in profile.get("pseudonymize", {}).items():
+        if keyword in dataset:
+            replacement = _pseudonymize_value(dataset, keyword, config)
+            actions.append(_action(dataset, keyword, "pseudonymize", replacement))
+            dataset.data_element(keyword).value = replacement
 
     for keyword, replacement in profile.get("replace", {}).items():
         if keyword in dataset:
@@ -70,6 +77,11 @@ def plan_anonymization_actions(
     profile = load_profile(profile_name)
     actions: list[AnonymizationAction] = []
 
+    for keyword, config in profile.get("pseudonymize", {}).items():
+        if keyword in dataset:
+            replacement = _pseudonymize_value(dataset, keyword, config)
+            actions.append(_action(dataset, keyword, "pseudonymize", replacement))
+
     for keyword, replacement in profile.get("replace", {}).items():
         if keyword in dataset:
             actions.append(_action(dataset, keyword, "replace", replacement))
@@ -110,6 +122,37 @@ def _action(dataset: Any, keyword: str, action: str, after: Any) -> Anonymizatio
         before=value_to_text(element.value),
         after=value_to_text(after),
     )
+
+
+def _pseudonymize_value(dataset: Any, target_keyword: str, config: Any) -> str:
+    if isinstance(config, str):
+        source_keyword = config
+        prefix = ""
+        length = 12
+        namespace = ""
+    elif isinstance(config, dict):
+        source_keyword = str(config.get("source") or target_keyword)
+        prefix = str(config.get("prefix", ""))
+        length = int(config.get("length", 12) or 12)
+        namespace = str(config.get("namespace", ""))
+    else:
+        source_keyword = target_keyword
+        prefix = ""
+        length = 12
+        namespace = ""
+
+    source_value = _dataset_value(dataset, source_keyword) or _dataset_value(
+        dataset,
+        target_keyword,
+    )
+    digest = hashlib.sha256(f"{namespace}|{source_keyword}|{source_value}".encode()).hexdigest()
+    return f"{prefix}{digest[:length].upper()}"
+
+
+def _dataset_value(dataset: Any, keyword: str) -> str:
+    if keyword in dataset:
+        return value_to_text(dataset.data_element(keyword).value)
+    return ""
 
 
 def _date_shift_config(profile: dict[str, Any]) -> dict[str, Any]:

@@ -44,10 +44,13 @@ ddpt tag dump examples/synthetic-dicom/sample.dcm --json reports/tag-dump.json
 ddpt policy export --json reports/policy-registry.json --csv reports/policy-registry.csv --html reports/policy-registry.html
 ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --html reports/inspect.html
 ddpt profile lint dental-research-sharing --json reports/research-profile-lint.json --html reports/research-profile-lint.html
+ddpt profile lint dental-linkable-research --json reports/linkable-profile-lint.json --html reports/linkable-profile-lint.html
 ddpt profile compare dental-basic dental-research-sharing --json reports/profile-comparison.json --html reports/profile-comparison.html
+ddpt profile compare dental-basic dental-linkable-research --json reports/linkable-profile-comparison.json --html reports/linkable-profile-comparison.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out outputs/sample.anonymized.dcm --audit reports/audit.json
 ddpt compare deid examples/synthetic-dicom/sample.dcm outputs/sample.anonymized.dcm --json reports/deid-comparison.json --html reports/deid-comparison.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-research-sharing --dry-run --audit reports/research-dry-run.json
+ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-linkable-research --dry-run --audit reports/linkable-dry-run.json
 ddpt pixel-review outputs/sample.anonymized.dcm --out-dir reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json reports/pixel-review.json --html reports/pixel-review.html
 ddpt package outputs/ --encrypt --key-out share/package.key --manifest reports/manifest.json --out share/dental-dicom-package.ddpt
 ddpt verify share/dental-dicom-package.ddpt --key share/package.key --receipt reports/package-receipt.json --html reports/package-receipt.html
@@ -133,7 +136,20 @@ Best for:
 - explaining why this toolkit is dental-specific
 - checking that public claims are backed by evidence
 
-### 7. Static Review Dashboard
+### 7. Linkable Research Profile
+
+The linkable research profile demonstrates deterministic pseudonymization for
+synthetic longitudinal studies. It keeps repeated synthetic `PatientID` values
+linkable without exposing the original identifier.
+
+Best for:
+
+- research workflow demos
+- longitudinal imaging examples
+- explaining the difference between one-time anonymization and linkable pseudonyms
+- showing profile lint and comparison as safety controls
+
+### 8. Static Review Dashboard
 
 The dashboard gathers the strongest evidence bundle reports and synthetic PNG
 previews into one local static HTML entrypoint.

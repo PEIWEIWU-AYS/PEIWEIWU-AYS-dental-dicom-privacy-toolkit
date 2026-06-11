@@ -12,6 +12,10 @@ profile 的处理差异。
 ddpt profile compare dental-basic dental-research-sharing \
   --json reports/profile-comparison.json \
   --html reports/profile-comparison.html
+
+ddpt profile compare dental-basic dental-linkable-research \
+  --json reports/linkable-profile-comparison.json \
+  --html reports/linkable-profile-comparison.html
 ```
 
 ## What It Shows
@@ -27,6 +31,8 @@ The comparison report includes:
 - per-keyword baseline action
 - per-keyword candidate action
 - notes explaining important differences such as date shifting
+- notes explaining direct identifier pseudonymization when the candidate uses
+  `pseudonymize`
 
 ## Why This Matters
 
@@ -34,6 +40,8 @@ Configurable anonymization is only useful when reviewers can understand what a
 configuration changes. A profile comparison report helps:
 
 - explain why `dental-research-sharing` shifts dates while `dental-basic` blanks them
+- explain why `dental-linkable-research` uses deterministic pseudonyms for
+  `PatientName` and `PatientID`
 - review custom YAML profiles before using them in a workflow
 - show collaborators a transparent profile diff
 - turn configuration decisions into JSON and HTML evidence

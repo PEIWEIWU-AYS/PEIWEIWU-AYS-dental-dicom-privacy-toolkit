@@ -628,6 +628,7 @@ def profile_show(
     table = Table(title=f"Profile: {summary['name']}")
     table.add_column("Action")
     table.add_column("Keywords")
+    table.add_row("pseudonymize", ", ".join(summary["pseudonymize_keywords"]) or "-")
     table.add_row("replace", ", ".join(summary["replace_keywords"]) or "-")
     table.add_row("blank", ", ".join(summary["blank_keywords"]) or "-")
     table.add_row(

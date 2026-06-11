@@ -8,8 +8,8 @@ from ddpt.models import ValidationCheck, ValidationReport
 from ddpt.utils import value_to_text
 
 EXPECTED_REPLACEMENTS = {
-    "PatientName": "ANONYMIZED^DENTAL",
-    "PatientID": "DDPT-SYNTHETIC-ID",
+    "PatientName": ("ANONYMIZED^DENTAL", "ANONYMIZED^"),
+    "PatientID": ("DDPT-SYNTHETIC-ID", "DDPT-LINK-"),
 }
 
 EXPECTED_BLANKS = [
@@ -32,13 +32,18 @@ def validate_anonymized_dicom(path: Path) -> ValidationReport:
     checks: list[ValidationCheck] = []
     warnings: list[str] = []
 
-    for keyword, expected in EXPECTED_REPLACEMENTS.items():
+    for keyword, allowed_values in EXPECTED_REPLACEMENTS.items():
         actual = value_to_text(dataset.get(keyword, ""))
+        expected_exact, allowed_prefix = allowed_values
+        passed = actual == expected_exact or actual.startswith(allowed_prefix)
         checks.append(
             ValidationCheck(
                 name=f"{keyword} replacement",
-                passed=actual == expected,
-                message=f"expected {expected!r}, found {actual!r}",
+                passed=passed,
+                message=(
+                    f"expected {expected_exact!r} or prefix {allowed_prefix!r}, "
+                    f"found {actual!r}"
+                ),
             )
         )
 

@@ -25,6 +25,8 @@ The lint report checks:
 
 - profile YAML is a mapping
 - `replace` is a keyword-to-value mapping
+- `pseudonymize` maps target keywords to source keywords or structured config
+- `pseudonymize.source`, `prefix`, `length`, and `namespace` have valid shapes
 - `blank` and `regenerate_uids` are keyword lists
 - `date_shift.offset_days` is an integer
 - `date_shift.keywords` are normally date keywords
@@ -40,6 +42,7 @@ JSON output is useful for CI and scripts:
 
 ```bash
 ddpt profile lint dental-research-sharing --json reports/research-profile-lint.json
+ddpt profile lint dental-linkable-research --json reports/linkable-profile-lint.json
 ```
 
 HTML output is useful for method review:

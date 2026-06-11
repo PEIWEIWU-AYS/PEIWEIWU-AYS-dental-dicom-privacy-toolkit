@@ -29,6 +29,7 @@ The matrix reviews whether the repository has evidence for:
 - metadata inspection and risk classification
 - configurable anonymization profiles
 - profile coverage, comparison, and lint checks
+- deterministic linkable pseudonymization for synthetic longitudinal research demos
 - burned-in pixel review and redaction evidence
 - exact DICOM tag operations
 - multi-stage YAML workflow recipes

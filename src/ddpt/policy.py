@@ -179,6 +179,8 @@ def classify_element(element: DataElement) -> tuple[RiskLevel, str, str, str, st
 
 
 def profile_action_for_keyword(profile_summary: dict, keyword: str) -> str:
+    if keyword in profile_summary["pseudonymize_keywords"]:
+        return "pseudonymize"
     if keyword in profile_summary["replace_keywords"]:
         return "replace"
     if keyword in profile_summary["blank_keywords"]:
@@ -199,6 +201,9 @@ def profile_coverage(profile_name_or_path: str) -> ProfileCoverageReport:
             policy.category == "date"
             and policy.recommended_action == "blank"
             and profile_action == "date_shift"
+        ) or (
+            policy.recommended_action == "replace"
+            and profile_action == "pseudonymize"
         )
         items.append(
             ProfileCoverageItem(
@@ -276,6 +281,8 @@ def _comparison_note(policy: TagPolicy, baseline_action: str, candidate_action: 
         return "same action"
     if policy.category == "date" and candidate_action == "date_shift":
         return "candidate preserves relative timing with deterministic date shifting"
+    if candidate_action == "pseudonymize":
+        return "candidate replaces the value with a deterministic pseudonym"
     if candidate_action == "blank":
         return "candidate removes the value by blanking"
     if candidate_action == "replace":

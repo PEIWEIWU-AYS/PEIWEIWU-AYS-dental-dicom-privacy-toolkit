@@ -96,10 +96,17 @@ ddpt policy export \
 ddpt profile lint dental-research-sharing \
   --json demo-run/reports/research-profile-lint.json \
   --html demo-run/reports/research-profile-lint.html
+ddpt profile lint dental-linkable-research \
+  --json demo-run/reports/linkable-profile-lint.json \
+  --html demo-run/reports/linkable-profile-lint.html
 ddpt profile show dental-research-sharing
+ddpt profile show dental-linkable-research
 ddpt profile compare dental-basic dental-research-sharing \
   --json demo-run/reports/profile-comparison.json \
   --html demo-run/reports/profile-comparison.html
+ddpt profile compare dental-basic dental-linkable-research \
+  --json demo-run/reports/linkable-profile-comparison.json \
+  --html demo-run/reports/linkable-profile-comparison.html
 ddpt compare deid \
   demo-run/input/sample.synthetic.dcm \
   demo-run/outputs/sample.anonymized.dcm \
@@ -113,17 +120,24 @@ ddpt anonymize demo-run/input/sample.synthetic.dcm \
   --dry-run \
   --audit demo-run/reports/research-dry-run.json \
   --html demo-run/reports/research-dry-run.html
+ddpt anonymize demo-run/input/sample.synthetic.dcm \
+  --profile dental-linkable-research \
+  --dry-run \
+  --audit demo-run/reports/linkable-dry-run.json \
+  --html demo-run/reports/linkable-dry-run.html
 ```
 
 Expected:
 
 - policy registry JSON, CSV, and HTML files are created
-- profile lint report passes without errors
-- the profile output lists date-shift keywords
+- profile lint reports pass without errors
+- the profile output lists date-shift and pseudonymize keywords
 - the profile comparison report shows date fields changed from `blank` to `date_shift`
+- the linkable profile comparison report shows direct identifiers changed to `pseudonymize`
 - the de-identification comparison report passes and shows direct identifiers changed
 - the share-readiness report passes all sharing gates
 - dry-run audit includes `date_shift` actions for study-level date fields
+- linkable dry-run audit includes `pseudonymize` actions for `PatientName` and `PatientID`
 - no DICOM output is written during dry run
 
 ## 8. Run Release Audit
