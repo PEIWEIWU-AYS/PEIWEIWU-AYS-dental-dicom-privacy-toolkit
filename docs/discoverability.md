@@ -57,4 +57,4 @@ Open-source dental DICOM anonymization, de-identification, encryption, audit rep
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including DICOM metadata inspection, anonymization profiles, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including DICOM directory inventory, PNG previews, metadata inspection, anonymization profiles, encrypted sharing packages, and audit reporting.

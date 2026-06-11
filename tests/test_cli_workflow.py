@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pydicom
 import pytest
+from PIL import Image
 from typer.testing import CliRunner
 
 from ddpt.cli import app
@@ -154,6 +155,9 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "reports" / "inventory.json").exists()
     assert (demo_dir / "reports" / "inventory.csv").exists()
     assert (demo_dir / "reports" / "inventory.html").exists()
+    assert (demo_dir / "reports" / "input-preview.png").exists()
+    assert (demo_dir / "reports" / "anonymized-preview.png").exists()
+    assert (demo_dir / "reports" / "redacted-preview.png").exists()
     assert (demo_dir / "outputs" / "sample.anonymized.dcm").exists()
     assert (demo_dir / "outputs" / "sample.redacted.dcm").exists()
     assert (demo_dir / "reports" / "inspect.html").exists()
@@ -218,6 +222,37 @@ def test_inventory_command_exports_safe_directory_report(tmp_path: Path) -> None
     assert len(rows) == 3
     first_row = next(row for row in rows if row["path"] == "first.dcm")
     assert first_row["patient_name_present"] == "True"
+
+
+def test_preview_command_exports_png_and_metadata(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    preview_png = tmp_path / "reports" / "sample-preview.png"
+    preview_json = tmp_path / "reports" / "sample-preview.json"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    result = runner.invoke(
+        app,
+        [
+            "preview",
+            str(source),
+            "--out",
+            str(preview_png),
+            "--json",
+            str(preview_json),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert preview_png.exists()
+    assert preview_json.exists()
+    report = json.loads(preview_json.read_text())
+    assert report["rows"] == 2
+    assert report["columns"] == 2
+    assert report["rendered_width"] >= report["columns"]
+    assert report["rendered_height"] >= report["rows"]
+    with Image.open(preview_png) as image:
+        assert image.mode == "L"
+        assert image.size == (report["rendered_width"], report["rendered_height"])
 
 
 def test_audit_chain_detects_tampering(tmp_path: Path) -> None:

@@ -4,7 +4,7 @@ Project: Dental DICOM Privacy Toolkit | 牙科 DICOM 脱敏加密共享工具包
 
 ## Positioning
 
-This project will be built as a synthetic-data-only open-source toolkit for dental DICOM privacy workflows. The first usable version should help a clinic, researcher, or developer inspect DICOM metadata, identify privacy risk, apply a documented anonymization profile, generate audit reports, and package anonymized files for encrypted sharing.
+This project will be built as a synthetic-data-only open-source toolkit for dental DICOM privacy workflows. The first usable version should help a clinic, researcher, or developer inventory DICOM folders, preview synthetic images, inspect metadata, identify privacy risk, apply a documented anonymization profile, generate audit reports, and package anonymized files for encrypted sharing.
 
 这个项目不是只做一个脚本，而是做成一个可以展示、可以写论文方法学、可以在 GitHub 上被搜索到的开源工具包。
 
@@ -12,7 +12,7 @@ This project will be built as a synthetic-data-only open-source toolkit for dent
 
 The project should prove one thing clearly:
 
-> Dental imaging files can be handled through a reproducible privacy workflow: inspect, classify risk, anonymize, validate, encrypt, package, audit, and share.
+> Dental imaging files can be handled through a reproducible privacy workflow: inventory, preview, inspect, classify risk, anonymize, validate, redact, encrypt, package, audit, and share.
 
 The first phase should avoid heavy web architecture. A strong command-line tool plus static reports is more credible and easier to test. A web demo can come after the core logic is stable.
 
@@ -20,13 +20,16 @@ The first phase should avoid heavy web architecture. A strong command-line tool 
 
 ```mermaid
 flowchart LR
-    A["Synthetic DICOM input"] --> B["Inspect metadata"]
-    B --> C["Classify privacy risk"]
-    C --> D["Apply dental anonymization profile"]
-    D --> E["Validate output"]
-    E --> F["Generate audit report"]
-    F --> G["Encrypt sharing package"]
-    G --> H["Verify or decrypt package"]
+    A["Synthetic DICOM input"] --> B["Inventory folder"]
+    B --> C["Render PNG preview"]
+    C --> D["Inspect metadata"]
+    D --> E["Classify privacy risk"]
+    E --> F["Apply dental anonymization profile"]
+    F --> G["Validate output"]
+    G --> H["Redact known pixel region"]
+    H --> I["Generate audit report"]
+    I --> J["Encrypt sharing package"]
+    J --> K["Verify or decrypt package"]
 ```
 
 ## User-Facing Commands
@@ -34,6 +37,8 @@ flowchart LR
 The planned CLI name is `ddpt`, short for Dental DICOM Privacy Toolkit.
 
 ```bash
+ddpt inventory examples/synthetic-dicom --json reports/inventory.json --csv reports/inventory.csv --html reports/inventory.html
+ddpt preview examples/synthetic-dicom/sample.dcm --out reports/sample-preview.png --json reports/sample-preview.json
 ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --html reports/inspect.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out outputs/sample.anonymized.dcm --audit reports/audit.json
 ddpt package outputs/ --encrypt --manifest reports/manifest.json --out share/dental-dicom-package.zip
@@ -134,6 +139,8 @@ Small development scripts and reproducible demo commands.
 - `pydantic`: typed report, manifest, and audit data models.
 - `cryptography`: authenticated symmetric encryption for sharing packages.
 - `jinja2`: render static HTML reports.
+- `numpy`: pixel data normalization and redaction support.
+- `pillow`: PNG preview/report assets.
 - `pyyaml`: load anonymization profile configuration.
 
 ### Development Dependencies
@@ -145,8 +152,6 @@ Small development scripts and reproducible demo commands.
 
 ### Later or Optional Dependencies
 
-- `numpy`: pixel data operations if needed later.
-- `pillow`: simple image preview/report assets if needed later.
 - `opencv-python`: possible future pixel redaction experiments, not first-phase default.
 - `fastapi`: possible later API demo.
 - `react` or `next`: possible later web dashboard.
@@ -183,8 +188,10 @@ Planned mature structure:
 dental-dicom-privacy-toolkit/
   src/ddpt/
     cli.py
+    inventory.py
     inspect.py
     anonymize.py
+    preview.py
     profiles.py
     report.py
     package.py

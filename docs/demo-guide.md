@@ -19,6 +19,9 @@ demo-run/
   reports/inventory.json
   reports/inventory.csv
   reports/inventory.html
+  reports/input-preview.png
+  reports/anonymized-preview.png
+  reports/redacted-preview.png
   outputs/sample.anonymized.dcm
   outputs/sample.redacted.dcm
   reports/inspect.json
@@ -50,6 +53,7 @@ The demo should show:
 
 - synthetic DICOM input creation
 - read-only directory inventory before anonymization
+- PNG previews for visual workflow review
 - high-risk metadata detection
 - dental-basic anonymization
 - direct identifier replacement or blanking
@@ -72,6 +76,7 @@ For step-by-step inspection:
 ```bash
 ddpt synthetic demo-run/sample.dcm
 ddpt inventory demo-run --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
+ddpt preview demo-run/sample.dcm --out demo-run/reports/sample-preview.png --json demo-run/reports/sample-preview.json
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
@@ -88,6 +93,8 @@ ddpt inventory demo-run/input \
   --csv demo-run/reports/inventory.csv \
   --html demo-run/reports/inventory.html
 ```
+
+Open `demo-run/reports/demo-summary.html` to see embedded input, anonymized, and pixel-redacted PNG previews.
 
 ## Safety
 

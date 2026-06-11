@@ -11,16 +11,17 @@ Version 0.1 is successful when a new user can:
 1. Install the Python package in a virtual environment.
 2. Generate a synthetic DICOM file.
 3. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
-4. Inspect metadata and receive JSON plus HTML reports.
-5. Apply the `dental-basic` anonymization profile.
-6. Confirm direct identifiers were replaced or removed.
-7. Generate an audit event JSON file.
-8. Validate anonymized output with a pass/fail report.
-9. Apply manual pixel redaction for known burned-in annotation regions.
-10. Package anonymized files with checksums.
-11. Encrypt the package.
-12. Verify or decrypt the package.
-13. Run automated tests locally and in GitHub Actions.
+4. Generate PNG previews for visual workflow review.
+5. Inspect metadata and receive JSON plus HTML reports.
+6. Apply the `dental-basic` anonymization profile.
+7. Confirm direct identifiers were replaced or removed.
+8. Generate an audit event JSON file.
+9. Validate anonymized output with a pass/fail report.
+10. Apply manual pixel redaction for known burned-in annotation regions.
+11. Package anonymized files with checksums.
+12. Encrypt the package.
+13. Verify or decrypt the package.
+14. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -30,6 +31,7 @@ Required:
 
 - synthetic DICOM generation
 - read-only directory inventory
+- PNG previews
 - metadata inspection
 - anonymization
 - validation
@@ -146,6 +148,19 @@ Required outputs:
 - terminal summary
 - JSON report
 - optional HTML report
+
+### `ddpt preview`
+
+Render DICOM pixel data to a PNG preview for workflow review.
+
+Required outputs:
+
+- PNG preview image
+- optional JSON metadata report
+- image dimensions
+- rendered preview dimensions
+- pixel value range
+- warning that previews are not diagnostic images
 
 ### `ddpt anonymize`
 

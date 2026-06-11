@@ -10,6 +10,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Policy Registry](policy-registry.md)
 - [Demo Guide](demo-guide.md)
 - [DICOM Inventory Preflight](inventory.md)
+- [DICOM PNG Preview](preview.md)
 - [Audit Chain](audit-chain.md)
 - [Data Safety](data-safety.md)
 - [Discoverability Profile](discoverability.md)

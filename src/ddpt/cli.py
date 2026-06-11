@@ -16,6 +16,7 @@ from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.policy import profile_coverage
+from ddpt.preview import render_dicom_preview
 from ddpt.profiles import built_in_profiles, describe_profile, write_profile_template
 from ddpt.reports import (
     model_to_dict,
@@ -318,6 +319,22 @@ def redact_pixels_command(
         write_json(audit_json, model_to_dict(audit))
     console.print(f"Pixel-redacted DICOM written to: {output_path}")
     console.print(f"Rectangles redacted: {len(rectangles)}")
+
+
+@app.command()
+def preview(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    output_path: Annotated[Path, typer.Option("--out", help="Output PNG preview path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write preview metadata JSON.")
+    ] = None,
+    max_size: Annotated[int, typer.Option(help="Maximum rendered side length.")] = 512,
+) -> None:
+    report = render_dicom_preview(input_path, output_path, max_size=max_size)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    console.print(f"Preview written to: {output_path}")
+    console.print(f"Rendered size: {report.rendered_width} x {report.rendered_height}")
 
 
 @app.command("package")

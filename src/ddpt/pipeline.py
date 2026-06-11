@@ -8,6 +8,7 @@ from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import DemoPipelineResult
 from ddpt.pixels import parse_rectangle, redact_pixels
+from ddpt.preview import render_dicom_preview
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
@@ -37,6 +38,9 @@ def run_demo_pipeline(
     inventory_json = reports_dir / "inventory.json"
     inventory_csv = reports_dir / "inventory.csv"
     inventory_html = reports_dir / "inventory.html"
+    input_preview_png = reports_dir / "input-preview.png"
+    anonymized_preview_png = reports_dir / "anonymized-preview.png"
+    redacted_preview_png = reports_dir / "redacted-preview.png"
     inspection_json = reports_dir / "inspect.json"
     inspection_html = reports_dir / "inspect.html"
     audit_json = reports_dir / "audit.json"
@@ -52,6 +56,7 @@ def run_demo_pipeline(
     key_path = share_dir / "package.key"
 
     create_synthetic_dicom(input_dicom)
+    render_dicom_preview(input_dicom, input_preview_png)
 
     inventory = build_inventory(input_dir)
     write_json(inventory_json, model_to_dict(inventory))
@@ -63,6 +68,7 @@ def run_demo_pipeline(
     write_inspection_html(inspection_html, inspection)
 
     audit = anonymize_dicom(input_dicom, anonymized_dicom, profile)
+    render_dicom_preview(anonymized_dicom, anonymized_preview_png)
     write_json(audit_json, model_to_dict(audit))
     write_audit_html(audit_html, audit)
 
@@ -70,6 +76,7 @@ def run_demo_pipeline(
     write_json(validation_json, model_to_dict(validation))
 
     redaction = redact_pixels(anonymized_dicom, redacted_dicom, [parse_rectangle(rectangle)])
+    render_dicom_preview(redacted_dicom, redacted_preview_png)
     write_json(redaction_json, model_to_dict(redaction))
 
     manifest = create_package(
@@ -91,6 +98,9 @@ def run_demo_pipeline(
         inventory_json=str(inventory_json),
         inventory_csv=str(inventory_csv),
         inventory_html=str(inventory_html),
+        input_preview_png=str(input_preview_png),
+        anonymized_preview_png=str(anonymized_preview_png),
+        redacted_preview_png=str(redacted_preview_png),
         anonymized_dicom=str(anonymized_dicom),
         redacted_dicom=str(redacted_dicom),
         inspection_json=str(inspection_json),

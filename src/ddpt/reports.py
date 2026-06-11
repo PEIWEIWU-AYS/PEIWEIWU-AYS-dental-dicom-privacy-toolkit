@@ -157,6 +157,16 @@ DEMO_SUMMARY_TEMPLATE = Template(
     th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
     th { background: #f3f6f8; }
     code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    .preview-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+    .preview-grid figure { margin: 0; }
+    .preview-grid img {
+      image-rendering: pixelated;
+      width: 128px;
+      height: 128px;
+      border: 1px solid #d9dee3;
+      background: #f3f6f8;
+    }
+    .preview-grid figcaption { margin-top: 6px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -178,6 +188,15 @@ DEMO_SUMMARY_TEMPLATE = Template(
     <li>Package entries: {{ result.package_entries }}</li>
     <li>Generated at: {{ result.generated_at }}</li>
   </ul>
+  <h2>Pixel Previews</h2>
+  <div class="preview-grid">
+    {% for item in preview_images %}
+    <figure>
+      <img src="{{ item.src }}" alt="{{ item.label }}">
+      <figcaption>{{ item.label }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
   <h2>Artifacts</h2>
   <table>
     <thead><tr><th>Artifact</th><th>Path</th></tr></thead>
@@ -186,6 +205,15 @@ DEMO_SUMMARY_TEMPLATE = Template(
       <tr><td>Inventory JSON</td><td><code>{{ result.inventory_json }}</code></td></tr>
       <tr><td>Inventory CSV</td><td><code>{{ result.inventory_csv }}</code></td></tr>
       <tr><td>Inventory HTML</td><td><code>{{ result.inventory_html }}</code></td></tr>
+      <tr><td>Input preview PNG</td><td><code>{{ result.input_preview_png }}</code></td></tr>
+      <tr>
+        <td>Anonymized preview PNG</td>
+        <td><code>{{ result.anonymized_preview_png }}</code></td>
+      </tr>
+      <tr>
+        <td>Pixel-redacted preview PNG</td>
+        <td><code>{{ result.redacted_preview_png }}</code></td>
+      </tr>
       <tr><td>Anonymized DICOM</td><td><code>{{ result.anonymized_dicom }}</code></td></tr>
       <tr><td>Pixel-redacted DICOM</td><td><code>{{ result.redacted_dicom }}</code></td></tr>
       <tr><td>Inspection HTML</td><td><code>{{ result.inspection_html }}</code></td></tr>
@@ -371,7 +399,15 @@ def write_audit_html(path: Path, audit: AnonymizationAudit) -> None:
 
 
 def write_demo_summary_html(path: Path, result: DemoPipelineResult) -> None:
-    _write_html(path, DEMO_SUMMARY_TEMPLATE.render(result=result))
+    preview_images = [
+        {"label": "Input", "src": Path(result.input_preview_png).name},
+        {"label": "Anonymized", "src": Path(result.anonymized_preview_png).name},
+        {"label": "Pixel-redacted", "src": Path(result.redacted_preview_png).name},
+    ]
+    _write_html(
+        path,
+        DEMO_SUMMARY_TEMPLATE.render(result=result, preview_images=preview_images),
+    )
 
 
 def write_batch_summary_html(path: Path, summary: BatchSummary) -> None:

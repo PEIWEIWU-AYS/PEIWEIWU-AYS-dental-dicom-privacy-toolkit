@@ -109,12 +109,31 @@ class PixelRedactionAudit(BaseModel):
     )
 
 
+class PreviewReport(BaseModel):
+    input_path: str
+    output_path: str
+    rows: int
+    columns: int
+    rendered_width: int
+    rendered_height: int
+    min_pixel_value: float
+    max_pixel_value: float
+    photometric_interpretation: str | None = None
+    note: str
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DemoPipelineResult(BaseModel):
     output_dir: str
     input_dicom: str
     inventory_json: str
     inventory_csv: str
     inventory_html: str
+    input_preview_png: str
+    anonymized_preview_png: str
+    redacted_preview_png: str
     anonymized_dicom: str
     redacted_dicom: str
     inspection_json: str
