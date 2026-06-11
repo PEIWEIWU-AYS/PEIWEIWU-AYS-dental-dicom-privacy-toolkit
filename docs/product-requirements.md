@@ -34,8 +34,9 @@ Version 0.1 is successful when a new user can:
 24. Generate package verification receipts for receiver-side sharing evidence.
 25. Run local REST API workflow demos for integration testing.
 26. Run a release-readiness audit before public GitHub publishing.
-27. Generate a local evidence bundle for MacBook validation and public demonstrations.
-28. Run automated tests locally and in GitHub Actions.
+27. Run a competitor-informed capability matrix that maps features to repository evidence.
+28. Generate a local evidence bundle for MacBook validation and public demonstrations.
+29. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -121,6 +122,20 @@ Required:
 - links to package verification receipts
 - non-zero exit status when any major evidence gate fails
 - documentation that generated evidence output must not be committed by default
+
+### `ddpt capability matrix`
+
+Generate a competitor-informed capability matrix for public project review.
+
+Required:
+
+- cover RSNA DICOM Anonymizer, DicomCleaner, Orthanc, RSNA CTP, DCMTK `dcmodify`, and pydicom anonymization examples
+- map inherited capability areas to local repository evidence
+- show the project's dental-specific differentiators
+- report implemented, partial, and missing capability counts
+- JSON output
+- optional HTML report
+- non-zero exit status when capability evidence is missing
 
 ### `ddpt workflow run`
 
@@ -522,6 +537,7 @@ To call Version 0.1 complete, we need:
 - a generated HTML report from synthetic data
 - a one-command demo pipeline that generates all core artifacts
 - a release-readiness audit command with JSON and HTML outputs
+- a capability matrix command with JSON and HTML outputs
 - a local evidence bundle command with JSON and HTML index outputs
 - README demo commands updated
 - CI passing locally or documented if remote CI is not available

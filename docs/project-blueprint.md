@@ -53,6 +53,7 @@ ddpt verify share/dental-dicom-package.ddpt --key share/package.key --receipt re
 ddpt decrypt share/dental-dicom-package.ddpt --key share/package.key --out restored/
 ddpt api serve demo-run
 ddpt release audit . --json release-audit.json --html release-audit.html
+ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ddpt evidence bundle . --out evidence-run
 ddpt demo demo-run
 ```
@@ -113,6 +114,19 @@ Best for:
 - GitHub project walkthroughs
 - paper method appendices
 - collaborator review without real patient data
+
+### 6. Capability Matrix
+
+The capability matrix turns competitor learning into a repository-evidence
+report. It maps reference tools and inherited capabilities to local files,
+commands, and differentiators.
+
+Best for:
+
+- GitHub project positioning
+- paper background and methods notes
+- explaining why this toolkit is dental-specific
+- checking that public claims are backed by evidence
 
 ## Languages
 

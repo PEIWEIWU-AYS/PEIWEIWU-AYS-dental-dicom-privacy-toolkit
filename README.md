@@ -21,6 +21,7 @@ Core goals:
 - Profile comparison reports for transparent anonymization configuration review
 - Profile lint checks for custom anonymization YAML safety
 - DICOM privacy policy registry export in JSON, CSV, and HTML
+- Competitor-informed capability matrix with repository evidence
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
 - Pixel review reports with original, overlay, and redacted PNG previews
@@ -47,6 +48,7 @@ python -m pip install -e ".[dev]"
 ddpt doctor
 ddpt safety scan .
 ddpt release audit . --json release-audit.json --html release-audit.html
+ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ddpt evidence bundle . --out evidence-run
 ddpt demo demo-run
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
@@ -89,6 +91,7 @@ See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for det
 See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile configuration checks.
 See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
+See [docs/capability-matrix.md](docs/capability-matrix.md) for competitor-informed capability evidence.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
@@ -149,7 +152,8 @@ synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
 research-sharing date shifting, release-readiness checks, and local evidence
 bundle generation, package verification receipts, profile comparison reports,
-profile lint checks, policy registry exports, and pixel review reports.
+profile lint checks, policy registry exports, capability matrix reports, and
+pixel review reports.
 
 ## License
 

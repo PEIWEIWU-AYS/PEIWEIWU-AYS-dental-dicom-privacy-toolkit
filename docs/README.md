@@ -6,6 +6,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 
 - [Project Blueprint](project-blueprint.md)
 - [Competitor Analysis](competitor-analysis.md)
+- [Capability Matrix](capability-matrix.md)
 - [Product Requirements](product-requirements.md)
 - [Policy Registry](policy-registry.md)
 - [Demo Guide](demo-guide.md)

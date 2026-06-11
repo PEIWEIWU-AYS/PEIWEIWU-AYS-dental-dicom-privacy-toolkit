@@ -12,6 +12,7 @@ from ddpt.anonymize import anonymize_dicom, plan_anonymization_actions
 from ddpt.api import create_api_app
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
+from ddpt.capability import build_capability_matrix
 from ddpt.doctor import run_doctor
 from ddpt.evidence import run_evidence_bundle
 from ddpt.inspection import inspect_dicom
@@ -41,6 +42,7 @@ from ddpt.release import run_release_audit
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
+    write_capability_matrix_html,
     write_inspection_html,
     write_inventory_html,
     write_package_receipt_html,
@@ -70,6 +72,7 @@ api_app = typer.Typer(help="Run local REST API demo.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
 evidence_app = typer.Typer(help="Build local demonstration evidence bundles.")
+capability_app = typer.Typer(help="Audit competitor-informed project capabilities.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(audit_app, name="audit")
@@ -80,6 +83,7 @@ app.add_typer(api_app, name="api")
 app.add_typer(workflow_app, name="workflow")
 app.add_typer(release_app, name="release")
 app.add_typer(evidence_app, name="evidence")
+app.add_typer(capability_app, name="capability")
 console = Console()
 
 
@@ -334,6 +338,45 @@ def evidence_bundle(
     console.print(f"Summary HTML: {Path(result.output_dir) / 'reports' / 'evidence-bundle.html'}")
     console.print(f"Overall: {'PASS' if result.passed else 'FAIL'}")
     if not result.passed:
+        raise typer.Exit(1)
+
+
+@capability_app.command("matrix")
+def capability_matrix(
+    root: Annotated[
+        Path, typer.Option("--root", help="Repository root to audit.")
+    ] = Path("."),
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON capability matrix.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML capability matrix.")
+    ] = None,
+) -> None:
+    report = build_capability_matrix(root)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_capability_matrix_html(html_output, report)
+
+    table = Table(title="Competitor-Informed Capability Matrix")
+    table.add_column("Status")
+    table.add_column("Capability")
+    table.add_column("Learned From")
+    table.add_column("Differentiator")
+    for item in report.items:
+        table.add_row(
+            item.status,
+            item.capability,
+            ", ".join(item.source_tools),
+            item.differentiator,
+        )
+    console.print(table)
+    console.print(f"Implemented: {report.implemented_items}/{report.total_items}")
+    console.print(f"Partial: {report.partial_items}")
+    console.print(f"Missing: {report.missing_items}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
         raise typer.Exit(1)
 
 

@@ -735,6 +735,45 @@ def test_release_audit_fails_incomplete_repository(tmp_path: Path) -> None:
     assert "readme-discoverability" in failed
 
 
+def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) -> None:
+    matrix_json = tmp_path / "reports" / "capability-matrix.json"
+    matrix_html = tmp_path / "reports" / "capability-matrix.html"
+
+    result = runner.invoke(
+        app,
+        [
+            "capability",
+            "matrix",
+            "--root",
+            ".",
+            "--json",
+            str(matrix_json),
+            "--html",
+            str(matrix_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert matrix_json.exists()
+    assert matrix_html.exists()
+    report = json.loads(matrix_json.read_text())
+    assert report["passed"] is True
+    assert report["implemented_items"] == report["total_items"]
+    assert report["partial_items"] == 0
+    assert report["missing_items"] == 0
+    reference_names = {item["name"] for item in report["references"]}
+    assert "RSNA DICOM Anonymizer" in reference_names
+    assert "PixelMed DicomCleaner" in reference_names
+    assert "Orthanc" in reference_names
+    capability_ids = {item["id"] for item in report["items"]}
+    assert "pixel-review-redaction" in capability_ids
+    assert "pipeline-recipes" in capability_ids
+    assert "secure-sharing" in capability_ids
+    html = matrix_html.read_text()
+    assert "Dental DICOM Capability Matrix" in html
+    assert "repository evidence" in html
+
+
 def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> None:
     output_dir = tmp_path / "evidence"
 
@@ -746,6 +785,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert evidence_json.exists()
     assert evidence_html.exists()
     assert (output_dir / "reports" / "release-audit.html").exists()
+    assert (output_dir / "reports" / "capability-matrix.html").exists()
     assert (output_dir / "reports" / "policy-registry.json").exists()
     assert (output_dir / "reports" / "policy-registry.csv").exists()
     assert (output_dir / "reports" / "policy-registry.html").exists()
@@ -760,6 +800,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert report["passed"] is True
     artifact_paths = {item["path"] for item in report["artifacts"]}
     assert "reports/release-audit.html" in artifact_paths
+    assert "reports/capability-matrix.html" in artifact_paths
     assert "reports/policy-registry.html" in artifact_paths
     assert "reports/profile-lint-dental-basic.html" in artifact_paths
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
@@ -769,6 +810,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "demo-run/reports/package-receipt.html" in artifact_paths
     html = evidence_html.read_text()
     assert "Dental DICOM Evidence Bundle" in html
+    assert "Capability matrix HTML" in html
     assert "Release audit HTML" in html
 
 

@@ -128,7 +128,22 @@ Expected:
 - JSON and HTML release-readiness reports are created
 - README, docs, workflow recipe, CI, safety scan, and profile coverage checks pass
 
-## 9. Generate Evidence Bundle
+## 9. Run Capability Matrix
+
+```bash
+ddpt capability matrix \
+  --root . \
+  --json capability-matrix.json \
+  --html capability-matrix.html
+```
+
+Expected:
+
+- overall capability matrix status is `PASS`
+- every capability item is `implemented`
+- `capability-matrix.html` shows reference tools, project evidence, and differentiators
+
+## 10. Generate Evidence Bundle
 
 ```bash
 ddpt evidence bundle . --out evidence-run
@@ -138,18 +153,20 @@ Expected:
 
 - overall evidence bundle status is `PASS`
 - `evidence-run/reports/evidence-bundle.html` exists
+- `evidence-run/reports/capability-matrix.html` exists
 - `evidence-run/reports/release-audit.html` exists
 - `evidence-run/reports/workflow-run.html` exists
 - `evidence-run/demo-run/reports/demo-summary.html` exists
 - `evidence-run/demo-run/reports/pixel-review.html` exists
 - `evidence-run/demo-run/reports/package-receipt.html` exists
 
-## 10. Open Human-Readable Outputs
+## 11. Open Human-Readable Outputs
 
 Open these files locally:
 
 ```text
 release-audit.html
+capability-matrix.html
 evidence-run/reports/evidence-bundle.html
 demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
@@ -159,7 +176,7 @@ demo-run/reports/audit.html
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
 
-## 11. Optional Local API Check
+## 12. Optional Local API Check
 
 Run this as a separate long-running command:
 

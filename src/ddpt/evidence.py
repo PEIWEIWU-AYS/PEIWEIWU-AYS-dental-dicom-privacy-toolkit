@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ddpt.capability import build_capability_matrix
 from ddpt.doctor import run_doctor
 from ddpt.models import EvidenceArtifact, EvidenceBundleResult
 from ddpt.pipeline import run_demo_pipeline
@@ -10,6 +11,7 @@ from ddpt.profiles import lint_profile
 from ddpt.release import run_release_audit
 from ddpt.reports import (
     model_to_dict,
+    write_capability_matrix_html,
     write_evidence_bundle_html,
     write_policy_registry_html,
     write_profile_lint_html,
@@ -34,6 +36,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     safety_report = scan_repository_safety(repository_root)
     release_report = run_release_audit(repository_root)
     policy_report = policy_registry_report()
+    capability_report = build_capability_matrix(repository_root)
     basic_lint_report = lint_profile("dental-basic")
     research_lint_report = lint_profile("dental-research-sharing")
 
@@ -44,6 +47,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     policy_json = reports_dir / "policy-registry.json"
     policy_csv = reports_dir / "policy-registry.csv"
     policy_html = reports_dir / "policy-registry.html"
+    capability_json = reports_dir / "capability-matrix.json"
+    capability_html = reports_dir / "capability-matrix.html"
     basic_lint_json = reports_dir / "profile-lint-dental-basic.json"
     basic_lint_html = reports_dir / "profile-lint-dental-basic.html"
     research_lint_json = reports_dir / "profile-lint-dental-research-sharing.json"
@@ -55,6 +60,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_json(policy_json, model_to_dict(policy_report))
     write_policy_registry_csv(policy_csv, policy_report)
     write_policy_registry_html(policy_html, policy_report)
+    write_json(capability_json, model_to_dict(capability_report))
+    write_capability_matrix_html(capability_html, capability_report)
     write_json(basic_lint_json, model_to_dict(basic_lint_report))
     write_profile_lint_html(basic_lint_html, basic_lint_report)
     write_json(research_lint_json, model_to_dict(research_lint_report))
@@ -108,6 +115,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "Policy registry HTML",
             "policy",
             "Human-readable DICOM privacy policy registry.",
+        ),
+        _artifact(
+            output_dir,
+            capability_html,
+            "Capability matrix HTML",
+            "strategy",
+            "Competitor-informed capability and evidence report.",
         ),
         _artifact(
             output_dir,
@@ -195,6 +209,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             doctor_report.passed
             and safety_report.passed
             and release_report.passed
+            and capability_report.passed
             and basic_lint_report.passed
             and research_lint_report.passed
             and demo_result.validation_passed

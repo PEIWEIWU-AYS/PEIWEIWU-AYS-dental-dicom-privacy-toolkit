@@ -263,6 +263,40 @@ class EvidenceBundleResult(BaseModel):
     )
 
 
+class CompetitorReference(BaseModel):
+    name: str
+    category: str
+    url: str
+    strengths: list[str]
+    gaps_for_dental_toolkit: list[str]
+
+
+class CapabilityMatrixItem(BaseModel):
+    id: str
+    capability: str
+    source_tools: list[str]
+    status: Literal["implemented", "partial", "missing"]
+    evidence: list[str]
+    missing_evidence: list[str] = Field(default_factory=list)
+    command: str | None = None
+    differentiator: str
+    note: str
+
+
+class CapabilityMatrixReport(BaseModel):
+    root_dir: str
+    passed: bool
+    implemented_items: int
+    partial_items: int
+    missing_items: int
+    total_items: int
+    references: list[CompetitorReference]
+    items: list[CapabilityMatrixItem]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DicomTagRecord(BaseModel):
     tag: str
     keyword: str

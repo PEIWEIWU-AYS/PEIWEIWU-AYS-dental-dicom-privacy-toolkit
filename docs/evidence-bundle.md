@@ -22,6 +22,7 @@ The bundle includes:
 - environment doctor JSON
 - public repository safety scan JSON
 - release-readiness audit JSON and HTML
+- competitor-informed capability matrix JSON and HTML
 - policy registry JSON, CSV, and HTML
 - built-in profile lint JSON and HTML
 - one-command synthetic demo output
@@ -42,6 +43,8 @@ evidence-run/
     safety-scan.json
     release-audit.json
     release-audit.html
+    capability-matrix.json
+    capability-matrix.html
     policy-registry.json
     policy-registry.csv
     policy-registry.html

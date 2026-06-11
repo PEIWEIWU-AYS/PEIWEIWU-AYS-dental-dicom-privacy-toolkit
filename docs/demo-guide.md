@@ -138,6 +138,7 @@ ddpt anonymize demo-run/input/sample.synthetic.dcm \
 For a complete local evidence bundle:
 
 ```bash
+ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ddpt evidence bundle . --out evidence-run
 open evidence-run/reports/evidence-bundle.html
 ```

@@ -32,7 +32,8 @@ release-readiness check fails.
   Orthanc, RSNA CTP, DCMTK, and pydicom
 - core implementation modules
 - Python package metadata and dependencies
-- GitHub Actions gates for doctor, release audit, safety scan, lint, and tests
+- GitHub Actions gates for doctor, release audit, capability matrix, safety scan,
+  lint, and tests
 - YAML workflow recipe coverage for the complete synthetic privacy pipeline
 - `dental-basic` profile coverage for high-risk and medium-risk policy items
 - public repository safety scan results
@@ -68,6 +69,7 @@ Run this before pushing a major milestone:
 ddpt doctor
 ddpt safety scan .
 ddpt release audit . --json release-audit.json --html release-audit.html
+ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ruff check .
 pytest -q
 ```

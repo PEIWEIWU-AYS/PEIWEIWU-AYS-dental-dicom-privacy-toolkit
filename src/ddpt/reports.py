@@ -8,6 +8,7 @@ from jinja2 import Template
 from ddpt.models import (
     AnonymizationAudit,
     BatchSummary,
+    CapabilityMatrixReport,
     DemoPipelineResult,
     EvidenceBundleResult,
     InspectionReport,
@@ -623,6 +624,122 @@ EVIDENCE_BUNDLE_TEMPLATE = Template(
 """
 )
 
+CAPABILITY_MATRIX_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Capability Matrix</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .implemented { color: #1f6f43; font-weight: 700; }
+    .partial { color: #8a5a00; font-weight: 700; }
+    .missing { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    a { color: #0b65c2; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Capability Matrix</h1>
+  <p class="warning">
+    Competitor-informed capability audit for an open-source dental DICOM privacy toolkit.
+    This report maps public project claims to repository evidence. It is not clinical,
+    legal, regulatory, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Repository root: <code>{{ report.root_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "implemented" if report.passed else "missing" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Implemented: {{ report.implemented_items }} / {{ report.total_items }}</li>
+    <li>Partial: {{ report.partial_items }}</li>
+    <li>Missing: {{ report.missing_items }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Reference Tools</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Tool</th>
+        <th>Category</th>
+        <th>Strengths</th>
+        <th>Gaps for This Toolkit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tool in report.references %}
+      <tr>
+        <td><a href="{{ tool.url }}">{{ tool.name }}</a></td>
+        <td>{{ tool.category }}</td>
+        <td>
+          {% for item in tool.strengths %}
+          {{ item }}{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% for item in tool.gaps_for_dental_toolkit %}
+          {{ item }}{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Capability Evidence</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Capability</th>
+        <th>Learned From</th>
+        <th>Differentiator</th>
+        <th>Evidence</th>
+        <th>Missing Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.items %}
+      <tr>
+        <td class="{{ item.status }}">{{ item.status }}</td>
+        <td>{{ item.capability }}<br><small>{{ item.note }}</small></td>
+        <td>
+          {% for tool in item.source_tools %}
+          {{ tool }}{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ item.differentiator }}</td>
+        <td>
+          {% for evidence in item.evidence %}
+          <code>{{ evidence }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% for evidence in item.missing_evidence %}
+          <code>{{ evidence }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 PACKAGE_RECEIPT_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -1045,6 +1162,10 @@ def write_release_audit_html(path: Path, report: ReleaseAuditReport) -> None:
 
 def write_evidence_bundle_html(path: Path, result: EvidenceBundleResult) -> None:
     _write_html(path, EVIDENCE_BUNDLE_TEMPLATE.render(result=result))
+
+
+def write_capability_matrix_html(path: Path, report: CapabilityMatrixReport) -> None:
+    _write_html(path, CAPABILITY_MATRIX_TEMPLATE.render(report=report))
 
 
 def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) -> None:

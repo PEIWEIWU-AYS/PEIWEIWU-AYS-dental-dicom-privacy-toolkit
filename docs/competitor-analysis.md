@@ -56,6 +56,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - bilingual English/Chinese discoverability
 - CLI that works cleanly in CI
 - static HTML reports for non-programmers
+- competitor-informed capability matrix that maps claims to repository evidence
 - PNG previews for GitHub-friendly visual review
 - pixel review reports with original, overlay, and redacted previews
 - read-only directory inventory before anonymization
@@ -125,6 +126,7 @@ The project should add:
 - local REST API endpoints for inventory, inspection, anonymization, validation, and preview
 - static HTML reports
 - release-readiness audit with JSON and HTML output before public GitHub milestones
+- capability matrix with JSON and HTML output for competitor-informed project review
 - evidence bundle with JSON and HTML index for MacBook validation and public demonstrations
 - encrypted sharing package with manifest and checksums
 - package verification receipts with JSON and HTML outputs
