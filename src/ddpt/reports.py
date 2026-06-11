@@ -16,6 +16,7 @@ from ddpt.models import (
     PixelReviewReport,
     PolicyRegistryReport,
     ProfileComparisonReport,
+    ProfileLintReport,
     ReleaseAuditReport,
     WorkflowRunReport,
 )
@@ -840,6 +841,80 @@ POLICY_REGISTRY_TEMPLATE = Template(
 """
 )
 
+PROFILE_LINT_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Profile Lint</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .error { color: #b00020; font-weight: 700; }
+    .warn { color: #8a5a00; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Profile Lint</h1>
+  <p class="warning">
+    Configuration lint report for anonymization profiles. Passing this lint check
+    does not certify de-identification or legal compliance.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Profile: {{ report.profile }}</li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "error" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Errors: {{ report.error_count }}</li>
+    <li>Warnings: {{ report.warning_count }}</li>
+    <li>Policy coverage: {{ report.covered_items }} / {{ report.total_policy_items }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Findings</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Severity</th>
+        <th>Rule</th>
+        <th>Keyword</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.findings %}
+      <tr>
+        <td class="{{ "error" if item.severity == "error" else "warn" }}">
+          {{ item.severity }}
+        </td>
+        <td>{{ item.rule_id }}</td>
+        <td>{{ item.keyword or "" }}</td>
+        <td>{{ item.message }}</td>
+      </tr>
+      {% endfor %}
+      {% if not report.findings %}
+      <tr><td colspan="4" class="ok">No findings.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 PIXEL_REVIEW_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -978,6 +1053,10 @@ def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) 
 
 def write_profile_comparison_html(path: Path, report: ProfileComparisonReport) -> None:
     _write_html(path, PROFILE_COMPARISON_TEMPLATE.render(report=report))
+
+
+def write_profile_lint_html(path: Path, report: ProfileLintReport) -> None:
+    _write_html(path, PROFILE_LINT_TEMPLATE.render(report=report))
 
 
 def write_policy_registry_html(path: Path, report: PolicyRegistryReport) -> None:

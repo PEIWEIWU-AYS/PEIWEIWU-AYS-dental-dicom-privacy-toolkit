@@ -4,6 +4,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from pydicom.datadict import tag_for_keyword
+
+from ddpt.models import ProfileLintFinding, ProfileLintReport
 
 DEFAULT_PROFILE = {
     "name": "dental-basic",
@@ -143,3 +146,268 @@ def describe_profile(name_or_path: str) -> dict[str, Any]:
         "remove_private_tags": bool(profile.get("remove_private_tags", True)),
         "raw": profile,
     }
+
+
+def lint_profile(name_or_path: str) -> ProfileLintReport:
+    from ddpt.policy import profile_coverage
+
+    findings: list[ProfileLintFinding] = []
+    try:
+        profile = load_profile(name_or_path)
+    except Exception as exc:
+        finding = ProfileLintFinding(
+            severity="error",
+            rule_id="profile-load-error",
+            message=str(exc),
+        )
+        return ProfileLintReport(
+            profile=name_or_path,
+            passed=False,
+            error_count=1,
+            warning_count=0,
+            covered_items=0,
+            total_policy_items=0,
+            high_risk_uncovered=[],
+            medium_risk_uncovered=[],
+            findings=[finding],
+        )
+
+    profile_name = (
+        str(profile.get("name", name_or_path)) if isinstance(profile, dict) else name_or_path
+    )
+    if not isinstance(profile, dict):
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="profile-shape",
+                message="Profile must be a YAML mapping.",
+            )
+        )
+        return _profile_lint_report(profile_name, findings, None)
+
+    _lint_replace(profile, findings)
+    _lint_keyword_list(profile, "blank", findings)
+    _lint_keyword_list(profile, "regenerate_uids", findings)
+    _lint_date_shift(profile, findings)
+    _lint_remove_private_tags(profile, findings)
+    _lint_action_conflicts(profile, findings)
+
+    coverage = None
+    try:
+        coverage = profile_coverage(name_or_path)
+        for keyword in coverage.high_risk_uncovered:
+            findings.append(
+                ProfileLintFinding(
+                    severity="error",
+                    rule_id="high-risk-uncovered",
+                    keyword=keyword,
+                    message=f"High-risk policy item is not covered: {keyword}",
+                )
+            )
+        for keyword in coverage.medium_risk_uncovered:
+            findings.append(
+                ProfileLintFinding(
+                    severity="warning",
+                    rule_id="medium-risk-uncovered",
+                    keyword=keyword,
+                    message=f"Medium-risk policy item is not covered: {keyword}",
+                )
+            )
+    except Exception as exc:
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="coverage-error",
+                message=str(exc),
+            )
+        )
+
+    return _profile_lint_report(profile_name, findings, coverage)
+
+
+def _lint_replace(profile: dict[str, Any], findings: list[ProfileLintFinding]) -> None:
+    replace = profile.get("replace", {})
+    if not isinstance(replace, dict):
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="replace-shape",
+                message="replace must be a mapping of DICOM keyword to replacement value.",
+            )
+        )
+        return
+    for keyword, value in replace.items():
+        _lint_keyword(keyword, findings)
+        if value is None:
+            findings.append(
+                ProfileLintFinding(
+                    severity="error",
+                    rule_id="replace-empty",
+                    keyword=str(keyword),
+                    message="Replacement value must not be null.",
+                )
+            )
+        if isinstance(value, str) and len(value) > 64:
+            findings.append(
+                ProfileLintFinding(
+                    severity="warning",
+                    rule_id="replace-long-value",
+                    keyword=str(keyword),
+                    message="Replacement value is longer than 64 characters.",
+                )
+            )
+
+
+def _lint_keyword_list(
+    profile: dict[str, Any],
+    field: str,
+    findings: list[ProfileLintFinding],
+) -> None:
+    values = profile.get(field, [])
+    if not isinstance(values, list):
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id=f"{field}-shape",
+                message=f"{field} must be a list of DICOM keywords.",
+            )
+        )
+        return
+    for keyword in values:
+        _lint_keyword(keyword, findings)
+
+
+def _lint_date_shift(profile: dict[str, Any], findings: list[ProfileLintFinding]) -> None:
+    config = profile.get("date_shift")
+    if config is None or config == "":
+        return
+    if not isinstance(config, dict):
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="date-shift-shape",
+                message="date_shift must be a mapping with offset_days and keywords.",
+            )
+        )
+        return
+    offset = config.get("offset_days")
+    if not isinstance(offset, int):
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="date-shift-offset",
+                message="date_shift.offset_days must be an integer.",
+            )
+        )
+    keywords = config.get("keywords", [])
+    if not isinstance(keywords, list):
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="date-shift-keywords",
+                message="date_shift.keywords must be a list of DICOM date keywords.",
+            )
+        )
+        return
+    for keyword in keywords:
+        _lint_keyword(keyword, findings)
+        if isinstance(keyword, str) and not keyword.endswith("Date"):
+            findings.append(
+                ProfileLintFinding(
+                    severity="warning",
+                    rule_id="date-shift-non-date-keyword",
+                    keyword=keyword,
+                    message="date_shift should normally be used with DICOM date keywords.",
+                )
+            )
+
+
+def _lint_remove_private_tags(
+    profile: dict[str, Any],
+    findings: list[ProfileLintFinding],
+) -> None:
+    value = profile.get("remove_private_tags", True)
+    if not isinstance(value, bool):
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="remove-private-tags-shape",
+                message="remove_private_tags must be true or false.",
+            )
+        )
+    elif value is False:
+        findings.append(
+            ProfileLintFinding(
+                severity="warning",
+                rule_id="private-tags-retained",
+                message="Private tags are retained; review vendor-specific identifying risk.",
+            )
+        )
+
+
+def _lint_action_conflicts(
+    profile: dict[str, Any],
+    findings: list[ProfileLintFinding],
+) -> None:
+    action_map: dict[str, list[str]] = {}
+    replace = profile.get("replace", {}) or {}
+    if isinstance(replace, dict):
+        for keyword in replace.keys():
+            action_map.setdefault(str(keyword), []).append("replace")
+    for field in ("blank", "regenerate_uids"):
+        values = profile.get(field, []) or []
+        if isinstance(values, list):
+            for keyword in values:
+                action_map.setdefault(str(keyword), []).append(field)
+    date_shift = profile.get("date_shift", {}) or {}
+    if isinstance(date_shift, dict) and isinstance(date_shift.get("keywords", []), list):
+        for keyword in date_shift.get("keywords", []) or []:
+            action_map.setdefault(str(keyword), []).append("date_shift")
+
+    for keyword, actions in action_map.items():
+        if len(actions) > 1:
+            findings.append(
+                ProfileLintFinding(
+                    severity="error",
+                    rule_id="conflicting-actions",
+                    keyword=keyword,
+                    message=f"Keyword appears in multiple actions: {', '.join(actions)}",
+                )
+            )
+
+
+def _lint_keyword(keyword: Any, findings: list[ProfileLintFinding]) -> None:
+    if not isinstance(keyword, str) or not keyword:
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="keyword-shape",
+                message=f"Invalid DICOM keyword: {keyword!r}",
+            )
+        )
+        return
+    if tag_for_keyword(keyword) is None:
+        findings.append(
+            ProfileLintFinding(
+                severity="error",
+                rule_id="unknown-keyword",
+                keyword=keyword,
+                message=f"Unknown DICOM keyword: {keyword}",
+            )
+        )
+
+
+def _profile_lint_report(profile_name: str, findings, coverage) -> ProfileLintReport:
+    error_count = sum(1 for finding in findings if finding.severity == "error")
+    warning_count = sum(1 for finding in findings if finding.severity == "warning")
+    return ProfileLintReport(
+        profile=profile_name,
+        passed=error_count == 0,
+        error_count=error_count,
+        warning_count=warning_count,
+        covered_items=coverage.covered_items if coverage else 0,
+        total_policy_items=coverage.total_items if coverage else 0,
+        high_risk_uncovered=coverage.high_risk_uncovered if coverage else [],
+        medium_risk_uncovered=coverage.medium_risk_uncovered if coverage else [],
+        findings=findings,
+    )

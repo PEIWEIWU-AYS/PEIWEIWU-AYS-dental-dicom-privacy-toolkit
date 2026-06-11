@@ -20,6 +20,7 @@
 - Dental imaging profile
 - Research-sharing profile with deterministic date shifting
 - Configurable tag handling
+- Profile lint checks
 - Validation report
 
 ## Milestone 4: Secure Sharing

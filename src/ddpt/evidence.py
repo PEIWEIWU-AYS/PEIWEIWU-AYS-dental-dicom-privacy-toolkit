@@ -6,11 +6,13 @@ from ddpt.doctor import run_doctor
 from ddpt.models import EvidenceArtifact, EvidenceBundleResult
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.policy import policy_registry_report, write_policy_registry_csv
+from ddpt.profiles import lint_profile
 from ddpt.release import run_release_audit
 from ddpt.reports import (
     model_to_dict,
     write_evidence_bundle_html,
     write_policy_registry_html,
+    write_profile_lint_html,
     write_release_audit_html,
     write_workflow_html,
 )
@@ -32,6 +34,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     safety_report = scan_repository_safety(repository_root)
     release_report = run_release_audit(repository_root)
     policy_report = policy_registry_report()
+    basic_lint_report = lint_profile("dental-basic")
+    research_lint_report = lint_profile("dental-research-sharing")
 
     doctor_json = reports_dir / "doctor.json"
     safety_json = reports_dir / "safety-scan.json"
@@ -40,6 +44,10 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     policy_json = reports_dir / "policy-registry.json"
     policy_csv = reports_dir / "policy-registry.csv"
     policy_html = reports_dir / "policy-registry.html"
+    basic_lint_json = reports_dir / "profile-lint-dental-basic.json"
+    basic_lint_html = reports_dir / "profile-lint-dental-basic.html"
+    research_lint_json = reports_dir / "profile-lint-dental-research-sharing.json"
+    research_lint_html = reports_dir / "profile-lint-dental-research-sharing.html"
     write_json(doctor_json, model_to_dict(doctor_report))
     write_json(safety_json, model_to_dict(safety_report))
     write_json(release_json, model_to_dict(release_report))
@@ -47,6 +55,10 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_json(policy_json, model_to_dict(policy_report))
     write_policy_registry_csv(policy_csv, policy_report)
     write_policy_registry_html(policy_html, policy_report)
+    write_json(basic_lint_json, model_to_dict(basic_lint_report))
+    write_profile_lint_html(basic_lint_html, basic_lint_report)
+    write_json(research_lint_json, model_to_dict(research_lint_report))
+    write_profile_lint_html(research_lint_html, research_lint_report)
 
     demo_result = run_demo_pipeline(demo_dir)
 
@@ -96,6 +108,20 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "Policy registry HTML",
             "policy",
             "Human-readable DICOM privacy policy registry.",
+        ),
+        _artifact(
+            output_dir,
+            basic_lint_html,
+            "Basic profile lint HTML",
+            "profile",
+            "Configuration lint report for dental-basic.",
+        ),
+        _artifact(
+            output_dir,
+            research_lint_html,
+            "Research profile lint HTML",
+            "profile",
+            "Configuration lint report for dental-research-sharing.",
         ),
         _artifact(
             output_dir,
@@ -169,6 +195,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             doctor_report.passed
             and safety_report.passed
             and release_report.passed
+            and basic_lint_report.passed
+            and research_lint_report.passed
             and demo_result.validation_passed
             and demo_result.audit_chain_passed
             and workflow_report.passed

@@ -26,7 +26,12 @@ from ddpt.policy import (
     write_policy_registry_csv,
 )
 from ddpt.preview import render_dicom_preview
-from ddpt.profiles import built_in_profiles, describe_profile, write_profile_template
+from ddpt.profiles import (
+    built_in_profiles,
+    describe_profile,
+    lint_profile,
+    write_profile_template,
+)
 from ddpt.redaction_plan import (
     load_redaction_plan,
     rectangles_from_plan,
@@ -42,6 +47,7 @@ from ddpt.reports import (
     write_pixel_review_html,
     write_policy_registry_html,
     write_profile_comparison_html,
+    write_profile_lint_html,
     write_release_audit_html,
     write_workflow_html,
 )
@@ -513,6 +519,43 @@ def profile_coverage_command(
     console.print(f"Covered: {report.covered_items}/{report.total_items}")
     console.print(f"High-risk uncovered: {len(report.high_risk_uncovered)}")
     console.print(f"Medium-risk uncovered: {len(report.medium_risk_uncovered)}")
+
+
+@profile_app.command("lint")
+def profile_lint_command(
+    profile: Annotated[str, typer.Argument(help="Profile name or YAML path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON lint report.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML lint report.")
+    ] = None,
+) -> None:
+    report = lint_profile(profile)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_profile_lint_html(html_output, report)
+
+    table = Table(title=f"Profile Lint: {report.profile}")
+    table.add_column("Severity")
+    table.add_column("Rule")
+    table.add_column("Keyword")
+    table.add_column("Message")
+    for finding in report.findings:
+        table.add_row(
+            finding.severity,
+            finding.rule_id,
+            finding.keyword or "",
+            finding.message,
+        )
+    console.print(table)
+    console.print(f"Errors: {report.error_count}")
+    console.print(f"Warnings: {report.warning_count}")
+    console.print(f"Coverage: {report.covered_items}/{report.total_policy_items}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
 
 
 @profile_app.command("compare")

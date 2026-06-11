@@ -489,6 +489,28 @@ class ProfileComparisonReport(BaseModel):
     )
 
 
+class ProfileLintFinding(BaseModel):
+    severity: Literal["error", "warning"]
+    rule_id: str
+    keyword: str | None = None
+    message: str
+
+
+class ProfileLintReport(BaseModel):
+    profile: str
+    passed: bool
+    error_count: int
+    warning_count: int
+    covered_items: int
+    total_policy_items: int
+    high_risk_uncovered: list[str]
+    medium_risk_uncovered: list[str]
+    findings: list[ProfileLintFinding]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class AuditChainEntry(BaseModel):
     path: str
     sha256: str

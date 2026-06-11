@@ -43,6 +43,7 @@ ddpt preview examples/synthetic-dicom/sample.dcm --out reports/sample-preview.pn
 ddpt tag dump examples/synthetic-dicom/sample.dcm --json reports/tag-dump.json
 ddpt policy export --json reports/policy-registry.json --csv reports/policy-registry.csv --html reports/policy-registry.html
 ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --html reports/inspect.html
+ddpt profile lint dental-research-sharing --json reports/research-profile-lint.json --html reports/research-profile-lint.html
 ddpt profile compare dental-basic dental-research-sharing --json reports/profile-comparison.json --html reports/profile-comparison.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out outputs/sample.anonymized.dcm --audit reports/audit.json
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-research-sharing --dry-run --audit reports/research-dry-run.json

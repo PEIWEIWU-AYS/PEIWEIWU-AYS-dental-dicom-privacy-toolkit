@@ -63,6 +63,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - HTML workflow reports for staged pipeline review
 - anonymization dry-run previews before writing DICOM files
 - deterministic date shifting for research-sharing profiles
+- profile lint checks for custom YAML configuration quality
 - profile comparison reports for transparent configuration review
 - exportable DICOM privacy policy registry in JSON, CSV, and HTML
 - reusable YAML pixel redaction plans for known burned-in regions
@@ -114,6 +115,7 @@ The project should add:
 - human-readable HTML report for workflow execution
 - pre-write anonymization dry-run reports for safer profile review
 - research-sharing profile with deterministic date shifting and audited date-shift actions
+- profile lint JSON and HTML reports for custom configuration review
 - profile comparison JSON and HTML reports for explaining configuration differences
 - policy registry export for transparent DICOM keyword risk/action rationale
 - PNG preview generation for before/after workflow review

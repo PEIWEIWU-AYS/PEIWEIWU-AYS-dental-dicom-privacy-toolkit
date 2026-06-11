@@ -23,6 +23,7 @@ The bundle includes:
 - public repository safety scan JSON
 - release-readiness audit JSON and HTML
 - policy registry JSON, CSV, and HTML
+- built-in profile lint JSON and HTML
 - one-command synthetic demo output
 - demo summary HTML with synthetic PNG previews
 - pixel review HTML with original, overlay, and redacted previews
@@ -44,6 +45,8 @@ evidence-run/
     policy-registry.json
     policy-registry.csv
     policy-registry.html
+    profile-lint-dental-basic.html
+    profile-lint-dental-research-sharing.html
     workflow-run.json
     workflow-run.html
     evidence-bundle.json

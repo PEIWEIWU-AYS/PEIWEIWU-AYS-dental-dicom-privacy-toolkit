@@ -19,6 +19,7 @@ Core goals:
 - DICOM anonymization profiles for dental imaging
 - Research-sharing profile with deterministic date shifting
 - Profile comparison reports for transparent anonymization configuration review
+- Profile lint checks for custom anonymization YAML safety
 - DICOM privacy policy registry export in JSON, CSV, and HTML
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
@@ -58,6 +59,7 @@ ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-du
 ddpt policy export --json demo-run/reports/policy-registry.json --csv demo-run/reports/policy-registry.csv --html demo-run/reports/policy-registry.html
 ddpt profile show dental-basic
 ddpt profile show dental-research-sharing
+ddpt profile lint dental-basic --json demo-run/reports/profile-lint.json --html demo-run/reports/profile-lint.html
 ddpt profile coverage dental-basic
 ddpt profile coverage dental-research-sharing
 ddpt profile compare dental-basic dental-research-sharing --json demo-run/reports/profile-comparison.json --html demo-run/reports/profile-comparison.html
@@ -84,6 +86,7 @@ See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and ex
 See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
 See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write anonymization previews.
 See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for deterministic date-shift research sharing.
+See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile configuration checks.
 See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
@@ -146,7 +149,7 @@ synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
 research-sharing date shifting, release-readiness checks, and local evidence
 bundle generation, package verification receipts, profile comparison reports,
-policy registry exports, and pixel review reports.
+profile lint checks, policy registry exports, and pixel review reports.
 
 ## License
 

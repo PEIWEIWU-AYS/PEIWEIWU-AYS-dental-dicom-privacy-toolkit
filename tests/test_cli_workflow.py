@@ -749,6 +749,8 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "policy-registry.json").exists()
     assert (output_dir / "reports" / "policy-registry.csv").exists()
     assert (output_dir / "reports" / "policy-registry.html").exists()
+    assert (output_dir / "reports" / "profile-lint-dental-basic.html").exists()
+    assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
     assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
@@ -759,6 +761,8 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     artifact_paths = {item["path"] for item in report["artifacts"]}
     assert "reports/release-audit.html" in artifact_paths
     assert "reports/policy-registry.html" in artifact_paths
+    assert "reports/profile-lint-dental-basic.html" in artifact_paths
+    assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
     assert "demo-run/reports/pixel-review.html" in artifact_paths
@@ -873,6 +877,8 @@ def test_demo_asset_script(tmp_path: Path) -> None:
 
 def test_profile_commands(tmp_path: Path) -> None:
     profile_json = tmp_path / "profile.json"
+    lint_json = tmp_path / "profile-lint.json"
+    lint_html = tmp_path / "profile-lint.html"
     coverage_json = tmp_path / "coverage.json"
     custom_profile = tmp_path / "custom-profile.yml"
     custom_source = tmp_path / "custom-source.dcm"
@@ -887,6 +893,25 @@ def test_profile_commands(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.output
     assert profile_json.exists()
     assert "PatientName" in profile_json.read_text()
+
+    result = runner.invoke(
+        app,
+        [
+            "profile",
+            "lint",
+            "dental-basic",
+            "--json",
+            str(lint_json),
+            "--html",
+            str(lint_html),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    lint_report = json.loads(lint_json.read_text())
+    assert lint_report["passed"] is True
+    assert lint_report["error_count"] == 0
+    assert lint_report["covered_items"] == lint_report["total_policy_items"]
+    assert "Dental DICOM Profile Lint" in lint_html.read_text()
 
     result = runner.invoke(
         app,
@@ -926,6 +951,42 @@ def test_profile_commands(tmp_path: Path) -> None:
     )
     assert result.exit_code == 0, result.output
     assert pydicom.dcmread(custom_output).PatientID == "DDPT-SYNTHETIC-ID"
+
+
+def test_profile_lint_flags_invalid_custom_profile(tmp_path: Path) -> None:
+    bad_profile = tmp_path / "bad-profile.yml"
+    bad_profile.write_text(
+        """
+name: bad-profile
+replace:
+  PatientName: BAD^TEST
+  NotARealDicomKeyword: value
+blank:
+  - PatientName
+date_shift:
+  offset_days: not-an-int
+  keywords:
+    - StudyTime
+remove_private_tags: "yes"
+""",
+        encoding="utf-8",
+    )
+    lint_json = tmp_path / "bad-lint.json"
+
+    result = runner.invoke(
+        app,
+        ["profile", "lint", str(bad_profile), "--json", str(lint_json)],
+    )
+
+    assert result.exit_code == 1
+    report = json.loads(lint_json.read_text())
+    assert report["passed"] is False
+    rule_ids = {finding["rule_id"] for finding in report["findings"]}
+    assert "unknown-keyword" in rule_ids
+    assert "conflicting-actions" in rule_ids
+    assert "date-shift-offset" in rule_ids
+    assert "date-shift-non-date-keyword" in rule_ids
+    assert "remove-private-tags-shape" in rule_ids
 
 
 def test_research_sharing_profile_shifts_dates_and_reports_actions(tmp_path: Path) -> None:

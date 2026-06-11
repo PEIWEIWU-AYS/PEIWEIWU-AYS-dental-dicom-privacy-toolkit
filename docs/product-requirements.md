@@ -20,21 +20,22 @@ Version 0.1 is successful when a new user can:
 10. Preview anonymization actions with dry-run mode.
 11. Apply the `dental-basic` anonymization profile.
 12. Apply the `dental-research-sharing` profile with deterministic date shifting.
-13. Compare anonymization profiles with JSON and HTML reports.
-14. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
-15. Confirm direct identifiers were replaced or removed.
-16. Generate an audit event JSON file.
-17. Validate anonymized output with a pass/fail report.
-18. Generate pixel review reports for known burned-in annotation regions.
-19. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-20. Package anonymized files with checksums.
-21. Encrypt the package.
-22. Verify or decrypt the package.
-23. Generate package verification receipts for receiver-side sharing evidence.
-24. Run local REST API workflow demos for integration testing.
-25. Run a release-readiness audit before public GitHub publishing.
-26. Generate a local evidence bundle for MacBook validation and public demonstrations.
-27. Run automated tests locally and in GitHub Actions.
+13. Lint anonymization profiles before running workflows.
+14. Compare anonymization profiles with JSON and HTML reports.
+15. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
+16. Confirm direct identifiers were replaced or removed.
+17. Generate an audit event JSON file.
+18. Validate anonymized output with a pass/fail report.
+19. Generate pixel review reports for known burned-in annotation regions.
+20. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+21. Package anonymized files with checksums.
+22. Encrypt the package.
+23. Verify or decrypt the package.
+24. Generate package verification receipts for receiver-side sharing evidence.
+25. Run local REST API workflow demos for integration testing.
+26. Run a release-readiness audit before public GitHub publishing.
+27. Generate a local evidence bundle for MacBook validation and public demonstrations.
+28. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -218,6 +219,22 @@ Required:
 - uncovered high-risk keyword list
 - uncovered medium-risk keyword list
 - optional JSON export
+
+### `ddpt profile lint`
+
+Check anonymization profile configuration quality before running workflows.
+
+Required:
+
+- validate YAML/profile shape
+- validate known DICOM keywords
+- detect conflicting actions for the same keyword
+- validate `date_shift` shape and offset
+- warn when private tags are retained
+- report high-risk and medium-risk policy coverage
+- JSON output
+- optional HTML report
+- non-zero exit status when errors exist
 
 ### `ddpt profile compare`
 

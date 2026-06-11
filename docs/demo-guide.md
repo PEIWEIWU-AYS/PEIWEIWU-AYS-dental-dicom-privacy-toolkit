@@ -121,6 +121,9 @@ ddpt policy export \
   --json demo-run/reports/policy-registry.json \
   --csv demo-run/reports/policy-registry.csv \
   --html demo-run/reports/policy-registry.html
+ddpt profile lint dental-research-sharing \
+  --json demo-run/reports/research-profile-lint.json \
+  --html demo-run/reports/research-profile-lint.html
 ddpt profile show dental-research-sharing
 ddpt profile compare dental-basic dental-research-sharing \
   --json demo-run/reports/profile-comparison.json \
