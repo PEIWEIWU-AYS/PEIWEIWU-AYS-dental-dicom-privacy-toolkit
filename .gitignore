@@ -44,6 +44,8 @@ evidence-run/
 evidence-*/
 macbook-validation-run/
 macbook-validation-*/
+showcase-run/
+showcase-*/
 
 # Private clinical material
 private/

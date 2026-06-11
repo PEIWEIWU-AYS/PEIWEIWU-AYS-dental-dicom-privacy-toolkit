@@ -614,6 +614,40 @@ class ReviewDashboardReport(BaseModel):
     )
 
 
+class ShowcaseItem(BaseModel):
+    label: str
+    category: str
+    path: str
+    description: str
+    exists: bool
+
+
+class ShowcasePreview(BaseModel):
+    label: str
+    path: str
+    description: str
+    exists: bool
+
+
+class ShowcaseReport(BaseModel):
+    evidence_dir: str
+    output_path: str
+    passed: bool
+    title: str
+    subtitle: str
+    total_items: int
+    available_items: int
+    total_previews: int
+    available_previews: int
+    items: list[ShowcaseItem]
+    previews: list[ShowcasePreview]
+    story_points: list[str]
+    safety_notes: list[str]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DeidentificationComparisonItem(BaseModel):
     keyword: str
     risk: RiskLevel

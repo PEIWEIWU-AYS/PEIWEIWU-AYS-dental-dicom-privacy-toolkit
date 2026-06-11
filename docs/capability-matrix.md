@@ -59,6 +59,7 @@ The matrix reviews whether the repository has evidence for:
 - de-identification certificate for synthetic sharing handoff evidence
 - audit chains, safety scan, release audit, and evidence bundles
 - one-command MacBook local validation report
+- public synthetic showcase gallery for GitHub visitors
 - GitHub publish preflight for public repository creation and push readiness
 - bilingual GitHub discoverability and synthetic-data safety positioning
 

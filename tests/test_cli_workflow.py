@@ -1497,11 +1497,13 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "local-api-evidence-endpoints" in capability_ids
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
+    assert "public-showcase-gallery" in capability_ids
     assert "share-readiness-gate" in capability_ids
     assert "workflow-quality-gate" in capability_ids
     assert "residual-risk-score" in capability_ids
     assert "privacy-regression-suite" in capability_ids
     assert "macbook-validation-report" in capability_ids
+    assert "public-showcase-gallery" in capability_ids
     assert "github-publish-preflight" in capability_ids
     assert "deid-certificate" in capability_ids
     assert "secure-sharing" in capability_ids
@@ -1719,6 +1721,46 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Profile conformance HTML" in html
     assert "Workflow profile conformance HTML" in html
     assert "Pixel risk scan HTML" in html
+
+
+def test_showcase_build_command_creates_public_gallery(tmp_path: Path) -> None:
+    evidence_dir = tmp_path / "evidence"
+    showcase_html = tmp_path / "showcase" / "showcase.html"
+    showcase_json = tmp_path / "showcase" / "showcase.json"
+
+    evidence_result = runner.invoke(app, ["evidence", "bundle", ".", "--out", str(evidence_dir)])
+    assert evidence_result.exit_code == 0, evidence_result.output
+
+    result = runner.invoke(
+        app,
+        [
+            "showcase",
+            "build",
+            str(evidence_dir),
+            "--out",
+            str(showcase_html),
+            "--json",
+            str(showcase_json),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert showcase_html.exists()
+    assert showcase_json.exists()
+    report = json.loads(showcase_json.read_text())
+    assert report["passed"] is True
+    assert report["available_items"] == report["total_items"]
+    assert report["available_previews"] == report["total_previews"]
+    labels = {item["label"] for item in report["items"]}
+    assert "Demo summary HTML" in labels
+    assert "De-identification certificate HTML" in labels
+    assert "Clinic export intake triage HTML" in labels
+    assert "Reference tool export HTML" in labels
+    html = showcase_html.read_text()
+    assert "Dental DICOM Privacy Toolkit Showcase" in html
+    assert "Workflow Story" in html
+    assert "Visual Evidence" in html
+    assert "Safety Boundary" in html
 
 
 def test_macbook_validation_command_creates_acceptance_report(tmp_path: Path) -> None:

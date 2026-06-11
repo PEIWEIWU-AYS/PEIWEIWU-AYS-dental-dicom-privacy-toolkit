@@ -73,6 +73,7 @@ jobs:
           test -f docs/profile-lint.md
           test -f docs/capability-matrix.md
           test -f docs/review-dashboard.md
+          test -f docs/showcase-gallery.md
           test -f docs/deid-comparison.md
           test -f docs/share-readiness.md
           test -f docs/synthetic-study.md
@@ -163,6 +164,9 @@ jobs:
 
       - name: Build local review dashboard
         run: python -m ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json
+
+      - name: Build public showcase gallery
+        run: python -m ddpt showcase build evidence-run --out showcase-run/showcase.html --json showcase-run/showcase.json
 
       - name: Run lint
         run: ruff check .

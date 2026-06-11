@@ -613,6 +613,30 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="public-showcase-gallery",
+        capability="Public synthetic showcase gallery for GitHub visitors",
+        source_tools=("RSNA DICOM Anonymizer", "PixelMed DicomCleaner", "Orthanc"),
+        evidence_files=(
+            "src/ddpt/showcase.py",
+            "docs/showcase-gallery.md",
+            "src/ddpt/reports.py",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt showcase build evidence-run --out showcase-run/showcase.html "
+            "--json showcase-run/showcase.json"
+        ),
+        differentiator=(
+            "A visitor-facing HTML gallery turns synthetic previews and key "
+            "reports into a searchable public project story without committing "
+            "real data or generated evidence."
+        ),
+        note=(
+            "This complements the technical review dashboard with a GitHub-friendly "
+            "showcase page for screenshots and collaborator onboarding."
+        ),
+    ),
+    CapabilitySpec(
         id="secure-sharing",
         capability="Encrypted sharing package with manifest, checksums, and receipt",
         source_tools=("RSNA CTP",),

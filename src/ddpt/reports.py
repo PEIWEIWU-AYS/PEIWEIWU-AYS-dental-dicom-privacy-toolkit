@@ -40,6 +40,7 @@ from ddpt.models import (
     ResidualRiskReport,
     ReviewDashboardReport,
     ShareReadinessReport,
+    ShowcaseReport,
     WorkflowQualityGateReport,
     WorkflowRunReport,
 )
@@ -2136,6 +2137,165 @@ REVIEW_DASHBOARD_TEMPLATE = Template(
 """
 )
 
+SHOWCASE_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ report.title }}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      color: #17202a;
+      background: #f7f9fb;
+    }
+    header {
+      background: #12343f;
+      color: white;
+      padding: 32px;
+    }
+    main { margin: 28px auto; max-width: 1160px; padding: 0 24px 32px; }
+    h1, h2 { margin-top: 0; }
+    a { color: #0b65c2; }
+    code { background: #eef2f6; padding: 2px 4px; border-radius: 4px; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .metric, .panel {
+      background: white;
+      border: 1px solid #d9dee3;
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .metric strong { display: block; font-size: 1.7rem; }
+    .pass { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+    }
+    figure { margin: 0; }
+    figure img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      image-rendering: pixelated;
+      background: #eef2f6;
+      border: 1px solid #d9dee3;
+    }
+    figcaption { margin-top: 8px; font-size: 0.95rem; }
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+    }
+    .report-link {
+      background: white;
+      border: 1px solid #d9dee3;
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .report-link a { font-weight: 700; text-decoration: none; }
+    .muted { color: #5f6b76; }
+    .notice {
+      background: #fff8e6;
+      border: 1px solid #f0cf75;
+      border-radius: 6px;
+      padding: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{ report.title }}</h1>
+    <p>{{ report.subtitle }}</p>
+  </header>
+  <main>
+    <section class="summary">
+      <div class="metric">
+        <span>Overall</span>
+        <strong class="{{ "pass" if report.passed else "fail" }}">
+          {{ "PASS" if report.passed else "REVIEW" }}
+        </strong>
+      </div>
+      <div class="metric">
+        <span>Reports</span>
+        <strong>{{ report.available_items }}/{{ report.total_items }}</strong>
+      </div>
+      <div class="metric">
+        <span>Previews</span>
+        <strong>{{ report.available_previews }}/{{ report.total_previews }}</strong>
+      </div>
+      <div class="metric">
+        <span>Generated</span>
+        <strong style="font-size: 1rem;">{{ report.generated_at }}</strong>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Workflow Story</h2>
+      <ol>
+        {% for point in report.story_points %}
+        <li>{{ point }}</li>
+        {% endfor %}
+      </ol>
+    </section>
+
+    <section class="panel">
+      <h2>Visual Evidence</h2>
+      <div class="preview-grid">
+        {% for preview in preview_links %}
+        {% if preview.exists %}
+        <figure>
+          <img src="{{ preview.href }}" alt="{{ preview.label }}">
+          <figcaption>
+            <strong>{{ preview.label }}</strong><br>
+            <span class="muted">{{ preview.description }}</span>
+          </figcaption>
+        </figure>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Open These Reports</h2>
+      <div class="link-grid">
+        {% for item in item_links %}
+        <div class="report-link">
+          {% if item.exists %}
+          <a href="{{ item.href }}">{{ item.label }}</a>
+          {% else %}
+          <strong class="fail">{{ item.label }}</strong>
+          {% endif %}
+          <p>{{ item.description }}</p>
+          <p class="muted"><code>{{ item.path or "missing" }}</code></p>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="notice">
+      <h2>Safety Boundary</h2>
+      <ul>
+        {% for note in report.safety_notes %}
+        <li>{{ note }}</li>
+        {% endfor %}
+      </ul>
+      <p>Evidence directory: <code>{{ report.evidence_dir }}</code></p>
+      <p>Output path: <code>{{ report.output_path }}</code></p>
+    </section>
+  </main>
+</body>
+</html>
+"""
+)
+
 DEID_COMPARISON_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -3366,6 +3526,40 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
             artifact_links=artifact_links,
             preview_links=preview_links,
             quick_links=quick_links,
+        ),
+    )
+
+
+def write_showcase_html(path: Path, report: ShowcaseReport) -> None:
+    item_links = [
+        {
+            "label": item.label,
+            "category": item.category,
+            "path": item.path,
+            "description": item.description,
+            "exists": item.exists,
+            "href": _relative_html_src(path, Path(report.evidence_dir) / item.path)
+            if item.path
+            else "",
+        }
+        for item in report.items
+    ]
+    preview_links = [
+        {
+            "label": preview.label,
+            "path": preview.path,
+            "description": preview.description,
+            "exists": preview.exists,
+            "href": _relative_html_src(path, Path(report.evidence_dir) / preview.path),
+        }
+        for preview in report.previews
+    ]
+    _write_html(
+        path,
+        SHOWCASE_TEMPLATE.render(
+            report=report,
+            item_links=item_links,
+            preview_links=preview_links,
         ),
     )
 

@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM PS3.15, DICOMDIR, clinic export intake, DICOM confidentiality alignment, DICOM JSON export, Orthanc-inspired API, local API evidence endpoints, Orthanc anonymization plan, Orthanc REST anonymize, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, residual privacy risk score, privacy regression suite, MacBook validation report, GitHub publish preflight, adversarial synthetic DICOM, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOMDIR预检, 诊所导出包预检, DICOM保密配置, DICOM PS3.15, DICOM保密配置对齐, DICOM JSON导出, Orthanc风格接口, 本地API证据端点, Orthanc匿名化计划, Orthanc REST脱敏, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 残余隐私风险评分, 隐私回归测试, MacBook验收报告, GitHub发布预检, 对抗性合成DICOM, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM PS3.15, DICOMDIR, clinic export intake, DICOM confidentiality alignment, DICOM JSON export, Orthanc-inspired API, local API evidence endpoints, Orthanc anonymization plan, Orthanc REST anonymize, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, residual privacy risk score, privacy regression suite, MacBook validation report, public showcase gallery, GitHub publish preflight, adversarial synthetic DICOM, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOMDIR预检, 诊所导出包预检, DICOM保密配置, DICOM PS3.15, DICOM保密配置对齐, DICOM JSON导出, Orthanc风格接口, 本地API证据端点, Orthanc匿名化计划, Orthanc REST脱敏, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 残余隐私风险评分, 隐私回归测试, MacBook验收报告, 公开示例画廊, GitHub发布预检, 对抗性合成DICOM, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -51,6 +51,7 @@ Core goals:
 - Local API evidence endpoints for privacy reports and publish preflight
 - Local browser workbench for synthetic workflow review
 - Static local review dashboard for non-programmer walkthroughs
+- Public synthetic showcase gallery for GitHub visitors and screenshots
 - Release-readiness audit for public GitHub publishing
 - Local evidence bundle for MacBook validation and project demonstrations
 - One-command MacBook validation report for local acceptance and GitHub readiness
@@ -83,6 +84,7 @@ ddpt regression suite regression-run --json regression-run/reports/privacy-regre
 ddpt publish preflight . --json publish-preflight.json --html publish-preflight.html
 ddpt publish preflight . --check-remote --json publish-preflight-remote.json --html publish-preflight-remote.html
 ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json
+ddpt showcase build evidence-run --out showcase-run/showcase.html --json showcase-run/showcase.json
 ddpt demo demo-run
 ddpt synthetic-study synthetic-study-demo --patients 2 --files-per-patient 2 --json synthetic-study-demo/manifest.json
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
@@ -179,6 +181,7 @@ See [docs/evidence-bundle.md](docs/evidence-bundle.md) for one-command local evi
 See [docs/privacy-regression-suite.md](docs/privacy-regression-suite.md) for adversarial synthetic privacy regression tests.
 See [docs/github-publish-preflight.md](docs/github-publish-preflight.md) for GitHub repository creation, topics, remote, and push readiness checks.
 See [docs/review-dashboard.md](docs/review-dashboard.md) for the static local review dashboard.
+See [docs/showcase-gallery.md](docs/showcase-gallery.md) for a public synthetic evidence gallery.
 See [docs/package-verification-receipts.md](docs/package-verification-receipts.md) for receiver-side sharing receipts.
 See [docs/share-readiness.md](docs/share-readiness.md) for the final synthetic sharing gate.
 See [docs/local-api.md](docs/local-api.md) for the local REST API demo.

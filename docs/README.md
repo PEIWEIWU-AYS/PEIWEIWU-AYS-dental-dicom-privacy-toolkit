@@ -38,6 +38,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Privacy Regression Suite](privacy-regression-suite.md)
 - [GitHub Publish Preflight](github-publish-preflight.md)
 - [Review Dashboard](review-dashboard.md)
+- [Showcase Gallery](showcase-gallery.md)
 - [Package Verification Receipts](package-verification-receipts.md)
 - [Share Readiness](share-readiness.md)
 - [DICOM Inventory Preflight](inventory.md)

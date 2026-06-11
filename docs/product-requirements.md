@@ -48,14 +48,15 @@ Version 0.1 is successful when a new user can:
 38. Run a competitor coverage report that maps reference tools to implemented evidence.
 39. Generate a static local review dashboard for non-programmer walkthroughs.
 40. Generate a local evidence bundle for MacBook validation and public demonstrations.
-41. Run a workflow quality gate that verifies public review evidence.
-42. Export a review-only Orthanc REST anonymization plan from a dental profile.
-43. Export a reference-tool pack for DCMTK, Orthanc, RSNA CTP-style migration notes, and pydicom scripts.
-44. Run a residual privacy risk score across generated workflow evidence.
-45. Run a synthetic adversarial privacy regression suite.
-46. Run a GitHub publish preflight before creating or pushing the public repository.
-47. Run automated tests locally and in GitHub Actions.
-48. Run a one-command MacBook validation report for local acceptance and GitHub readiness.
+41. Generate a public synthetic showcase gallery for GitHub visitors and screenshots.
+42. Run a workflow quality gate that verifies public review evidence.
+43. Export a review-only Orthanc REST anonymization plan from a dental profile.
+44. Export a reference-tool pack for DCMTK, Orthanc, RSNA CTP-style migration notes, and pydicom scripts.
+45. Run a residual privacy risk score across generated workflow evidence.
+46. Run a synthetic adversarial privacy regression suite.
+47. Run a GitHub publish preflight before creating or pushing the public repository.
+48. Run automated tests locally and in GitHub Actions.
+49. Run a one-command MacBook validation report for local acceptance and GitHub readiness.
 
 ### `ddpt demo`
 
@@ -173,6 +174,21 @@ Required:
 - non-failing `action-required` status when the GitHub remote is missing by default
 - optional `--require-remote` mode that fails until GitHub is ready to push
 - JSON and HTML output
+
+### `ddpt showcase build`
+
+Generate a public-facing synthetic evidence gallery from an evidence bundle.
+
+Required:
+
+- evidence bundle directory input
+- output HTML path
+- optional JSON output path
+- synthetic preview image links
+- links to strongest public reports
+- project workflow story points
+- safety notes for synthetic-only public demonstration
+- non-zero exit status when required showcase artifacts or previews are missing
 
 ### `ddpt publish preflight`
 
