@@ -153,6 +153,7 @@ Expected:
 
 - overall evidence bundle status is `PASS`
 - `evidence-run/reports/evidence-bundle.html` exists
+- `evidence-run/reports/review-dashboard.html` exists
 - `evidence-run/reports/capability-matrix.html` exists
 - `evidence-run/reports/release-audit.html` exists
 - `evidence-run/reports/workflow-run.html` exists
@@ -168,6 +169,7 @@ Open these files locally:
 release-audit.html
 capability-matrix.html
 evidence-run/reports/evidence-bundle.html
+evidence-run/reports/review-dashboard.html
 demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
 demo-run/reports/inspect.html
@@ -175,6 +177,7 @@ demo-run/reports/audit.html
 ```
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
+The review dashboard should show quick links, artifact status, and synthetic PNG previews.
 
 ## 12. Optional Local API Check
 

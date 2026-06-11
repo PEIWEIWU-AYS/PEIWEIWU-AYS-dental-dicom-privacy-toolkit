@@ -32,6 +32,7 @@ The bundle includes:
 - package verification receipt HTML
 - tamper-evident demo audit chain
 - YAML workflow JSON and HTML report
+- static review dashboard JSON and HTML
 - evidence bundle JSON and HTML index
 
 ## Output Structure
@@ -52,6 +53,8 @@ evidence-run/
     profile-lint-dental-research-sharing.html
     workflow-run.json
     workflow-run.html
+    review-dashboard.json
+    review-dashboard.html
     evidence-bundle.json
     evidence-bundle.html
   demo-run/
@@ -74,6 +77,7 @@ Open the index:
 
 ```bash
 open evidence-run/reports/evidence-bundle.html
+open evidence-run/reports/review-dashboard.html
 ```
 
 ## Why This Matters
@@ -83,6 +87,7 @@ This evidence bundle focuses on public demonstration value:
 
 - a new user can validate the project locally
 - reviewers can inspect human-readable reports
+- non-programmer collaborators can start from one dashboard page
 - CI can exercise the same proof path
 - GitHub visitors can understand the workflow without real patient data
 - collaborators can see environment, safety, release, workflow, audit, and package

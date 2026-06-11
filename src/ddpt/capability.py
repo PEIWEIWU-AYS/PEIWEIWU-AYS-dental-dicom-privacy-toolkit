@@ -222,6 +222,25 @@ CAPABILITY_SPECS = [
         note="Keeps the first release lightweight while still enabling integration testing.",
     ),
     CapabilitySpec(
+        id="static-review-dashboard",
+        capability="Static local review dashboard for non-programmer walkthroughs",
+        source_tools=("RSNA DICOM Anonymizer", "PixelMed DicomCleaner", "Orthanc"),
+        evidence_files=(
+            "src/ddpt/dashboard.py",
+            "src/ddpt/reports.py",
+            "docs/review-dashboard.md",
+            "docs/macbook-validation.md",
+        ),
+        command=(
+            "ddpt dashboard build evidence-run --out "
+            "evidence-run/reports/review-dashboard.html"
+        ),
+        differentiator="A single local HTML entrypoint gathers reports, links, and previews.",
+        note=(
+            "Adds GUI-style review without requiring a server, browser upload, or real data."
+        ),
+    ),
+    CapabilitySpec(
         id="secure-sharing",
         capability="Encrypted sharing package with manifest, checksums, and receipt",
         source_tools=("RSNA CTP",),

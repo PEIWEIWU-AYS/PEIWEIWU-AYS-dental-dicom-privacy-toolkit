@@ -35,8 +35,9 @@ Version 0.1 is successful when a new user can:
 25. Run local REST API workflow demos for integration testing.
 26. Run a release-readiness audit before public GitHub publishing.
 27. Run a competitor-informed capability matrix that maps features to repository evidence.
-28. Generate a local evidence bundle for MacBook validation and public demonstrations.
-29. Run automated tests locally and in GitHub Actions.
+28. Generate a static local review dashboard for non-programmer walkthroughs.
+29. Generate a local evidence bundle for MacBook validation and public demonstrations.
+30. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -120,6 +121,7 @@ Required:
 - evidence index JSON and HTML
 - links to demo summary, audit chain, encrypted package, and workflow report
 - links to package verification receipts
+- static review dashboard JSON and HTML output
 - non-zero exit status when any major evidence gate fails
 - documentation that generated evidence output must not be committed by default
 
@@ -136,6 +138,21 @@ Required:
 - JSON output
 - optional HTML report
 - non-zero exit status when capability evidence is missing
+
+### `ddpt dashboard build`
+
+Build a static local review dashboard from an evidence bundle.
+
+Required:
+
+- evidence bundle directory input
+- HTML output
+- optional JSON dashboard report
+- quick links to core reports
+- embedded synthetic PNG previews when available
+- artifact availability counts
+- non-zero exit status when the evidence bundle index is missing or artifacts are missing
+- documentation that this is a static local review aid, not a production PACS or clinical viewer
 
 ### `ddpt workflow run`
 
@@ -526,7 +543,8 @@ HTML report sections:
 - No real patient data processing in examples.
 - No production PACS integration.
 - No cloud upload.
-- No web dashboard until CLI workflow is stable.
+- No production web dashboard until CLI workflow is stable.
+- Static local review dashboards are allowed for synthetic evidence review.
 
 ## Completion Evidence
 
@@ -538,6 +556,7 @@ To call Version 0.1 complete, we need:
 - a one-command demo pipeline that generates all core artifacts
 - a release-readiness audit command with JSON and HTML outputs
 - a capability matrix command with JSON and HTML outputs
+- a static review dashboard command with JSON and HTML outputs
 - a local evidence bundle command with JSON and HTML index outputs
 - README demo commands updated
 - CI passing locally or documented if remote CI is not available

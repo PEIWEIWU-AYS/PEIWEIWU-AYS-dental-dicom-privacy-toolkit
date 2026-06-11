@@ -19,6 +19,7 @@ from ddpt.models import (
     ProfileComparisonReport,
     ProfileLintReport,
     ReleaseAuditReport,
+    ReviewDashboardReport,
     WorkflowRunReport,
 )
 from ddpt.utils import ensure_parent
@@ -740,6 +741,132 @@ CAPABILITY_MATRIX_TEMPLATE = Template(
 """
 )
 
+REVIEW_DASHBOARD_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Review Dashboard</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+      background: #fbfcfd;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; background: white; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .quick-card {
+      border: 1px solid #d9dee3;
+      background: white;
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .quick-card a { color: #0b65c2; font-weight: 700; text-decoration: none; }
+    .preview-grid { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+    .preview-grid figure { margin: 0; background: white; border: 1px solid #d9dee3; padding: 10px; }
+    .preview-grid img {
+      image-rendering: pixelated;
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      background: #f3f6f8;
+      border: 1px solid #d9dee3;
+    }
+    .preview-grid figcaption { margin-top: 6px; font-size: 0.9rem; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    a { color: #0b65c2; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Review Dashboard</h1>
+  <p class="warning">
+    Local static dashboard for synthetic-data review. It gathers the strongest
+    reports from the evidence bundle into one MacBook-friendly page. It is not
+    clinical, legal, regulatory, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Evidence directory: <code>{{ report.evidence_dir }}</code></li>
+    <li>Output path: <code>{{ report.output_path }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Evidence bundle: {{ "PASS" if report.evidence_bundle_passed else "FAIL" }}</li>
+    <li>Artifacts available: {{ report.available_artifacts }} / {{ report.total_artifacts }}</li>
+    <li>Missing artifacts: {{ report.missing_artifacts }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Open First</h2>
+  <div class="quick-grid">
+    {% for item in quick_links %}
+    <div class="quick-card">
+      <a href="{{ item.href }}">{{ item.label }}</a>
+      <p>{{ item.description }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <h2>Visual Previews</h2>
+  <div class="preview-grid">
+    {% for item in preview_links %}
+    {% if item.exists %}
+    <figure>
+      <img src="{{ item.href }}" alt="{{ item.label }}">
+      <figcaption>{{ item.label }}</figcaption>
+    </figure>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <h2>All Evidence Artifacts</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Category</th>
+        <th>Artifact</th>
+        <th>Path</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in artifact_links %}
+      <tr>
+        <td class="{{ "ok" if item.exists else "fail" }}">
+          {{ "available" if item.exists else "missing" }}
+        </td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.label }}</td>
+        <td>
+          {% if item.exists %}
+          <a href="{{ item.href }}"><code>{{ item.path }}</code></a>
+          {% else %}
+          <code>{{ item.path }}</code>
+          {% endif %}
+        </td>
+        <td>{{ item.description }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 PACKAGE_RECEIPT_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -1166,6 +1293,48 @@ def write_evidence_bundle_html(path: Path, result: EvidenceBundleResult) -> None
 
 def write_capability_matrix_html(path: Path, report: CapabilityMatrixReport) -> None:
     _write_html(path, CAPABILITY_MATRIX_TEMPLATE.render(report=report))
+
+
+def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> None:
+    artifact_links = [
+        {
+            "label": artifact.label,
+            "category": artifact.category,
+            "path": artifact.path,
+            "description": artifact.description,
+            "exists": artifact.exists,
+            "href": _relative_html_src(path, Path(report.evidence_dir) / artifact.path),
+        }
+        for artifact in report.artifacts
+    ]
+    preview_links = [
+        {
+            "label": preview.label,
+            "path": preview.path,
+            "exists": preview.exists,
+            "href": _relative_html_src(path, Path(report.evidence_dir) / preview.path),
+        }
+        for preview in report.previews
+    ]
+    quick_labels = {
+        "Review dashboard HTML",
+        "Evidence bundle HTML",
+        "Demo summary HTML",
+        "Capability matrix HTML",
+        "Release audit HTML",
+        "Pixel review HTML",
+        "Package verification receipt",
+    }
+    quick_links = [item for item in artifact_links if item["label"] in quick_labels]
+    _write_html(
+        path,
+        REVIEW_DASHBOARD_TEMPLATE.render(
+            report=report,
+            artifact_links=artifact_links,
+            preview_links=preview_links,
+            quick_links=quick_links,
+        ),
+    )
 
 
 def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) -> None:

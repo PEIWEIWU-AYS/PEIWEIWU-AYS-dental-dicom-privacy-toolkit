@@ -55,6 +55,7 @@ ddpt api serve demo-run
 ddpt release audit . --json release-audit.json --html release-audit.html
 ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ddpt evidence bundle . --out evidence-run
+ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html
 ddpt demo demo-run
 ```
 
@@ -127,6 +128,18 @@ Best for:
 - paper background and methods notes
 - explaining why this toolkit is dental-specific
 - checking that public claims are backed by evidence
+
+### 7. Static Review Dashboard
+
+The dashboard gathers the strongest evidence bundle reports and synthetic PNG
+previews into one local static HTML entrypoint.
+
+Best for:
+
+- non-programmer walkthroughs
+- MacBook demonstrations
+- showing GUI-style accessibility without a server
+- reviewing synthetic evidence before public screenshots
 
 ## Languages
 
@@ -301,11 +314,13 @@ dental-dicom-privacy-toolkit/
 - HTML report sample
 - GitHub release notes
 
-### Phase 7: Optional Web Dashboard
+### Phase 7: Static Review Dashboard
 
-- Local synthetic-file demo only
-- No real patient upload messaging
+- Static local HTML output
+- Local synthetic evidence bundle only
+- No real patient upload workflow
 - Report viewer and workflow explainer
+- No production PACS or clinical viewer claims
 
 ## Safety Rules
 

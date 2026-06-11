@@ -768,6 +768,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     capability_ids = {item["id"] for item in report["items"]}
     assert "pixel-review-redaction" in capability_ids
     assert "pipeline-recipes" in capability_ids
+    assert "static-review-dashboard" in capability_ids
     assert "secure-sharing" in capability_ids
     html = matrix_html.read_text()
     assert "Dental DICOM Capability Matrix" in html
@@ -784,6 +785,8 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     evidence_html = output_dir / "reports" / "evidence-bundle.html"
     assert evidence_json.exists()
     assert evidence_html.exists()
+    assert (output_dir / "reports" / "review-dashboard.json").exists()
+    assert (output_dir / "reports" / "review-dashboard.html").exists()
     assert (output_dir / "reports" / "release-audit.html").exists()
     assert (output_dir / "reports" / "capability-matrix.html").exists()
     assert (output_dir / "reports" / "policy-registry.json").exists()
@@ -799,6 +802,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     report = json.loads(evidence_json.read_text())
     assert report["passed"] is True
     artifact_paths = {item["path"] for item in report["artifacts"]}
+    assert "reports/review-dashboard.html" in artifact_paths
     assert "reports/release-audit.html" in artifact_paths
     assert "reports/capability-matrix.html" in artifact_paths
     assert "reports/policy-registry.html" in artifact_paths
@@ -810,8 +814,44 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "demo-run/reports/package-receipt.html" in artifact_paths
     html = evidence_html.read_text()
     assert "Dental DICOM Evidence Bundle" in html
+    assert "Review dashboard HTML" in html
     assert "Capability matrix HTML" in html
     assert "Release audit HTML" in html
+
+
+def test_dashboard_build_command_summarizes_evidence_bundle(tmp_path: Path) -> None:
+    output_dir = tmp_path / "evidence"
+    dashboard_html = tmp_path / "dashboard.html"
+    dashboard_json = tmp_path / "dashboard.json"
+
+    evidence_result = runner.invoke(app, ["evidence", "bundle", ".", "--out", str(output_dir)])
+    assert evidence_result.exit_code == 0, evidence_result.output
+
+    result = runner.invoke(
+        app,
+        [
+            "dashboard",
+            "build",
+            str(output_dir),
+            "--out",
+            str(dashboard_html),
+            "--json",
+            str(dashboard_json),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert dashboard_html.exists()
+    assert dashboard_json.exists()
+    report = json.loads(dashboard_json.read_text())
+    assert report["passed"] is True
+    assert report["available_artifacts"] == report["total_artifacts"]
+    preview_labels = {item["label"] for item in report["previews"] if item["exists"]}
+    assert "Synthetic input preview" in preview_labels
+    assert "Pixel review overlay" in preview_labels
+    html = dashboard_html.read_text()
+    assert "Dental DICOM Review Dashboard" in html
+    assert "demo-run/reports/input-preview.png" in html
 
 
 def test_safety_scan_flags_private_material(tmp_path: Path) -> None:

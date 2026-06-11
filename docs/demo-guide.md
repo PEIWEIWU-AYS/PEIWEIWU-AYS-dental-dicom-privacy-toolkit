@@ -140,6 +140,8 @@ For a complete local evidence bundle:
 ```bash
 ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ddpt evidence bundle . --out evidence-run
+ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html
+open evidence-run/reports/review-dashboard.html
 open evidence-run/reports/evidence-bundle.html
 ```
 

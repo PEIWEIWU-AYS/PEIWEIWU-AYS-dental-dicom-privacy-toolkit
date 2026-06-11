@@ -263,6 +263,35 @@ class EvidenceBundleResult(BaseModel):
     )
 
 
+class DashboardArtifact(BaseModel):
+    label: str
+    category: str
+    path: str
+    description: str
+    exists: bool
+
+
+class DashboardPreview(BaseModel):
+    label: str
+    path: str
+    exists: bool
+
+
+class ReviewDashboardReport(BaseModel):
+    evidence_dir: str
+    output_path: str
+    passed: bool
+    evidence_bundle_passed: bool
+    total_artifacts: int
+    available_artifacts: int
+    missing_artifacts: int
+    artifacts: list[DashboardArtifact]
+    previews: list[DashboardPreview]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class CompetitorReference(BaseModel):
     name: str
     category: str

@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ddpt.capability import build_capability_matrix
+from ddpt.dashboard import build_review_dashboard_report
 from ddpt.doctor import run_doctor
 from ddpt.models import EvidenceArtifact, EvidenceBundleResult
 from ddpt.pipeline import run_demo_pipeline
@@ -16,6 +17,7 @@ from ddpt.reports import (
     write_policy_registry_html,
     write_profile_lint_html,
     write_release_audit_html,
+    write_review_dashboard_html,
     write_workflow_html,
 )
 from ddpt.safety import scan_repository_safety
@@ -78,6 +80,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_json(workflow_json, model_to_dict(workflow_report))
     write_workflow_html(workflow_html, workflow_report)
 
+    dashboard_json = reports_dir / "review-dashboard.json"
+    dashboard_html = reports_dir / "review-dashboard.html"
     evidence_json = reports_dir / "evidence-bundle.json"
     evidence_html = reports_dir / "evidence-bundle.html"
     artifacts = [
@@ -108,6 +112,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "Release audit HTML",
             "release",
             "Human-readable release-readiness report.",
+        ),
+        _artifact(
+            output_dir,
+            dashboard_html,
+            "Review dashboard HTML",
+            "dashboard",
+            "MacBook-friendly static dashboard for opening the strongest reports.",
         ),
         _artifact(
             output_dir,
@@ -225,6 +236,9 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     )
     write_json(evidence_json, model_to_dict(result))
     write_evidence_bundle_html(evidence_html, result)
+    dashboard_report = build_review_dashboard_report(output_dir, dashboard_html, result)
+    write_json(dashboard_json, model_to_dict(dashboard_report))
+    write_review_dashboard_html(dashboard_html, dashboard_report)
     return result
 
 

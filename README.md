@@ -27,6 +27,7 @@ Core goals:
 - Pixel review reports with original, overlay, and redacted PNG previews
 - YAML workflow recipes for reproducible staged pipelines
 - Local REST API for integration demos
+- Static local review dashboard for non-programmer walkthroughs
 - Release-readiness audit for public GitHub publishing
 - Local evidence bundle for MacBook validation and project demonstrations
 - Encrypted sharing package prototypes
@@ -50,6 +51,7 @@ ddpt safety scan .
 ddpt release audit . --json release-audit.json --html release-audit.html
 ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ddpt evidence bundle . --out evidence-run
+ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json
 ddpt demo demo-run
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
@@ -96,6 +98,7 @@ See [docs/macbook-validation.md](docs/macbook-validation.md) for a local accepta
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
 See [docs/evidence-bundle.md](docs/evidence-bundle.md) for one-command local evidence generation.
+See [docs/review-dashboard.md](docs/review-dashboard.md) for the static local review dashboard.
 See [docs/package-verification-receipts.md](docs/package-verification-receipts.md) for receiver-side sharing receipts.
 See [docs/local-api.md](docs/local-api.md) for the local REST API demo.
 
@@ -152,8 +155,8 @@ synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
 research-sharing date shifting, release-readiness checks, and local evidence
 bundle generation, package verification receipts, profile comparison reports,
-profile lint checks, policy registry exports, capability matrix reports, and
-pixel review reports.
+profile lint checks, policy registry exports, capability matrix reports, static
+review dashboards, and pixel review reports.
 
 ## License
 
