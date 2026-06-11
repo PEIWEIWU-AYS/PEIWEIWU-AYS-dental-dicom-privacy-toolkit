@@ -387,6 +387,28 @@ class CapabilityMatrixReport(BaseModel):
     )
 
 
+class ObjectiveAuditItem(BaseModel):
+    id: str
+    category: str
+    requirement: str
+    passed: bool
+    evidence: list[str] = Field(default_factory=list)
+    missing_evidence: list[str] = Field(default_factory=list)
+    note: str
+
+
+class ObjectiveAuditReport(BaseModel):
+    root_dir: str
+    passed: bool
+    total_items: int
+    passed_items: int
+    failed_items: int
+    items: list[ObjectiveAuditItem]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DicomTagRecord(BaseModel):
     tag: str
     keyword: str

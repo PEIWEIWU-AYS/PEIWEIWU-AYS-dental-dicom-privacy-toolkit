@@ -8,7 +8,7 @@
 
 ## GitHub Description
 
-Open-source dental DICOM anonymization, de-identification, deterministic pseudonymization, local browser workbench, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
+Open-source dental DICOM anonymization, de-identification, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
 
 ## Suggested GitHub Topics
 
@@ -24,6 +24,7 @@ Open-source dental DICOM anonymization, de-identification, deterministic pseudon
 - linkable research pseudonyms
 - local browser workbench
 - DICOM web UI
+- objective completion audit
 - DICOM anonymization dry run
 - medical imaging privacy
 - encrypted DICOM sharing
@@ -48,6 +49,7 @@ Open-source dental DICOM anonymization, de-identification, deterministic pseudon
 - 可链接研究数据
 - 本地工作台
 - DICOM网页界面
+- 原始目标完成度审计
 - 脱敏预演
 - 医学影像隐私
 - DICOM接口
@@ -70,6 +72,7 @@ Open-source dental DICOM anonymization, de-identification, deterministic pseudon
 - linkable DICOM research pseudonyms
 - DICOM local browser workbench
 - dental DICOM web UI
+- DICOM project objective completion audit
 - DICOM anonymization dry run
 - dental imaging privacy toolkit
 - encrypted DICOM sharing
@@ -81,9 +84,10 @@ Open-source dental DICOM anonymization, de-identification, deterministic pseudon
 - 牙科 DICOM 脱敏 工具
 - 牙科 DICOM 伪名化
 - 牙科 DICOM 本地工作台
+- 医学影像开源项目完成度审计
 - 医学影像隐私 开源
 - 口腔影像 加密共享
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, anonymization dry-run reports, linkable research pseudonymization profiles, a local browser workbench, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, local REST API integration demos, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, anonymization dry-run reports, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, local REST API integration demos, encrypted sharing packages, and audit reporting.

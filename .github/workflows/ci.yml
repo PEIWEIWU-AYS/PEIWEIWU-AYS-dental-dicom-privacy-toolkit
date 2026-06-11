@@ -51,6 +51,7 @@ jobs:
           test -f docs/tag-operations.md
           test -f docs/local-api.md
           test -f docs/local-workbench.md
+          test -f docs/objective-completion-audit.md
           test -f docs/audit-chain.md
           test -f docs/package-verification-receipts.md
           test -f docs/profile-comparison.md
@@ -73,6 +74,9 @@ jobs:
 
       - name: Run competitor-informed capability matrix
         run: python -m ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
+
+      - name: Run original objective completion audit
+        run: python -m ddpt completion audit . --json objective-audit.json --html objective-audit.html
 
       - name: Lint built-in anonymization profiles
         run: |

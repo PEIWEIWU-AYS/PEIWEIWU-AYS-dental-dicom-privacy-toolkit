@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ddpt.capability import build_capability_matrix
+from ddpt.completion import run_objective_audit
 from ddpt.dashboard import build_review_dashboard_report
 from ddpt.doctor import run_doctor
 from ddpt.models import EvidenceArtifact, EvidenceBundleResult
@@ -14,6 +15,7 @@ from ddpt.reports import (
     model_to_dict,
     write_capability_matrix_html,
     write_evidence_bundle_html,
+    write_objective_audit_html,
     write_policy_registry_html,
     write_profile_lint_html,
     write_release_audit_html,
@@ -39,6 +41,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     release_report = run_release_audit(repository_root)
     policy_report = policy_registry_report()
     capability_report = build_capability_matrix(repository_root)
+    objective_report = run_objective_audit(repository_root)
     basic_lint_report = lint_profile("dental-basic")
     research_lint_report = lint_profile("dental-research-sharing")
     linkable_lint_report = lint_profile("dental-linkable-research")
@@ -52,6 +55,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     policy_html = reports_dir / "policy-registry.html"
     capability_json = reports_dir / "capability-matrix.json"
     capability_html = reports_dir / "capability-matrix.html"
+    objective_json = reports_dir / "objective-audit.json"
+    objective_html = reports_dir / "objective-audit.html"
     basic_lint_json = reports_dir / "profile-lint-dental-basic.json"
     basic_lint_html = reports_dir / "profile-lint-dental-basic.html"
     research_lint_json = reports_dir / "profile-lint-dental-research-sharing.json"
@@ -67,6 +72,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_policy_registry_html(policy_html, policy_report)
     write_json(capability_json, model_to_dict(capability_report))
     write_capability_matrix_html(capability_html, capability_report)
+    write_json(objective_json, model_to_dict(objective_report))
+    write_objective_audit_html(objective_html, objective_report)
     write_json(basic_lint_json, model_to_dict(basic_lint_report))
     write_profile_lint_html(basic_lint_html, basic_lint_report)
     write_json(research_lint_json, model_to_dict(research_lint_report))
@@ -138,6 +145,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "Capability matrix HTML",
             "strategy",
             "Competitor-informed capability and evidence report.",
+        ),
+        _artifact(
+            output_dir,
+            objective_html,
+            "Objective completion audit HTML",
+            "strategy",
+            "Requirement-level proof against the original competitor-learning objective.",
         ),
         _artifact(
             output_dir,
@@ -247,6 +261,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             and safety_report.passed
             and release_report.passed
             and capability_report.passed
+            and objective_report.passed
             and basic_lint_report.passed
             and research_lint_report.passed
             and linkable_lint_report.passed

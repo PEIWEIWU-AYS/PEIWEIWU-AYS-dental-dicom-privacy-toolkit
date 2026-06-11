@@ -353,6 +353,31 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="objective-completion-audit",
+        capability="Original objective completion audit with requirement-level evidence",
+        source_tools=(
+            "RSNA DICOM Anonymizer",
+            "PixelMed DicomCleaner",
+            "Orthanc",
+            "RSNA CTP",
+            "DCMTK dcmodify",
+            "pydicom anonymization example",
+        ),
+        evidence_files=(
+            "src/ddpt/completion.py",
+            "docs/objective-completion-audit.md",
+            "tests/test_cli_workflow.py",
+        ),
+        command="ddpt completion audit . --json objective-audit.json --html objective-audit.html",
+        differentiator=(
+            "The project can audit itself against the original competitor-learning objective."
+        ),
+        note=(
+            "Maps each named reference tool, inherited capability, and differentiator "
+            "to files, terms, capability IDs, and release gates."
+        ),
+    ),
+    CapabilitySpec(
         id="bilingual-discoverability",
         capability="Bilingual GitHub discoverability and synthetic-data safety positioning",
         source_tools=("RSNA DICOM Anonymizer", "pydicom anonymization example"),

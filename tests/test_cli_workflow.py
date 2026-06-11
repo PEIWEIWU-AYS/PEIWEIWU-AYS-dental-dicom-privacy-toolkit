@@ -824,6 +824,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "PixelMed DicomCleaner" in reference_names
     assert "Orthanc" in reference_names
     capability_ids = {item["id"] for item in report["items"]}
+    assert "objective-completion-audit" in capability_ids
     assert "linkable-pseudonymization" in capability_ids
     assert "before-after-deid-comparison" in capability_ids
     assert "pixel-review-redaction" in capability_ids
@@ -834,6 +835,45 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     html = matrix_html.read_text()
     assert "Dental DICOM Capability Matrix" in html
     assert "repository evidence" in html
+
+
+def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) -> None:
+    audit_json = tmp_path / "reports" / "objective-audit.json"
+    audit_html = tmp_path / "reports" / "objective-audit.html"
+
+    result = runner.invoke(
+        app,
+        [
+            "completion",
+            "audit",
+            ".",
+            "--json",
+            str(audit_json),
+            "--html",
+            str(audit_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert audit_json.exists()
+    assert audit_html.exists()
+    report = json.loads(audit_json.read_text())
+    assert report["passed"] is True
+    assert report["failed_items"] == 0
+    item_ids = {item["id"] for item in report["items"]}
+    assert "study-rsna-anonymizer" in item_ids
+    assert "study-dicomcleaner" in item_ids
+    assert "study-orthanc" in item_ids
+    assert "study-rsna-ctp" in item_ids
+    assert "study-dcmtk-dcmodify" in item_ids
+    assert "study-pydicom-example" in item_ids
+    assert "shareable-proof-package" in item_ids
+    assert "capability-matrix-gate" in item_ids
+    rsna = next(item for item in report["items"] if item["id"] == "study-rsna-anonymizer")
+    assert "capability:configurable-anonymization" in rsna["evidence"]
+    html = audit_html.read_text()
+    assert "Dental DICOM Objective Completion Audit" in html
+    assert "RSNA DICOM Anonymizer" in html
 
 
 def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> None:
@@ -850,6 +890,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "review-dashboard.html").exists()
     assert (output_dir / "reports" / "release-audit.html").exists()
     assert (output_dir / "reports" / "capability-matrix.html").exists()
+    assert (output_dir / "reports" / "objective-audit.html").exists()
     assert (output_dir / "reports" / "policy-registry.json").exists()
     assert (output_dir / "reports" / "policy-registry.csv").exists()
     assert (output_dir / "reports" / "policy-registry.html").exists()
@@ -869,6 +910,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/review-dashboard.html" in artifact_paths
     assert "reports/release-audit.html" in artifact_paths
     assert "reports/capability-matrix.html" in artifact_paths
+    assert "reports/objective-audit.html" in artifact_paths
     assert "reports/policy-registry.html" in artifact_paths
     assert "reports/profile-lint-dental-basic.html" in artifact_paths
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
@@ -883,6 +925,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Dental DICOM Evidence Bundle" in html
     assert "Review dashboard HTML" in html
     assert "Capability matrix HTML" in html
+    assert "Objective completion audit HTML" in html
     assert "Release audit HTML" in html
 
 

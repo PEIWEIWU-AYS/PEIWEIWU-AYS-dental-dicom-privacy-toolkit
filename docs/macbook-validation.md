@@ -189,13 +189,28 @@ Expected:
 - `evidence-run/demo-run/reports/package-receipt.html` exists
 - `evidence-run/demo-run/reports/share-readiness.html` exists
 
-## 11. Open Human-Readable Outputs
+## 11. Run Objective Completion Audit
+
+```bash
+ddpt completion audit . \
+  --json objective-audit.json \
+  --html objective-audit.html
+```
+
+Expected:
+
+- overall objective completion audit status is `PASS`
+- every named reference tool has evidence
+- inherited capabilities and differentiators are mapped to repository files and commands
+
+## 12. Open Human-Readable Outputs
 
 Open these files locally:
 
 ```text
 release-audit.html
 capability-matrix.html
+objective-audit.html
 evidence-run/reports/evidence-bundle.html
 evidence-run/reports/review-dashboard.html
 demo-run/reports/demo-summary.html
@@ -209,7 +224,7 @@ demo-run/reports/share-readiness.html
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
 The review dashboard should show quick links, artifact status, and synthetic PNG previews.
 
-## 12. Optional Local API Check
+## 13. Optional Local API Check
 
 Run this as a separate long-running command:
 

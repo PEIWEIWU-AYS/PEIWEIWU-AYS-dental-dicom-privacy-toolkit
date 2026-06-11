@@ -13,6 +13,7 @@ from ddpt.api import create_api_app
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
 from ddpt.capability import build_capability_matrix
+from ddpt.completion import run_objective_audit
 from ddpt.dashboard import build_review_dashboard_report
 from ddpt.deid_compare import compare_deidentification
 from ddpt.doctor import run_doctor
@@ -48,6 +49,7 @@ from ddpt.reports import (
     write_deid_comparison_html,
     write_inspection_html,
     write_inventory_html,
+    write_objective_audit_html,
     write_package_receipt_html,
     write_pixel_review_html,
     write_policy_registry_html,
@@ -79,6 +81,7 @@ workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
 evidence_app = typer.Typer(help="Build local demonstration evidence bundles.")
 capability_app = typer.Typer(help="Audit competitor-informed project capabilities.")
+completion_app = typer.Typer(help="Audit original project objective completion.")
 dashboard_app = typer.Typer(help="Build static local review dashboards.")
 compare_app = typer.Typer(help="Compare DICOM privacy outputs.")
 share_app = typer.Typer(help="Check sharing readiness gates.")
@@ -93,6 +96,7 @@ app.add_typer(workflow_app, name="workflow")
 app.add_typer(release_app, name="release")
 app.add_typer(evidence_app, name="evidence")
 app.add_typer(capability_app, name="capability")
+app.add_typer(completion_app, name="completion")
 app.add_typer(dashboard_app, name="dashboard")
 app.add_typer(compare_app, name="compare")
 app.add_typer(share_app, name="share")
@@ -388,6 +392,43 @@ def capability_matrix(
     console.print(f"Implemented: {report.implemented_items}/{report.total_items}")
     console.print(f"Partial: {report.partial_items}")
     console.print(f"Missing: {report.missing_items}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@completion_app.command("audit")
+def completion_audit(
+    root: Annotated[
+        Path, typer.Argument(help="Repository root to audit against the original objective.")
+    ] = Path("."),
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON objective audit.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML objective audit.")
+    ] = None,
+) -> None:
+    report = run_objective_audit(root)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_objective_audit_html(html_output, report)
+
+    table = Table(title="Original Objective Completion Audit")
+    table.add_column("Status")
+    table.add_column("Category")
+    table.add_column("Requirement")
+    table.add_column("Missing")
+    for item in report.items:
+        table.add_row(
+            "PASS" if item.passed else "FAIL",
+            item.category,
+            item.requirement,
+            ", ".join(item.missing_evidence),
+        )
+    console.print(table)
+    console.print(f"Passed: {report.passed_items}/{report.total_items}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)

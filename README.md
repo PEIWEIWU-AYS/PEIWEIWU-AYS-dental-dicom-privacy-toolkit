@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, deterministic pseudonymization, local browser workbench, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM伪名化, 本地工作台, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -23,6 +23,7 @@ Core goals:
 - Profile lint checks for custom anonymization YAML safety
 - DICOM privacy policy registry export in JSON, CSV, and HTML
 - Competitor-informed capability matrix with repository evidence
+- Objective completion audit against the original competitor-learning goal
 - Before/after de-identification comparison reports
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
@@ -54,6 +55,7 @@ ddpt doctor
 ddpt safety scan .
 ddpt release audit . --json release-audit.json --html release-audit.html
 ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
+ddpt completion audit . --json objective-audit.json --html objective-audit.html
 ddpt evidence bundle . --out evidence-run
 ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json
 ddpt demo demo-run
@@ -113,6 +115,7 @@ See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization p
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
 See [docs/deid-comparison.md](docs/deid-comparison.md) for before/after de-identification comparison reports.
 See [docs/capability-matrix.md](docs/capability-matrix.md) for competitor-informed capability evidence.
+See [docs/objective-completion-audit.md](docs/objective-completion-audit.md) for requirement-level evidence against the original goal.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
@@ -176,7 +179,7 @@ Version 0.1 local prototype in active development. The current workflow supports
 synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
 local browser workbench, research-sharing date shifting, linkable research pseudonymization,
-release-readiness checks, and local evidence bundle generation,
+objective completion audit, release-readiness checks, and local evidence bundle generation,
 package verification receipts, profile comparison reports,
 profile lint checks, policy registry exports, capability matrix reports, static
 review dashboards, de-identification comparison reports, and pixel review

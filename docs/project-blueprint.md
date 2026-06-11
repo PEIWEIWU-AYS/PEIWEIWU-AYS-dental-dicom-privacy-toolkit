@@ -60,6 +60,7 @@ ddpt api serve demo-run
 open http://127.0.0.1:8765/workbench
 ddpt release audit . --json release-audit.json --html release-audit.html
 ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
+ddpt completion audit . --json objective-audit.json --html objective-audit.html
 ddpt evidence bundle . --out evidence-run
 ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html
 ddpt demo demo-run
@@ -150,7 +151,20 @@ Best for:
 - explaining why this toolkit is dental-specific
 - checking that public claims are backed by evidence
 
-### 8. Linkable Research Profile
+### 8. Objective Completion Audit
+
+The objective completion audit checks whether the repository satisfies the
+original competitor-learning goal. It turns a broad project promise into
+requirement-level evidence with pass/fail status.
+
+Best for:
+
+- final project readiness review
+- grant, paper, or portfolio explanation
+- avoiding vague claims about having learned from reference tools
+- mapping each competitor lesson to concrete files, commands, and reports
+
+### 9. Linkable Research Profile
 
 The linkable research profile demonstrates deterministic pseudonymization for
 synthetic longitudinal studies. It keeps repeated synthetic `PatientID` values
@@ -163,7 +177,7 @@ Best for:
 - explaining the difference between one-time anonymization and linkable pseudonyms
 - showing profile lint and comparison as safety controls
 
-### 9. Static Review Dashboard
+### 10. Static Review Dashboard
 
 The dashboard gathers the strongest evidence bundle reports and synthetic PNG
 previews into one local static HTML entrypoint.

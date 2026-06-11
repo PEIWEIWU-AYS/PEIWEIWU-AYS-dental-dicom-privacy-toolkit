@@ -15,6 +15,8 @@ synthetic CBCT or radiograph files belong to the same research subject without
 seeing the clinic's original patient identifier.
 
 This profile creates deterministic pseudonyms from a configured source keyword.
+That behavior is deterministic pseudonymization: the same source identifier maps
+to the same synthetic research identifier.
 The built-in profile uses `PatientID` as the source and writes:
 
 - `PatientName`: `ANONYMIZED^<HASH>`

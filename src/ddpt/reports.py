@@ -14,6 +14,7 @@ from ddpt.models import (
     EvidenceBundleResult,
     InspectionReport,
     InventoryReport,
+    ObjectiveAuditReport,
     PackageVerificationReceipt,
     PixelReviewReport,
     PolicyRegistryReport,
@@ -751,6 +752,88 @@ CAPABILITY_MATRIX_TEMPLATE = Template(
 """
 )
 
+OBJECTIVE_AUDIT_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Objective Completion Audit</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Objective Completion Audit</h1>
+  <p class="warning">
+    Requirement-by-requirement audit against the original competitor-learning
+    objective. This report maps claims to local repository evidence. It is not
+    clinical, legal, regulatory, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Repository root: <code>{{ report.root_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Passed items: {{ report.passed_items }} / {{ report.total_items }}</li>
+    <li>Failed items: {{ report.failed_items }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Requirement Evidence</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Category</th>
+        <th>Requirement</th>
+        <th>Evidence</th>
+        <th>Missing Evidence</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.items %}
+      <tr>
+        <td class="{{ "ok" if item.passed else "fail" }}">
+          {{ "PASS" if item.passed else "FAIL" }}
+        </td>
+        <td>{{ item.category }}<br><code>{{ item.id }}</code></td>
+        <td>{{ item.requirement }}</td>
+        <td>
+          {% for evidence in item.evidence %}
+          <code>{{ evidence }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% for evidence in item.missing_evidence %}
+          <code>{{ evidence }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 REVIEW_DASHBOARD_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -1476,6 +1559,10 @@ def write_capability_matrix_html(path: Path, report: CapabilityMatrixReport) -> 
     _write_html(path, CAPABILITY_MATRIX_TEMPLATE.render(report=report))
 
 
+def write_objective_audit_html(path: Path, report: ObjectiveAuditReport) -> None:
+    _write_html(path, OBJECTIVE_AUDIT_TEMPLATE.render(report=report))
+
+
 def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> None:
     artifact_links = [
         {
@@ -1504,6 +1591,7 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
         "De-identification comparison HTML",
         "Share readiness HTML",
         "Capability matrix HTML",
+        "Objective completion audit HTML",
         "Release audit HTML",
         "Pixel review HTML",
         "Package verification receipt",
