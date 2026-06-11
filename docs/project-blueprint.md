@@ -39,6 +39,7 @@ ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out 
 ddpt package outputs/ --encrypt --manifest reports/manifest.json --out share/dental-dicom-package.zip
 ddpt verify share/dental-dicom-package.zip
 ddpt decrypt share/dental-dicom-package.zip --out restored/
+ddpt demo demo-run
 ```
 
 ## Presentation Forms

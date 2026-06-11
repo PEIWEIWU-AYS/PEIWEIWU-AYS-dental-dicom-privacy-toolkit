@@ -104,3 +104,25 @@ class PixelRedactionAudit(BaseModel):
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
+
+
+class DemoPipelineResult(BaseModel):
+    output_dir: str
+    input_dicom: str
+    anonymized_dicom: str
+    redacted_dicom: str
+    inspection_json: str
+    inspection_html: str
+    audit_json: str
+    audit_html: str
+    validation_json: str
+    redaction_json: str
+    manifest_json: str
+    package_path: str
+    key_path: str
+    summary_html: str
+    validation_passed: bool
+    package_entries: int
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )

@@ -21,6 +21,23 @@ Version 0.1 is successful when a new user can:
 11. Verify or decrypt the package.
 12. Run automated tests locally and in GitHub Actions.
 
+### `ddpt demo`
+
+Run the complete synthetic privacy workflow in one command.
+
+Required:
+
+- synthetic DICOM generation
+- metadata inspection
+- anonymization
+- validation
+- manual pixel redaction
+- encrypted package creation
+- package verification
+- JSON reports
+- HTML reports
+- summary HTML page
+
 ## Command Requirements
 
 The CLI command is `ddpt`.
@@ -189,5 +206,6 @@ To call Version 0.1 complete, we need:
 - all required commands implemented
 - tests covering synthetic, inspect, anonymize, package, verify, decrypt
 - a generated HTML report from synthetic data
+- a one-command demo pipeline that generates all core artifacts
 - README demo commands updated
 - CI passing locally or documented if remote CI is not available

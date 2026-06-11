@@ -133,6 +133,25 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     assert (decrypted / "sample.anonymized.dcm").exists()
 
 
+def test_demo_pipeline_command(tmp_path: Path) -> None:
+    demo_dir = tmp_path / "demo"
+
+    result = runner.invoke(app, ["demo", str(demo_dir)])
+
+    assert result.exit_code == 0, result.output
+    assert (demo_dir / "input" / "sample.synthetic.dcm").exists()
+    assert (demo_dir / "outputs" / "sample.anonymized.dcm").exists()
+    assert (demo_dir / "outputs" / "sample.redacted.dcm").exists()
+    assert (demo_dir / "reports" / "inspect.html").exists()
+    assert (demo_dir / "reports" / "audit.html").exists()
+    assert (demo_dir / "reports" / "validation.json").exists()
+    assert (demo_dir / "reports" / "redaction.json").exists()
+    assert (demo_dir / "reports" / "demo-summary.html").exists()
+    assert (demo_dir / "share" / "package.ddpt").exists()
+    assert (demo_dir / "share" / "manifest.json").exists()
+    assert (demo_dir / "share" / "package.key").exists()
+
+
 def test_package_rejects_empty_directory(tmp_path: Path) -> None:
     empty = tmp_path / "empty"
     empty.mkdir()

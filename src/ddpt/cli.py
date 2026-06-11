@@ -10,6 +10,7 @@ from rich.table import Table
 from ddpt import __version__
 from ddpt.anonymize import anonymize_dicom
 from ddpt.inspection import inspect_dicom
+from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.reports import model_to_dict, write_audit_html, write_inspection_html
 from ddpt.sharing import create_package, decrypt_package, verify_package
@@ -46,6 +47,26 @@ def synthetic(
 ) -> None:
     path = create_synthetic_dicom(output, patient_name, patient_id, modality, study_description)
     console.print(f"Created synthetic DICOM: {path}")
+
+
+@app.command()
+def demo(
+    output_dir: Annotated[Path, typer.Argument(help="Output demo directory.")],
+    profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
+    rect: Annotated[
+        str,
+        typer.Option(
+            "--rect",
+            help="Demo redaction rectangle in x,y,width,height format.",
+        ),
+    ] = "1,0,1,1",
+) -> None:
+    result = run_demo_pipeline(output_dir, profile, rect)
+    console.print(f"Demo pipeline written to: {result.output_dir}")
+    console.print(f"Summary HTML: {result.summary_html}")
+    console.print(f"Package entries: {result.package_entries}")
+    if not result.validation_passed:
+        raise typer.Exit(1)
 
 
 @app.command()

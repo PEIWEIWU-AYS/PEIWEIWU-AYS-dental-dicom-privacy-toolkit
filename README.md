@@ -31,6 +31,14 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
 
+ddpt demo demo-run
+```
+
+The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, JSON reports, HTML reports, an encrypted package, and a summary page to `demo-run/`.
+
+## Manual Step-by-Step Demo
+
+```bash
 ddpt synthetic demo-run/sample.dcm
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html

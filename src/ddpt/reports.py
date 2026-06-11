@@ -5,7 +5,7 @@ from typing import Any
 
 from jinja2 import Template
 
-from ddpt.models import AnonymizationAudit, InspectionReport
+from ddpt.models import AnonymizationAudit, DemoPipelineResult, InspectionReport
 from ddpt.utils import ensure_parent
 
 INSPECTION_TEMPLATE = Template(
@@ -119,6 +119,63 @@ AUDIT_TEMPLATE = Template(
 """
 )
 
+DEMO_SUMMARY_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Privacy Toolkit Demo Summary</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Privacy Toolkit Demo Summary</h1>
+  <p class="warning">
+    Synthetic demo only. This workflow demonstrates privacy risk reduction, auditability,
+    packaging, and verification. It is not a legal compliance guarantee.
+  </p>
+  <h2>Pipeline Result</h2>
+  <ul>
+    <li>
+      Validation:
+      <span class="ok">{{ "passed" if result.validation_passed else "failed" }}</span>
+    </li>
+    <li>Package entries: {{ result.package_entries }}</li>
+    <li>Generated at: {{ result.generated_at }}</li>
+  </ul>
+  <h2>Artifacts</h2>
+  <table>
+    <thead><tr><th>Artifact</th><th>Path</th></tr></thead>
+    <tbody>
+      <tr><td>Input synthetic DICOM</td><td><code>{{ result.input_dicom }}</code></td></tr>
+      <tr><td>Anonymized DICOM</td><td><code>{{ result.anonymized_dicom }}</code></td></tr>
+      <tr><td>Pixel-redacted DICOM</td><td><code>{{ result.redacted_dicom }}</code></td></tr>
+      <tr><td>Inspection HTML</td><td><code>{{ result.inspection_html }}</code></td></tr>
+      <tr><td>Anonymization audit HTML</td><td><code>{{ result.audit_html }}</code></td></tr>
+      <tr><td>Validation JSON</td><td><code>{{ result.validation_json }}</code></td></tr>
+      <tr><td>Redaction audit JSON</td><td><code>{{ result.redaction_json }}</code></td></tr>
+      <tr><td>Encrypted package</td><td><code>{{ result.package_path }}</code></td></tr>
+      <tr><td>Package manifest</td><td><code>{{ result.manifest_json }}</code></td></tr>
+      <tr><td>Package key</td><td><code>{{ result.key_path }}</code></td></tr>
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -126,6 +183,10 @@ def write_inspection_html(path: Path, report: InspectionReport) -> None:
 
 def write_audit_html(path: Path, audit: AnonymizationAudit) -> None:
     _write_html(path, AUDIT_TEMPLATE.render(audit=audit))
+
+
+def write_demo_summary_html(path: Path, result: DemoPipelineResult) -> None:
+    _write_html(path, DEMO_SUMMARY_TEMPLATE.render(result=result))
 
 
 def _write_html(path: Path, html: str) -> None:
