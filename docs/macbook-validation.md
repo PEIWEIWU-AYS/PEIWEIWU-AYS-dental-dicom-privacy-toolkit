@@ -4,6 +4,10 @@ This checklist validates the project locally on a MacBook using synthetic DICOM 
 
 这份清单用于在 MacBook 上用合成 DICOM 数据验收项目效果。
 
+For a one-command JSON/HTML acceptance report, run
+`ddpt macbook validate . --out macbook-validation-run` and see
+[MacBook Validation Report](macbook-validation-report.md).
+
 ## 1. Install
 
 ```bash

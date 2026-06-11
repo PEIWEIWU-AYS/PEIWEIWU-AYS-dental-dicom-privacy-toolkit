@@ -27,6 +27,7 @@ from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
 from ddpt.intake import triage_clinic_export
 from ddpt.inventory import build_inventory, write_inventory_csv
+from ddpt.macbook import run_macbook_validation
 from ddpt.orthanc_plan import build_orthanc_anonymize_plan
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixel_review import create_pixel_review
@@ -75,6 +76,7 @@ from ddpt.reports import (
     write_filename_privacy_html,
     write_inspection_html,
     write_inventory_html,
+    write_macbook_validation_html,
     write_objective_audit_html,
     write_orthanc_plan_html,
     write_package_receipt_html,
@@ -136,6 +138,7 @@ risk_app = typer.Typer(help="Score residual privacy risk from generated evidence
 regression_app = typer.Typer(help="Run synthetic privacy regression suites.")
 publish_app = typer.Typer(help="Prepare public GitHub publishing.")
 reference_app = typer.Typer(help="Export external reference-tool review packs.")
+macbook_app = typer.Typer(help="Run local MacBook validation reports.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(confidentiality_app, name="confidentiality")
@@ -166,6 +169,7 @@ app.add_typer(risk_app, name="risk")
 app.add_typer(regression_app, name="regression")
 app.add_typer(publish_app, name="publish")
 app.add_typer(reference_app, name="reference")
+app.add_typer(macbook_app, name="macbook")
 console = Console()
 
 
@@ -460,6 +464,71 @@ def evidence_bundle(
     console.print(f"Summary HTML: {Path(result.output_dir) / 'reports' / 'evidence-bundle.html'}")
     console.print(f"Overall: {'PASS' if result.passed else 'FAIL'}")
     if not result.passed:
+        raise typer.Exit(1)
+
+
+@macbook_app.command("validate")
+def macbook_validate(
+    repository_root: Annotated[
+        Path,
+        typer.Argument(help="Repository root to validate on this MacBook."),
+    ] = Path("."),
+    output_dir: Annotated[
+        Path,
+        typer.Option("--out", help="Output MacBook validation directory."),
+    ] = Path("macbook-validation-run"),
+    check_remote: Annotated[
+        bool,
+        typer.Option(
+            "--check-remote/--no-check-remote",
+            help="Check whether the configured GitHub remote exists.",
+        ),
+    ] = True,
+    require_remote: Annotated[
+        bool,
+        typer.Option(
+            "--require-remote/--no-require-remote",
+            help="Fail overall validation unless GitHub is ready to push.",
+        ),
+    ] = False,
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write MacBook validation JSON.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write MacBook validation HTML.")
+    ] = None,
+) -> None:
+    report = run_macbook_validation(
+        repository_root,
+        output_dir,
+        check_remote=check_remote,
+        require_remote=require_remote,
+    )
+    json_output = json_output or output_dir / "reports" / "macbook-validation.json"
+    html_output = html_output or output_dir / "reports" / "macbook-validation.html"
+    write_json(json_output, model_to_dict(report))
+    write_macbook_validation_html(html_output, report)
+
+    table = Table(title="Dental DICOM MacBook Validation")
+    table.add_column("Status")
+    table.add_column("Check")
+    table.add_column("Required")
+    table.add_column("Message")
+    for check in report.checks:
+        table.add_row(
+            check.status,
+            check.id,
+            "yes" if check.required else "no",
+            check.message,
+        )
+    console.print(table)
+    console.print(f"Evidence directory: {report.evidence_dir}")
+    console.print(f"Review dashboard: {report.dashboard_html}")
+    console.print(f"Validation HTML: {html_output}")
+    console.print(f"Local passed: {report.local_passed}")
+    console.print(f"GitHub ready: {report.github_ready}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
         raise typer.Exit(1)
 
 

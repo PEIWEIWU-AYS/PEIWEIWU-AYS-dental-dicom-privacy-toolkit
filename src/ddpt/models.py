@@ -525,6 +525,44 @@ class PublishPreflightReport(BaseModel):
         return sum(1 for check in self.checks if check.status == "fail")
 
 
+class MacBookValidationCheck(BaseModel):
+    id: str
+    category: str
+    status: Literal["pass", "warning", "action-required", "fail"]
+    required: bool
+    passed: bool
+    message: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class MacBookValidationReport(BaseModel):
+    root_dir: str
+    output_dir: str
+    evidence_dir: str
+    dashboard_html: str
+    local_passed: bool
+    github_ready: bool
+    require_remote: bool
+    passed: bool
+    checks: list[MacBookValidationCheck]
+    next_steps: list[str]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+    @property
+    def passed_checks(self) -> int:
+        return sum(1 for check in self.checks if check.passed)
+
+    @property
+    def failed_checks(self) -> int:
+        return sum(1 for check in self.checks if check.status == "fail")
+
+    @property
+    def action_required_checks(self) -> int:
+        return sum(1 for check in self.checks if check.status == "action-required")
+
+
 class EvidenceArtifact(BaseModel):
     label: str
     category: str

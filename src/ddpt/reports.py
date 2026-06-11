@@ -22,6 +22,7 @@ from ddpt.models import (
     FilenamePrivacyScanReport,
     InspectionReport,
     InventoryReport,
+    MacBookValidationReport,
     ObjectiveAuditReport,
     OrthancAnonymizePlanReport,
     PackageVerificationReceipt,
@@ -2989,6 +2990,96 @@ PIXEL_REVIEW_TEMPLATE = Template(
 """
 )
 
+MACBOOK_VALIDATION_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM MacBook Validation</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    .notice { padding: 12px; background: #eef6ff; border: 1px solid #9dc6ee; border-radius: 6px; }
+    .pass { color: #1f6f43; font-weight: 700; }
+    .warning, .action-required { color: #8a5a00; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM MacBook Validation</h1>
+  <p class="notice">
+    Local synthetic-data acceptance report for MacBook demonstrations and
+    open-source review. This is not clinical, legal, regulatory, or security
+    certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Repository root: <code>{{ report.root_dir }}</code></li>
+    <li>Output directory: <code>{{ report.output_dir }}</code></li>
+    <li>Evidence directory: <code>{{ report.evidence_dir }}</code></li>
+    <li>Review dashboard: <code>{{ report.dashboard_html }}</code></li>
+    <li>Local validation passed: {{ report.local_passed }}</li>
+    <li>GitHub ready: {{ report.github_ready }}</li>
+    <li>Require remote: {{ report.require_remote }}</li>
+    <li>
+      Overall:
+      <span class="{{ "pass" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Passed checks: {{ report.passed_checks }}/{{ report.checks | length }}</li>
+    <li>Action required checks: {{ report.action_required_checks }}</li>
+    <li>Failed checks: {{ report.failed_checks }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Checks</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Check</th>
+        <th>Category</th>
+        <th>Required</th>
+        <th>Message</th>
+        <th>Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for check in report.checks %}
+      <tr>
+        <td class="{{ check.status }}">{{ check.status }}</td>
+        <td><code>{{ check.id }}</code></td>
+        <td>{{ check.category }}</td>
+        <td>{{ check.required }}</td>
+        <td>{{ check.message }}</td>
+        <td>
+          {% for item in check.evidence %}
+          <code>{{ item }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Next Steps</h2>
+  <ol>
+    {% for step in report.next_steps %}
+    <li>{{ step }}</li>
+    {% endfor %}
+  </ol>
+</body>
+</html>
+"""
+)
+
 PUBLISH_PREFLIGHT_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -3208,6 +3299,10 @@ def write_release_audit_html(path: Path, report: ReleaseAuditReport) -> None:
 
 def write_evidence_bundle_html(path: Path, result: EvidenceBundleResult) -> None:
     _write_html(path, EVIDENCE_BUNDLE_TEMPLATE.render(result=result))
+
+
+def write_macbook_validation_html(path: Path, report: MacBookValidationReport) -> None:
+    _write_html(path, MACBOOK_VALIDATION_TEMPLATE.render(report=report))
 
 
 def write_capability_matrix_html(path: Path, report: CapabilityMatrixReport) -> None:

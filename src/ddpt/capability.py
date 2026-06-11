@@ -773,6 +773,27 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="macbook-validation-report",
+        capability="One-command MacBook local validation report",
+        source_tools=("RSNA CTP", "Orthanc", "PixelMed DicomCleaner"),
+        evidence_files=(
+            "src/ddpt/macbook.py",
+            "docs/macbook-validation-report.md",
+            "src/ddpt/reports.py",
+            "tests/test_cli_workflow.py",
+        ),
+        command="ddpt macbook validate . --out macbook-validation-run",
+        differentiator=(
+            "Environment, release, competitor coverage, objective completion, "
+            "evidence bundle, dashboard, and GitHub readiness are summarized "
+            "in one local JSON/HTML acceptance report."
+        ),
+        note=(
+            "Turns many proof commands into a MacBook-friendly acceptance layer "
+            "without uploading DICOM files or requiring GitHub to exist first."
+        ),
+    ),
+    CapabilitySpec(
         id="objective-completion-audit",
         capability="Original objective completion audit with requirement-level evidence",
         source_tools=(

@@ -31,6 +31,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Profile Comparison](profile-comparison.md)
 - [Profile Conformance](profile-conformance.md)
 - [MacBook Validation](macbook-validation.md)
+- [MacBook Validation Report](macbook-validation-report.md)
 - [Public Repository Safety Scan](safety-scan.md)
 - [Release Audit](release-audit.md)
 - [Evidence Bundle](evidence-bundle.md)

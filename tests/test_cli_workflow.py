@@ -1501,6 +1501,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "workflow-quality-gate" in capability_ids
     assert "residual-risk-score" in capability_ids
     assert "privacy-regression-suite" in capability_ids
+    assert "macbook-validation-report" in capability_ids
     assert "github-publish-preflight" in capability_ids
     assert "deid-certificate" in capability_ids
     assert "secure-sharing" in capability_ids
@@ -1556,6 +1557,7 @@ def test_competitor_coverage_reports_reference_tool_mapping(tmp_path: Path) -> N
     assert "local-api-evidence-endpoints" in capability_ids
     assert "dcmodify-plan-export" in capability_ids
     assert "privacy-regression-suite" in capability_ids
+    assert "macbook-validation-report" in capability_ids
     assert "github-publish-preflight" in capability_ids
     assert "competitor-coverage-report" in capability_ids
     html = coverage_html.read_text()
@@ -1717,6 +1719,48 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Profile conformance HTML" in html
     assert "Workflow profile conformance HTML" in html
     assert "Pixel risk scan HTML" in html
+
+
+def test_macbook_validation_command_creates_acceptance_report(tmp_path: Path) -> None:
+    output_dir = tmp_path / "macbook-validation"
+
+    result = runner.invoke(
+        app,
+        [
+            "macbook",
+            "validate",
+            ".",
+            "--out",
+            str(output_dir),
+            "--no-check-remote",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    report_json = output_dir / "reports" / "macbook-validation.json"
+    report_html = output_dir / "reports" / "macbook-validation.html"
+    assert report_json.exists()
+    assert report_html.exists()
+    assert (output_dir / "evidence-run" / "reports" / "evidence-bundle.html").exists()
+    assert (output_dir / "evidence-run" / "reports" / "review-dashboard.html").exists()
+    report = json.loads(report_json.read_text())
+    assert report["passed"] is True
+    assert report["local_passed"] is True
+    assert report["github_ready"] is False
+    checks = {item["id"]: item for item in report["checks"]}
+    assert checks["environment-doctor"]["status"] == "pass"
+    assert checks["release-audit"]["status"] == "pass"
+    assert checks["capability-matrix"]["status"] == "pass"
+    assert checks["competitor-coverage"]["status"] == "pass"
+    assert checks["objective-completion"]["status"] == "pass"
+    assert checks["evidence-bundle"]["status"] == "pass"
+    assert checks["review-dashboard"]["status"] == "pass"
+    assert checks["github-publish-preflight"]["status"] == "action-required"
+    assert checks["github-publish-preflight"]["required"] is False
+    assert checks["github-publish-preflight"]["passed"] is True
+    html = report_html.read_text()
+    assert "Dental DICOM MacBook Validation" in html
+    assert "github-publish-preflight" in html
 
 
 def test_certificate_command_builds_handoff_certificate(tmp_path: Path) -> None:

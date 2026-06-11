@@ -55,6 +55,7 @@ Version 0.1 is successful when a new user can:
 45. Run a synthetic adversarial privacy regression suite.
 46. Run a GitHub publish preflight before creating or pushing the public repository.
 47. Run automated tests locally and in GitHub Actions.
+48. Run a one-command MacBook validation report for local acceptance and GitHub readiness.
 
 ### `ddpt demo`
 
@@ -151,6 +152,27 @@ Required:
 - GitHub publish preflight JSON and HTML output
 - non-zero exit status when any major evidence gate fails
 - documentation that generated evidence output must not be committed by default
+
+### `ddpt macbook validate`
+
+Generate a local MacBook acceptance report that summarizes the strongest
+project evidence into one JSON/HTML result.
+
+Required:
+
+- repository root input
+- output directory input
+- environment doctor check
+- public release audit check
+- competitor-informed capability matrix check
+- reference-tool coverage check
+- objective completion audit check
+- evidence bundle generation
+- static review dashboard availability check
+- GitHub publish preflight check
+- non-failing `action-required` status when the GitHub remote is missing by default
+- optional `--require-remote` mode that fails until GitHub is ready to push
+- JSON and HTML output
 
 ### `ddpt publish preflight`
 

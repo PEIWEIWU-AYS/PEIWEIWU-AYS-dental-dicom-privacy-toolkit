@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM PS3.15, DICOMDIR, clinic export intake, DICOM confidentiality alignment, DICOM JSON export, Orthanc-inspired API, local API evidence endpoints, Orthanc anonymization plan, Orthanc REST anonymize, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, residual privacy risk score, privacy regression suite, GitHub publish preflight, adversarial synthetic DICOM, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOMDIR预检, 诊所导出包预检, DICOM保密配置, DICOM PS3.15, DICOM保密配置对齐, DICOM JSON导出, Orthanc风格接口, 本地API证据端点, Orthanc匿名化计划, Orthanc REST脱敏, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 残余隐私风险评分, 隐私回归测试, GitHub发布预检, 对抗性合成DICOM, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM PS3.15, DICOMDIR, clinic export intake, DICOM confidentiality alignment, DICOM JSON export, Orthanc-inspired API, local API evidence endpoints, Orthanc anonymization plan, Orthanc REST anonymize, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, residual privacy risk score, privacy regression suite, MacBook validation report, GitHub publish preflight, adversarial synthetic DICOM, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOMDIR预检, 诊所导出包预检, DICOM保密配置, DICOM PS3.15, DICOM保密配置对齐, DICOM JSON导出, Orthanc风格接口, 本地API证据端点, Orthanc匿名化计划, Orthanc REST脱敏, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 残余隐私风险评分, 隐私回归测试, MacBook验收报告, GitHub发布预检, 对抗性合成DICOM, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -53,6 +53,7 @@ Core goals:
 - Static local review dashboard for non-programmer walkthroughs
 - Release-readiness audit for public GitHub publishing
 - Local evidence bundle for MacBook validation and project demonstrations
+- One-command MacBook validation report for local acceptance and GitHub readiness
 - Encrypted sharing package prototypes
 - Package verification receipts for receiver-side sharing evidence
 - Share-readiness gate before synthetic package handoff
@@ -77,6 +78,7 @@ ddpt capability matrix --root . --json capability-matrix.json --html capability-
 ddpt competitor coverage --root . --json competitor-coverage.json --html competitor-coverage.html
 ddpt completion audit . --json objective-audit.json --html objective-audit.html
 ddpt evidence bundle . --out evidence-run
+ddpt macbook validate . --out macbook-validation-run
 ddpt regression suite regression-run --json regression-run/reports/privacy-regression-suite.json --html regression-run/reports/privacy-regression-suite.html
 ddpt publish preflight . --json publish-preflight.json --html publish-preflight.html
 ddpt publish preflight . --check-remote --json publish-preflight-remote.json --html publish-preflight-remote.html
@@ -170,6 +172,7 @@ See [docs/deid-certificate.md](docs/deid-certificate.md) for the synthetic de-id
 See [docs/capability-matrix.md](docs/capability-matrix.md) for competitor-informed capability evidence.
 See [docs/objective-completion-audit.md](docs/objective-completion-audit.md) for requirement-level evidence against the original goal.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
+See [docs/macbook-validation-report.md](docs/macbook-validation-report.md) for one-command local validation reports.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
 See [docs/evidence-bundle.md](docs/evidence-bundle.md) for one-command local evidence generation.

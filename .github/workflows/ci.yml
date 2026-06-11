@@ -50,6 +50,7 @@ jobs:
           test -f docs/residual-risk-score.md
           test -f docs/anonymization-dry-run.md
           test -f docs/macbook-validation.md
+          test -f docs/macbook-validation-report.md
           test -f docs/safety-scan.md
           test -f docs/batch.md
           test -f docs/release-audit.md
@@ -111,6 +112,9 @@ jobs:
 
       - name: Generate local evidence bundle
         run: python -m ddpt evidence bundle . --out evidence-run
+
+      - name: Run MacBook validation report
+        run: python -m ddpt macbook validate . --out macbook-validation-run --no-check-remote
 
       - name: Run synthetic privacy regression suite
         run: python -m ddpt regression suite regression-run --json regression-run/reports/privacy-regression-suite.json --html regression-run/reports/privacy-regression-suite.html

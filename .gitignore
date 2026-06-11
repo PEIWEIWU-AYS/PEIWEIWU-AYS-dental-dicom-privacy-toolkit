@@ -42,6 +42,8 @@ workflow-run/
 workflow-*/
 evidence-run/
 evidence-*/
+macbook-validation-run/
+macbook-validation-*/
 
 # Private clinical material
 private/
