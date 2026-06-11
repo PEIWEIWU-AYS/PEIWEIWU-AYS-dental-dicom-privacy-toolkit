@@ -29,6 +29,7 @@ The bundle includes:
 - policy registry JSON, CSV, and HTML
 - DICOM confidentiality alignment JSON and HTML
 - built-in profile lint JSON and HTML
+- clinic export intake triage JSON and HTML from the workflow recipe
 - safe DICOM JSON export JSON and HTML from the workflow recipe
 - filename privacy scan JSON and HTML from the workflow recipe
 - privacy remediation plan JSON and HTML from the workflow recipe
@@ -101,6 +102,7 @@ evidence-run/
     outputs/sample.anonymized.dcm
     outputs/sample.redacted.dcm
     reports/
+      intake-triage.html
       filename-privacy.html
       dicom-json.html
       remediation-plan.html

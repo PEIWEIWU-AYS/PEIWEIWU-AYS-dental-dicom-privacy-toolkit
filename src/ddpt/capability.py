@@ -158,6 +158,35 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="clinic-export-intake-triage",
+        capability="Clinic export intake triage for DICOMDIR, ZIP, sidecar, and path risks",
+        source_tools=(
+            "PixelMed DicomCleaner",
+            "RSNA CTP",
+            "Orthanc",
+            "pydicom anonymization example",
+        ),
+        evidence_files=(
+            "src/ddpt/intake.py",
+            "docs/intake-triage.md",
+            "src/ddpt/api.py",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt intake triage clinic-export --json intake-triage.json "
+            "--html intake-triage.html"
+        ),
+        differentiator=(
+            "Scans realistic dental export folders and ZIP archives before "
+            "anonymization, including DICOMDIR, sidecar files, unsafe archive paths, "
+            "and patient identifiers in paths."
+        ),
+        note=(
+            "Adds an intake gate before inventory/anonymization so raw clinic "
+            "exports are not mistaken for GitHub-ready evidence."
+        ),
+    ),
+    CapabilitySpec(
         id="filename-privacy-scan",
         capability="Filename and path privacy scan before sharing",
         source_tools=("PixelMed DicomCleaner", "RSNA CTP", "pydicom anonymization example"),
@@ -458,8 +487,8 @@ CAPABILITY_SPECS = [
         ),
         command="ddpt api serve demo-run --host 127.0.0.1 --port 8765",
         differentiator=(
-            "Browser and REST clients can trigger filename, remediation, pixel-risk, "
-            "regression, and publish-preflight reports without cloud upload."
+            "Browser and REST clients can trigger intake, filename, remediation, "
+            "pixel-risk, regression, and publish-preflight reports without cloud upload."
         ),
         note=(
             "Extends Orthanc-style API thinking into a local report workstation "

@@ -5,6 +5,13 @@ steps:
     action: synthetic
     output: input/sample.synthetic.dcm
 
+  - id: clinic-export-intake-triage
+    action: intake-triage
+    input: input
+    json: reports/intake-triage.json
+    html: reports/intake-triage.html
+    require_pass: false
+
   - id: filename-privacy-scan
     action: filename-scan
     input: input

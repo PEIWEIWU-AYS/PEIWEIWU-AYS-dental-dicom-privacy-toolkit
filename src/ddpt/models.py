@@ -371,6 +371,50 @@ class FilenamePrivacyScanReport(BaseModel):
     )
 
 
+class IntakeFinding(BaseModel):
+    path: str
+    severity: Literal["high", "medium", "low"]
+    category: str
+    rule_id: str
+    message: str
+    recommended_action: str
+
+
+class IntakeFileRecord(BaseModel):
+    path: str
+    source: Literal["filesystem", "archive"]
+    kind: Literal["dicom", "dicomdir", "sidecar", "archive-risk", "unknown"]
+    size_bytes: int
+    readable_dicom: bool = False
+    modality: str | None = None
+    patient_name_present: bool = False
+    patient_id_present: bool = False
+    high_risk_tags: int = 0
+    medium_risk_tags: int = 0
+    findings: list[IntakeFinding] = Field(default_factory=list)
+
+
+class ClinicExportIntakeReport(BaseModel):
+    input_path: str
+    input_type: Literal["directory", "file", "zip", "missing"]
+    recursive: bool
+    passed: bool
+    total_files: int
+    dicom_files: int
+    dicomdir_files: int
+    sidecar_files: int
+    archive_risk_files: int
+    unknown_files: int
+    high_findings: int
+    medium_findings: int
+    files: list[IntakeFileRecord]
+    next_steps: list[str] = Field(default_factory=list)
+    boundary_notes: list[str] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DoctorCheck(BaseModel):
     name: str
     passed: bool

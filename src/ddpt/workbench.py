@@ -248,6 +248,7 @@ WORKBENCH_TEMPLATE = Template(
           </label>
         </div>
         <div class="actions">
+          <button id="intake-triage">Intake Triage</button>
           <button id="filename-scan">Filename Scan</button>
           <button id="remediation-plan">Remediation Plan</button>
           <button id="pixel-risk">Pixel Risk</button>
@@ -358,6 +359,9 @@ WORKBENCH_TEMPLATE = Template(
     });
     document.getElementById("filename-scan").addEventListener("click", () => {
       run("Filename scan", "/filename-scan", {path: value("input-dir")});
+    });
+    document.getElementById("intake-triage").addEventListener("click", () => {
+      run("Intake triage", "/intake-triage", {path: value("input-dir")});
     });
     document.getElementById("remediation-plan").addEventListener("click", () => {
       run("Remediation plan", "/remediation-plan", {

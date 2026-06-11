@@ -339,6 +339,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "intake-triage.html",
+            "Clinic export intake triage HTML",
+            "intake",
+            "Read-only clinic export, DICOMDIR, sidecar, ZIP, and path preflight.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "dcmodify-plan.html",
             "dcmodify plan HTML",
             "expert-review",

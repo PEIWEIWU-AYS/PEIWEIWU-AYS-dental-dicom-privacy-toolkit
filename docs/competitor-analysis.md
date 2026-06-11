@@ -54,6 +54,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - dental/CBCT/oral imaging positioning
 - synthetic demo data as a first-class workflow
 - multi-file synthetic DICOM study folders for batch and repeated-subject demos
+- clinic export intake triage for DICOMDIR, sidecar files, ZIP archives, and risky paths
 - batch de-identification evidence for directory workflows
 - bilingual English/Chinese discoverability
 - CLI that works cleanly in CI
@@ -130,6 +131,7 @@ The project should add:
 - dental-specific profile names and documentation
 - audit event JSON output
 - directory inventory with JSON, CSV, and HTML exports
+- clinic export intake triage with JSON and HTML outputs before raw export handling
 - filename/path privacy scan with JSON and HTML outputs before sharing
 - privacy remediation plan with JSON and HTML outputs before anonymization
 - multi-stage YAML workflow runner with step-level artifacts

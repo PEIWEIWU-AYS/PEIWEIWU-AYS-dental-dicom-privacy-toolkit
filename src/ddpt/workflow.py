@@ -14,6 +14,7 @@ from ddpt.deid_compare import compare_deidentification
 from ddpt.dicom_json import export_dicom_json
 from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
+from ddpt.intake import triage_clinic_export
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import WorkflowRunReport, WorkflowStepResult
 from ddpt.orthanc_plan import build_orthanc_anonymize_plan
@@ -28,6 +29,7 @@ from ddpt.remediation import build_privacy_remediation_plan
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
+    write_clinic_export_intake_html,
     write_confidentiality_alignment_html,
     write_dcmodify_plan_html,
     write_deid_certificate_html,
@@ -151,6 +153,27 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             artifacts.append(html_path)
         if not report.passed:
             raise ValueError("Filename privacy scan requires review")
+        return artifacts
+
+    if action == "intake-triage":
+        report = triage_clinic_export(
+            _path(root_dir, step["input"]),
+            recursive=bool(step.get("recursive", True)),
+            max_archive_member_bytes=int(
+                step.get("max_archive_member_bytes", 16 * 1024 * 1024)
+            ),
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_clinic_export_intake_html(html_path, report)
+            artifacts.append(html_path)
+        if not report.passed and bool(step.get("require_pass", True)):
+            raise ValueError("Clinic export intake triage requires review")
         return artifacts
 
     if action == "inspect":

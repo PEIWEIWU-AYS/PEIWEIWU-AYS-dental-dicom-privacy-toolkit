@@ -6,8 +6,8 @@ workflow while keeping all files inside the local API root.
 
 `ddpt api serve` 会在 `/workbench` 提供一个轻量本地浏览器工作台。它让用户可以
 用按钮触发合成 DICOM 演示、目录 inventory、metadata inspect、匿名化、验证和 PNG
-preview，也可以生成隐私整改、文件名隐私、像素风险、隐私回归和 GitHub 发布预检
-报告，同时所有路径都被限制在本地 API root 内。
+preview，也可以生成诊所导出包接收预检、隐私整改、文件名隐私、像素风险、隐私回归
+和 GitHub 发布预检报告，同时所有路径都被限制在本地 API root 内。
 
 ## Start
 
@@ -37,6 +37,7 @@ The workbench can call local API endpoints for:
 - profile-based anonymization
 - anonymized DICOM validation
 - PNG preview generation
+- clinic export intake triage reports
 - filename privacy reports
 - privacy remediation reports
 - pixel risk reports

@@ -26,6 +26,7 @@ http://127.0.0.1:8765/workbench
 - `POST /inventory`
 - `POST /inspect`
 - `POST /dicom-json`
+- `POST /intake-triage`
 - `POST /filename-scan`
 - `POST /remediation-plan`
 - `POST /pixel-risk`
@@ -61,6 +62,10 @@ curl http://127.0.0.1:8765/competitor-coverage
 Generate local privacy evidence reports from the API:
 
 ```bash
+curl -X POST http://127.0.0.1:8765/intake-triage \
+  -H "Content-Type: application/json" \
+  -d '{"path":"input"}'
+
 curl -X POST http://127.0.0.1:8765/remediation-plan \
   -H "Content-Type: application/json" \
   -d '{"path":"input","profile":"dental-basic"}'
@@ -99,8 +104,9 @@ All paths are resolved inside the API root directory. Requests such as `../outsi
 
 The `/workbench` page provides browser controls for synthetic demo generation,
 inventory, inspection, anonymization, validation, preview, privacy evidence
-reports, regression suite runs, and publish preflight checks. It is a GUI-style
-entrypoint for MacBook demonstrations, not a production viewer.
+reports, clinic export intake triage, regression suite runs, and publish
+preflight checks. It is a GUI-style entrypoint for MacBook demonstrations, not a
+production viewer.
 
 ## Safety Boundary
 

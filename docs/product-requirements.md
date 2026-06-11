@@ -14,46 +14,47 @@ Version 0.1 is successful when a new user can:
 4. Generate a synthetic DICOM file.
 5. Run a YAML recipe as a reproducible multi-stage workflow.
 6. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
-7. Run a filename and path privacy scan before sharing.
-8. Generate a privacy remediation plan before anonymization.
-9. Generate PNG previews for visual workflow review.
-10. Run exact tag dump/set/blank/delete operations for expert workflows.
-11. Export a DCMTK `dcmodify`-style expert operation plan from an anonymization profile.
-12. Export safe DICOM metadata JSON for integration demos.
-13. Inspect metadata and receive JSON plus HTML reports.
-14. Preview anonymization actions with dry-run mode.
-15. Apply the `dental-basic` anonymization profile.
-16. Apply the `dental-research-sharing` profile with deterministic date shifting.
-17. Lint anonymization profiles before running workflows.
-18. Compare anonymization profiles with JSON and HTML reports.
-19. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
-20. Generate DICOM PS3.15-inspired confidentiality alignment reports.
-21. Generate before/after de-identification comparison reports.
-22. Verify post-anonymization output against the selected profile.
-23. Confirm direct identifiers were replaced or removed.
-24. Generate an audit event JSON file.
-25. Validate anonymized output with a pass/fail report.
-26. Run a conservative pixel risk scan before manual pixel review.
-27. Generate pixel review reports for known burned-in annotation regions.
-28. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-29. Package anonymized files with checksums.
-30. Encrypt the package.
-31. Verify or decrypt the package.
-32. Generate package verification receipts for receiver-side sharing evidence.
-33. Run a share-readiness gate before synthetic package handoff.
-34. Run local REST API workflow demos for integration testing.
-35. Run a release-readiness audit before public GitHub publishing.
-36. Run a competitor-informed capability matrix that maps features to repository evidence.
-37. Run a competitor coverage report that maps reference tools to implemented evidence.
-38. Generate a static local review dashboard for non-programmer walkthroughs.
-39. Generate a local evidence bundle for MacBook validation and public demonstrations.
-40. Run a workflow quality gate that verifies public review evidence.
-41. Export a review-only Orthanc REST anonymization plan from a dental profile.
-42. Export a reference-tool pack for DCMTK, Orthanc, RSNA CTP-style migration notes, and pydicom scripts.
-43. Run a residual privacy risk score across generated workflow evidence.
-44. Run a synthetic adversarial privacy regression suite.
-45. Run a GitHub publish preflight before creating or pushing the public repository.
-46. Run automated tests locally and in GitHub Actions.
+7. Run a clinic export intake triage for DICOMDIR, ZIP, sidecar files, and risky paths.
+8. Run a filename and path privacy scan before sharing.
+9. Generate a privacy remediation plan before anonymization.
+10. Generate PNG previews for visual workflow review.
+11. Run exact tag dump/set/blank/delete operations for expert workflows.
+12. Export a DCMTK `dcmodify`-style expert operation plan from an anonymization profile.
+13. Export safe DICOM metadata JSON for integration demos.
+14. Inspect metadata and receive JSON plus HTML reports.
+15. Preview anonymization actions with dry-run mode.
+16. Apply the `dental-basic` anonymization profile.
+17. Apply the `dental-research-sharing` profile with deterministic date shifting.
+18. Lint anonymization profiles before running workflows.
+19. Compare anonymization profiles with JSON and HTML reports.
+20. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
+21. Generate DICOM PS3.15-inspired confidentiality alignment reports.
+22. Generate before/after de-identification comparison reports.
+23. Verify post-anonymization output against the selected profile.
+24. Confirm direct identifiers were replaced or removed.
+25. Generate an audit event JSON file.
+26. Validate anonymized output with a pass/fail report.
+27. Run a conservative pixel risk scan before manual pixel review.
+28. Generate pixel review reports for known burned-in annotation regions.
+29. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+30. Package anonymized files with checksums.
+31. Encrypt the package.
+32. Verify or decrypt the package.
+33. Generate package verification receipts for receiver-side sharing evidence.
+34. Run a share-readiness gate before synthetic package handoff.
+35. Run local REST API workflow demos for integration testing.
+36. Run a release-readiness audit before public GitHub publishing.
+37. Run a competitor-informed capability matrix that maps features to repository evidence.
+38. Run a competitor coverage report that maps reference tools to implemented evidence.
+39. Generate a static local review dashboard for non-programmer walkthroughs.
+40. Generate a local evidence bundle for MacBook validation and public demonstrations.
+41. Run a workflow quality gate that verifies public review evidence.
+42. Export a review-only Orthanc REST anonymization plan from a dental profile.
+43. Export a reference-tool pack for DCMTK, Orthanc, RSNA CTP-style migration notes, and pydicom scripts.
+44. Run a residual privacy risk score across generated workflow evidence.
+45. Run a synthetic adversarial privacy regression suite.
+46. Run a GitHub publish preflight before creating or pushing the public repository.
+47. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -255,6 +256,26 @@ Required:
 - support synthetic, filename scan, inventory, inspect, DICOM JSON export, remediation-plan, confidentiality-alignment, dcmodify plan, Orthanc plan, anonymize, profile-verify, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, quality-gate, and risk-score stages
 - support remediation-plan stages before anonymization
 - support before/after de-identification comparison stages
+
+### `ddpt intake triage`
+
+Run a read-only clinic export preflight before raw export folders or ZIP
+archives enter the DICOM anonymization workflow.
+
+Required:
+
+- directory, single-file, and ZIP archive input
+- no ZIP extraction to disk
+- DICOM and DICOMDIR detection
+- sidecar file detection for PDF, CSV, spreadsheet, document, and image exports
+- unsafe archive member path detection
+- patient identifiers in folder and file paths
+- DICOM metadata high/medium risk summaries
+- next-step recommendations
+- JSON output
+- optional HTML output
+- local API endpoint and workbench button for MacBook demos
+- non-zero exit status when high or medium findings are present
 
 ### `ddpt filename scan`
 

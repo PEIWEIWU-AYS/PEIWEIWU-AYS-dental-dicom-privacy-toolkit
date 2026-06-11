@@ -317,6 +317,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert workflow_json.exists()
     assert workflow_html.exists()
     assert (workflow_dir / "input" / "sample.synthetic.dcm").exists()
+    assert (workflow_dir / "reports" / "intake-triage.json").exists()
+    assert (workflow_dir / "reports" / "intake-triage.html").exists()
     assert (workflow_dir / "reports" / "filename-privacy.json").exists()
     assert (workflow_dir / "reports" / "filename-privacy.html").exists()
     assert (workflow_dir / "reports" / "inventory.json").exists()
@@ -371,6 +373,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert report["passed"] is True
     assert [step["id"] for step in report["steps"]] == [
         "create-synthetic",
+        "clinic-export-intake-triage",
         "filename-privacy-scan",
         "inventory-input",
         "inspect-input",
@@ -397,6 +400,12 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "workflow-quality-gate",
         "residual-risk-score",
     ]
+    intake = json.loads((workflow_dir / "reports" / "intake-triage.json").read_text())
+    assert intake["passed"] is False
+    assert intake["high_findings"] >= 1
+    assert "ACTION REQUIRED" in (
+        workflow_dir / "reports" / "intake-triage.html"
+    ).read_text()
     certificate = json.loads((workflow_dir / "reports" / "deid-certificate.json").read_text())
     assert certificate["passed"] is True
     assert certificate["passed_checks"] == certificate["total_checks"]
@@ -425,6 +434,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
+    assert "clinic-export-intake-triage" in html
     assert "filename-privacy-scan" in html
     assert "dicom-json-export" in html
     assert "remediation-plan" in html
@@ -679,6 +689,100 @@ def test_filename_privacy_scan_command_flags_path_identifiers(tmp_path: Path) ->
     html = filename_html.read_text()
     assert "Dental DICOM Filename Privacy Scan" in html
     assert "Suggested Safe Name" in html
+
+
+def test_intake_triage_detects_dicomdir_sidecars_and_path_risk(tmp_path: Path) -> None:
+    export_dir = tmp_path / "clinic-export"
+    patient_dir = export_dir / "患者-13800138000"
+    source = patient_dir / "case-20260101.dcm"
+    dicomdir = export_dir / "DICOMDIR"
+    report_pdf = patient_dir / "report.pdf"
+    intake_json = tmp_path / "reports" / "intake-triage.json"
+    intake_html = tmp_path / "reports" / "intake-triage.html"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    dicomdir.write_bytes(source.read_bytes())
+    report_pdf.write_text("synthetic report placeholder", encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        [
+            "intake",
+            "triage",
+            str(export_dir),
+            "--json",
+            str(intake_json),
+            "--html",
+            str(intake_html),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert intake_json.exists()
+    assert intake_html.exists()
+    report = json.loads(intake_json.read_text())
+    assert report["passed"] is False
+    assert report["input_type"] == "directory"
+    assert report["dicom_files"] == 1
+    assert report["dicomdir_files"] == 1
+    assert report["sidecar_files"] == 1
+    assert report["high_findings"] >= 3
+    records = {item["path"]: item for item in report["files"]}
+    assert records["DICOMDIR"]["kind"] == "dicomdir"
+    assert records["DICOMDIR"]["readable_dicom"] is True
+    assert any(
+        finding["rule_id"] == "dicomdir-present"
+        for finding in records["DICOMDIR"]["findings"]
+    )
+    sidecar = records["患者-13800138000/report.pdf"]
+    assert sidecar["kind"] == "sidecar"
+    assert any(
+        finding["rule_id"] == "sidecar-private-file"
+        for finding in sidecar["findings"]
+    )
+    html = intake_html.read_text()
+    assert "Dental DICOM Clinic Export Intake Triage" in html
+    assert "ACTION REQUIRED" in html
+
+
+def test_intake_triage_inspects_zip_without_extracting(tmp_path: Path) -> None:
+    source = tmp_path / "sample.synthetic.dcm"
+    archive_path = tmp_path / "clinic-export.zip"
+    intake_json = tmp_path / "reports" / "zip-intake.json"
+    extract_marker = tmp_path / "escape.dcm"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    with zipfile.ZipFile(archive_path, "w") as archive:
+        archive.write(source, "DICOM/STUDY1/IM0001.dcm")
+        archive.write(source, "../escape.dcm")
+        archive.writestr("患者-13800138000/report.csv", "name,phone\nsynthetic,000")
+
+    result = runner.invoke(
+        app,
+        [
+            "intake",
+            "triage",
+            str(archive_path),
+            "--json",
+            str(intake_json),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert not extract_marker.exists()
+    report = json.loads(intake_json.read_text())
+    assert report["input_type"] == "zip"
+    assert report["dicom_files"] == 2
+    assert report["sidecar_files"] == 1
+    assert report["high_findings"] >= 2
+    by_path = {item["path"]: item for item in report["files"]}
+    assert by_path["DICOM/STUDY1/IM0001.dcm"]["source"] == "archive"
+    assert by_path["DICOM/STUDY1/IM0001.dcm"]["readable_dicom"] is True
+    unsafe = by_path["../escape.dcm"]
+    assert any(
+        finding["rule_id"] == "unsafe-archive-path"
+        for finding in unsafe["findings"]
+    )
 
 
 def test_dcmodify_plan_command_exports_profile_operations(tmp_path: Path) -> None:
@@ -1120,6 +1224,7 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     assert response.status_code == 200
     endpoints = response.json()["endpoints"]
     assert "/workbench" in endpoints
+    assert "/intake-triage" in endpoints
     assert "/filename-scan" in endpoints
     assert "/remediation-plan" in endpoints
     assert "/pixel-risk" in endpoints
@@ -1131,6 +1236,7 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     assert "Dental DICOM Local Workbench" in response.text
     assert "dental-linkable-research" in response.text
     assert "Evidence Reports" in response.text
+    assert "Intake Triage" in response.text
 
     response = client.post("/inventory", json={"path": "input"})
     assert response.status_code == 200
@@ -1148,6 +1254,14 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     dicom_json = response.json()
     assert dicom_json["dicom_json"]["00100010"]["Redacted"] is True
     assert dicom_json["dicom_json"]["00100010"]["Value"] == ["[redacted]"]
+
+    response = client.post("/intake-triage", json={"path": "input"})
+    assert response.status_code == 200
+    intake = response.json()
+    assert intake["dicom_files"] == 1
+    assert intake["high_findings"] >= 1
+    assert intake["_api_artifacts"]["html"] == "reports/api-intake-triage.html"
+    assert (tmp_path / "reports" / "api-intake-triage.html").exists()
 
     response = client.post("/filename-scan", json={"path": "input"})
     assert response.status_code == 200
@@ -1367,6 +1481,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "Orthanc" in reference_names
     capability_ids = {item["id"] for item in report["items"]}
     assert "objective-completion-audit" in capability_ids
+    assert "clinic-export-intake-triage" in capability_ids
     assert "privacy-remediation-plan" in capability_ids
     assert "profile-conformance-verification" in capability_ids
     assert "dicom-confidentiality-alignment" in capability_ids
@@ -1434,6 +1549,7 @@ def test_competitor_coverage_reports_reference_tool_mapping(tmp_path: Path) -> N
         for capability in tool["capabilities"]
     }
     assert "pixel-review-redaction" in capability_ids
+    assert "clinic-export-intake-triage" in capability_ids
     assert "dicom-json-export" in capability_ids
     assert "orthanc-anonymize-plan" in capability_ids
     assert "reference-tool-export-pack" in capability_ids
@@ -1520,6 +1636,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "intake-triage.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "filename-privacy.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "dicom-json.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "remediation-plan.html").exists()
@@ -1556,6 +1673,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
     assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
+    assert "workflow-run/reports/intake-triage.html" in artifact_paths
     assert "workflow-run/reports/filename-privacy.html" in artifact_paths
     assert "workflow-run/reports/dicom-json.html" in artifact_paths
     assert "workflow-run/reports/remediation-plan.html" in artifact_paths

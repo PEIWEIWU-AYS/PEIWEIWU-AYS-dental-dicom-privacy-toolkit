@@ -10,6 +10,7 @@ from ddpt.models import (
     AnonymizationAudit,
     BatchSummary,
     CapabilityMatrixReport,
+    ClinicExportIntakeReport,
     CompetitorCoverageReport,
     ConfidentialityAlignmentReport,
     DcmodifyPlanReport,
@@ -1229,6 +1230,119 @@ FILENAME_PRIVACY_TEMPLATE = Template(
         <td><code>{{ file.path }}</code></td>
         <td><code>{{ file.suggested_safe_name }}</code></td>
         <td>{{ file.findings|length }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
+CLINIC_EXPORT_INTAKE_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Clinic Export Intake Triage</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .high { color: #b00020; font-weight: 700; }
+    .medium { color: #8a5a00; font-weight: 700; }
+    .low { color: #1f6f43; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Clinic Export Intake Triage</h1>
+  <p class="warning">
+    Read-only intake triage for clinic export folders or ZIP archives. The
+    toolkit does not extract archives, modify files, anonymize DICOMs, contact
+    servers, or upload data from this command.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>Input type: {{ report.input_type }}</li>
+    <li>Recursive: {{ report.recursive }}</li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "ACTION REQUIRED" }}
+      </span>
+    </li>
+    <li>Total files: {{ report.total_files }}</li>
+    <li>DICOM files: {{ report.dicom_files }}</li>
+    <li>DICOMDIR files: {{ report.dicomdir_files }}</li>
+    <li>Sidecar files: {{ report.sidecar_files }}</li>
+    <li>Archive-risk files: {{ report.archive_risk_files }}</li>
+    <li>Unknown files: {{ report.unknown_files }}</li>
+    <li>High findings: {{ report.high_findings }}</li>
+    <li>Medium findings: {{ report.medium_findings }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Next Steps</h2>
+  <ul>
+    {% for item in report.next_steps %}
+    <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Boundary Notes</h2>
+  <ul>
+    {% for item in report.boundary_notes %}
+    <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Files</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Kind</th>
+        <th>Source</th>
+        <th>Path</th>
+        <th>Size</th>
+        <th>Readable DICOM</th>
+        <th>Modality</th>
+        <th>Patient Fields</th>
+        <th>Risk Tags</th>
+        <th>Findings</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for file in report.files %}
+      <tr>
+        <td>{{ file.kind }}</td>
+        <td>{{ file.source }}</td>
+        <td><code>{{ file.path }}</code></td>
+        <td>{{ file.size_bytes }}</td>
+        <td>{{ file.readable_dicom }}</td>
+        <td>{{ file.modality or "" }}</td>
+        <td>
+          PatientName={{ file.patient_name_present }}<br>
+          PatientID={{ file.patient_id_present }}
+        </td>
+        <td>high={{ file.high_risk_tags }}<br>medium={{ file.medium_risk_tags }}</td>
+        <td>
+          {% for finding in file.findings %}
+          <div class="{{ finding.severity }}">
+            <strong>{{ finding.severity }}</strong>
+            {{ finding.rule_id }}: {{ finding.message }}
+          </div>
+          <div>{{ finding.recommended_action }}</div>
+          {% if not loop.last %}<hr>{% endif %}
+          {% endfor %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>
@@ -3068,6 +3182,13 @@ def write_publish_preflight_html(path: Path, report: PublishPreflightReport) -> 
 
 def write_filename_privacy_html(path: Path, report: FilenamePrivacyScanReport) -> None:
     _write_html(path, FILENAME_PRIVACY_TEMPLATE.render(report=report))
+
+
+def write_clinic_export_intake_html(
+    path: Path,
+    report: ClinicExportIntakeReport,
+) -> None:
+    _write_html(path, CLINIC_EXPORT_INTAKE_TEMPLATE.render(report=report))
 
 
 def write_pixel_risk_scan_html(path: Path, report: PixelRiskScanReport) -> None:

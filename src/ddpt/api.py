@@ -12,6 +12,7 @@ from ddpt.competitor import build_competitor_coverage
 from ddpt.dicom_json import export_dicom_json
 from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
+from ddpt.intake import triage_clinic_export
 from ddpt.inventory import build_inventory
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixel_risk import scan_pixel_risk
@@ -22,6 +23,7 @@ from ddpt.regression import run_privacy_regression_suite
 from ddpt.remediation import build_privacy_remediation_plan
 from ddpt.reports import (
     model_to_dict,
+    write_clinic_export_intake_html,
     write_filename_privacy_html,
     write_pixel_risk_scan_html,
     write_privacy_regression_html,
@@ -59,6 +61,13 @@ class FilenameScanRequest(BaseModel):
     recursive: bool = True
     json_path: str = "reports/api-filename-privacy.json"
     html_path: str = "reports/api-filename-privacy.html"
+
+
+class IntakeTriageRequest(BaseModel):
+    path: str
+    recursive: bool = True
+    json_path: str = "reports/api-intake-triage.json"
+    html_path: str = "reports/api-intake-triage.html"
 
 
 class RemediationPlanRequest(BaseModel):
@@ -120,6 +129,7 @@ def create_api_app(root_dir: Path) -> FastAPI:
                 "/inventory",
                 "/inspect",
                 "/dicom-json",
+                "/intake-triage",
                 "/filename-scan",
                 "/remediation-plan",
                 "/pixel-risk",
@@ -172,6 +182,16 @@ def create_api_app(root_dir: Path) -> FastAPI:
         report = scan_filename_privacy(input_path, recursive=request.recursive)
         write_json(json_path, model_to_dict(report))
         write_filename_privacy_html(html_path, report)
+        return _with_api_artifacts(root, report, json_path, html_path)
+
+    @app.post("/intake-triage")
+    def intake_triage(request: IntakeTriageRequest) -> dict:
+        input_path = _resolve_inside_root(root, request.path)
+        json_path = _resolve_inside_root(root, request.json_path)
+        html_path = _resolve_inside_root(root, request.html_path)
+        report = triage_clinic_export(input_path, recursive=request.recursive)
+        write_json(json_path, model_to_dict(report))
+        write_clinic_export_intake_html(html_path, report)
         return _with_api_artifacts(root, report, json_path, html_path)
 
     @app.post("/remediation-plan")

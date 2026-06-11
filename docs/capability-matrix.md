@@ -27,6 +27,7 @@ Expected result:
 The matrix reviews whether the repository has evidence for:
 
 - metadata inspection and risk classification
+- clinic export intake triage for DICOMDIR, ZIP, sidecar, and path risks
 - filename and path privacy scan before sharing
 - privacy remediation plans before anonymization
 - multi-file synthetic dental study generation

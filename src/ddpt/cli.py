@@ -25,6 +25,7 @@ from ddpt.doctor import run_doctor
 from ddpt.evidence import run_evidence_bundle
 from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
+from ddpt.intake import triage_clinic_export
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.orthanc_plan import build_orthanc_anonymize_plan
 from ddpt.pipeline import run_demo_pipeline
@@ -64,6 +65,7 @@ from ddpt.reports import (
     model_to_dict,
     write_audit_html,
     write_capability_matrix_html,
+    write_clinic_export_intake_html,
     write_competitor_coverage_html,
     write_confidentiality_alignment_html,
     write_dcmodify_plan_html,
@@ -117,6 +119,7 @@ dcmodify_app = typer.Typer(help="Export DCMTK dcmodify-style review plans.")
 dicom_json_app = typer.Typer(help="Export safe DICOM metadata JSON.")
 orthanc_app = typer.Typer(help="Export review-only Orthanc anonymization plans.")
 api_app = typer.Typer(help="Run local REST API demo.")
+intake_app = typer.Typer(help="Triage clinic export folders and archives.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
 evidence_app = typer.Typer(help="Build local demonstration evidence bundles.")
@@ -146,6 +149,7 @@ app.add_typer(dcmodify_app, name="dcmodify")
 app.add_typer(dicom_json_app, name="dicom-json")
 app.add_typer(orthanc_app, name="orthanc")
 app.add_typer(api_app, name="api")
+app.add_typer(intake_app, name="intake")
 app.add_typer(workflow_app, name="workflow")
 app.add_typer(release_app, name="release")
 app.add_typer(evidence_app, name="evidence")
@@ -1101,6 +1105,66 @@ def filename_scan(
     console.print(f"High findings: {report.high_findings}")
     console.print(f"Medium findings: {report.medium_findings}")
     console.print(f"Overall: {'PASS' if report.passed else 'REVIEW'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@intake_app.command("triage")
+def intake_triage(
+    input_path: Annotated[
+        Path,
+        typer.Argument(help="Clinic export directory, DICOM file, or ZIP archive."),
+    ],
+    json_output: Annotated[
+        Path | None,
+        typer.Option("--json", help="Write JSON intake triage report."),
+    ] = None,
+    html_output: Annotated[
+        Path | None,
+        typer.Option("--html", help="Write HTML intake triage report."),
+    ] = None,
+    recursive: Annotated[
+        bool,
+        typer.Option("--recursive/--no-recursive", help="Recurse through directories."),
+    ] = True,
+    max_archive_member_bytes: Annotated[
+        int,
+        typer.Option(
+            "--max-archive-member-bytes",
+            help="Maximum ZIP member size to read for DICOM metadata.",
+        ),
+    ] = 16 * 1024 * 1024,
+) -> None:
+    report = triage_clinic_export(
+        input_path,
+        recursive=recursive,
+        max_archive_member_bytes=max_archive_member_bytes,
+    )
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_clinic_export_intake_html(html_output, report)
+
+    table = Table(title="Dental DICOM Clinic Export Intake Triage")
+    table.add_column("Kind")
+    table.add_column("Findings")
+    table.add_column("Path")
+    table.add_column("Readable DICOM")
+    for file in report.files:
+        table.add_row(
+            file.kind,
+            str(len(file.findings)),
+            file.path,
+            "yes" if file.readable_dicom else "no",
+        )
+    console.print(table)
+    console.print(f"Total files: {report.total_files}")
+    console.print(f"DICOM files: {report.dicom_files}")
+    console.print(f"DICOMDIR files: {report.dicomdir_files}")
+    console.print(f"Sidecar files: {report.sidecar_files}")
+    console.print(f"High findings: {report.high_findings}")
+    console.print(f"Medium findings: {report.medium_findings}")
+    console.print(f"Overall: {'PASS' if report.passed else 'ACTION REQUIRED'}")
     if not report.passed:
         raise typer.Exit(1)
 
