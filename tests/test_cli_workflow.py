@@ -270,6 +270,49 @@ def test_doctor_command_reports_environment(tmp_path: Path) -> None:
     assert "module:PIL" in check_names
 
 
+def test_safety_scan_passes_current_repository(tmp_path: Path) -> None:
+    safety_json = tmp_path / "reports" / "safety.json"
+
+    result = runner.invoke(app, ["safety", "scan", ".", "--json", str(safety_json)])
+
+    assert result.exit_code == 0, result.output
+    report = json.loads(safety_json.read_text())
+    assert report["passed"] is True
+    assert report["findings"] == []
+    assert report["scanned_files"] > 0
+
+
+def test_safety_scan_flags_private_material(tmp_path: Path) -> None:
+    (tmp_path / "README.md").write_text("# Safe public docs\n", encoding="utf-8")
+    (tmp_path / "examples" / "synthetic-dicom").mkdir(parents=True)
+    (tmp_path / "examples" / "synthetic-dicom" / "synthetic-example.dcm").write_bytes(
+        b"synthetic-placeholder"
+    )
+    (tmp_path / "private").mkdir()
+    (tmp_path / "private" / "real-patient.dcm").write_bytes(b"not public")
+    (tmp_path / "clinic-exports").mkdir()
+    (tmp_path / "clinic-exports" / "appointments.csv").write_text(
+        "name,phone\nPatient,555-0100\n",
+        encoding="utf-8",
+    )
+    (tmp_path / ".env").write_text("TOKEN=secret\n", encoding="utf-8")
+    (tmp_path / "reports").mkdir()
+    (tmp_path / "reports" / "generated-preview.png").write_bytes(b"ignored generated file")
+    safety_json = tmp_path / "safety.json"
+
+    result = runner.invoke(app, ["safety", "scan", str(tmp_path), "--json", str(safety_json)])
+
+    assert result.exit_code == 1
+    report = json.loads(safety_json.read_text())
+    assert report["passed"] is False
+    finding_paths = {item["path"] for item in report["findings"]}
+    assert ".env" in finding_paths
+    assert "private/real-patient.dcm" in finding_paths
+    assert "clinic-exports/appointments.csv" in finding_paths
+    assert "examples/synthetic-dicom/synthetic-example.dcm" not in finding_paths
+    assert "reports/generated-preview.png" not in finding_paths
+
+
 def test_audit_chain_detects_tampering(tmp_path: Path) -> None:
     demo_dir = tmp_path / "demo"
     chain_json = demo_dir / "reports" / "audit-chain.json"

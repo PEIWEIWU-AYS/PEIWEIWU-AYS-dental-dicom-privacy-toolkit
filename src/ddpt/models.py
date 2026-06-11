@@ -142,6 +142,23 @@ class DoctorReport(BaseModel):
     )
 
 
+class SafetyFinding(BaseModel):
+    path: str
+    severity: Literal["high", "medium", "low"]
+    rule_id: str
+    message: str
+
+
+class SafetyScanReport(BaseModel):
+    root_dir: str
+    passed: bool
+    scanned_files: int
+    findings: list[SafetyFinding]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DemoPipelineResult(BaseModel):
     output_dir: str
     input_dicom: str

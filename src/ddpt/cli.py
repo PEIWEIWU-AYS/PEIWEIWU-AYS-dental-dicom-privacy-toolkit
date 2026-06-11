@@ -25,6 +25,7 @@ from ddpt.reports import (
     write_inspection_html,
     write_inventory_html,
 )
+from ddpt.safety import scan_repository_safety
 from ddpt.sharing import create_package, decrypt_package, verify_package
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.utils import write_json
@@ -33,8 +34,10 @@ from ddpt.validation import validate_anonymized_dicom
 app = typer.Typer(help="Dental DICOM Privacy Toolkit", invoke_without_command=True)
 profile_app = typer.Typer(help="Inspect anonymization profiles.")
 audit_app = typer.Typer(help="Create and verify audit chains.")
+safety_app = typer.Typer(help="Run public repository safety checks.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(audit_app, name="audit")
+app.add_typer(safety_app, name="safety")
 console = Console()
 
 
@@ -160,6 +163,32 @@ def doctor(
     for check in report.checks:
         table.add_row(check.name, "PASS" if check.passed else "FAIL", check.message)
     console.print(table)
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@safety_app.command("scan")
+def safety_scan(
+    root_dir: Annotated[Path, typer.Argument(help="Repository root to scan.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write safety scan JSON.")
+    ] = None,
+) -> None:
+    report = scan_repository_safety(root_dir)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+
+    table = Table(title="Public Repository Safety Scan")
+    table.add_column("Severity")
+    table.add_column("Rule")
+    table.add_column("Path")
+    table.add_column("Message")
+    for finding in report.findings:
+        table.add_row(finding.severity, finding.rule_id, finding.path, finding.message)
+    console.print(table)
+    console.print(f"Scanned files: {report.scanned_files}")
+    console.print(f"Findings: {len(report.findings)}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)

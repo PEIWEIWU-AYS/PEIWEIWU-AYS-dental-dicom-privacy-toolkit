@@ -10,19 +10,20 @@ Version 0.1 is successful when a new user can:
 
 1. Install the Python package in a virtual environment.
 2. Run `ddpt doctor` to confirm the local environment is ready.
-3. Generate a synthetic DICOM file.
-4. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
-5. Generate PNG previews for visual workflow review.
-6. Inspect metadata and receive JSON plus HTML reports.
-7. Apply the `dental-basic` anonymization profile.
-8. Confirm direct identifiers were replaced or removed.
-9. Generate an audit event JSON file.
-10. Validate anonymized output with a pass/fail report.
-11. Apply manual pixel redaction for known burned-in annotation regions.
-12. Package anonymized files with checksums.
-13. Encrypt the package.
-14. Verify or decrypt the package.
-15. Run automated tests locally and in GitHub Actions.
+3. Run `ddpt safety scan` to confirm the public repository has no obvious private clinical material.
+4. Generate a synthetic DICOM file.
+5. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
+6. Generate PNG previews for visual workflow review.
+7. Inspect metadata and receive JSON plus HTML reports.
+8. Apply the `dental-basic` anonymization profile.
+9. Confirm direct identifiers were replaced or removed.
+10. Generate an audit event JSON file.
+11. Validate anonymized output with a pass/fail report.
+12. Apply manual pixel redaction for known burned-in annotation regions.
+13. Package anonymized files with checksums.
+14. Encrypt the package.
+15. Verify or decrypt the package.
+16. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -55,6 +56,20 @@ Required:
 - platform summary
 - terminal pass/fail output
 - optional JSON export
+
+### `ddpt safety scan`
+
+Scan the public repository for common accidental private-data leaks before pushing.
+
+Required:
+
+- block real DICOM extensions outside clearly synthetic examples
+- block clinical image/document/spreadsheet/archive extensions
+- block `.env`, private key, and certificate files
+- flag dangerous directory names such as `private`, `patient-data`, `real-data`, `clinic-exports`, and `raw-dicom`
+- ignore generated local demo directories and Python/Node caches
+- optional JSON export
+- non-zero exit status when findings are present
 
 ### `ddpt inventory`
 

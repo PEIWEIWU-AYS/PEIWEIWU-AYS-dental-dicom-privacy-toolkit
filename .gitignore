@@ -37,6 +37,7 @@ reports/
 share/
 restored/
 demo-run/
+demo-*/
 
 # Private clinical material
 private/

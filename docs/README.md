@@ -10,6 +10,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Policy Registry](policy-registry.md)
 - [Demo Guide](demo-guide.md)
 - [MacBook Validation](macbook-validation.md)
+- [Public Repository Safety Scan](safety-scan.md)
 - [DICOM Inventory Preflight](inventory.md)
 - [DICOM PNG Preview](preview.md)
 - [Audit Chain](audit-chain.md)

@@ -37,6 +37,7 @@ jobs:
           test -f docs/policy-registry.md
           test -f docs/demo-guide.md
           test -f docs/macbook-validation.md
+          test -f docs/safety-scan.md
           test -f docs/inventory.md
           test -f docs/preview.md
           test -f docs/audit-chain.md
@@ -44,6 +45,9 @@ jobs:
 
       - name: Run environment doctor
         run: python -m ddpt doctor --json doctor.json
+
+      - name: Run public repository safety scan
+        run: python -m ddpt safety scan . --json safety-scan.json
 
       - name: Run lint
         run: ruff check .
