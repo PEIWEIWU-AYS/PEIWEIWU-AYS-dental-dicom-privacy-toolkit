@@ -59,6 +59,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - PNG previews for GitHub-friendly visual review
 - read-only directory inventory before anonymization
 - RSNA CTP-inspired YAML workflow recipes
+- anonymization dry-run previews before writing DICOM files
 - reusable YAML pixel redaction plans for known burned-in regions
 - DCMTK-style exact tag operations with audit JSON
 - Orthanc-inspired local REST API without heavy PACS infrastructure
@@ -102,6 +103,7 @@ The project should add:
 - audit event JSON output
 - directory inventory with JSON, CSV, and HTML exports
 - multi-stage YAML workflow runner with step-level artifacts
+- pre-write anonymization dry-run reports for safer profile review
 - PNG preview generation for before/after workflow review
 - percent-based pixel redaction plans for repeated dental export layouts
 - exact tag dump/set/blank/delete commands with write-operation audits

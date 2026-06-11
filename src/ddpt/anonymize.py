@@ -50,6 +50,37 @@ def anonymize_dicom(input_path: Path, output_path: Path, profile_name: str) -> A
     )
 
 
+def plan_anonymization_actions(
+    input_path: Path,
+    profile_name: str,
+    output_path: Path | None = None,
+) -> AnonymizationAudit:
+    dataset = pydicom.dcmread(input_path)
+    profile = load_profile(profile_name)
+    actions: list[AnonymizationAction] = []
+
+    for keyword, replacement in profile.get("replace", {}).items():
+        if keyword in dataset:
+            actions.append(_action(dataset, keyword, "replace", replacement))
+
+    for keyword in profile.get("blank", []):
+        if keyword in dataset:
+            actions.append(_action(dataset, keyword, "blank", ""))
+
+    for keyword in profile.get("regenerate_uids", []):
+        if keyword in dataset:
+            actions.append(_action(dataset, keyword, "regenerate_uid", "<generated-uid>"))
+
+    remove_private_tags = bool(profile.get("remove_private_tags", True))
+    return AnonymizationAudit(
+        input_path=str(input_path),
+        output_path=str(output_path or ""),
+        profile=str(profile.get("name", profile_name)),
+        actions=actions,
+        private_tags_removed=remove_private_tags,
+    )
+
+
 def _action(dataset: Any, keyword: str, action: str, after: Any) -> AnonymizationAction:
     element = dataset.data_element(keyword)
     return AnonymizationAction(

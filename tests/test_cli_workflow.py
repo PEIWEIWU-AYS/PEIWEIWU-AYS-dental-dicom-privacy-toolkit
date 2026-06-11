@@ -147,6 +147,46 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     assert (decrypted / "sample.anonymized.dcm").exists()
 
 
+def test_anonymize_dry_run_previews_changes_without_writing_dicom(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    audit_json = tmp_path / "reports" / "dry-run-audit.json"
+    audit_html = tmp_path / "reports" / "dry-run-audit.html"
+    missing_output = tmp_path / "outputs" / "should-not-exist.dcm"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+
+    result = runner.invoke(app, ["anonymize", str(source)])
+    assert result.exit_code == 1
+    assert "--out is required" in result.output
+
+    result = runner.invoke(
+        app,
+        [
+            "anonymize",
+            str(source),
+            "--dry-run",
+            "--audit",
+            str(audit_json),
+            "--html",
+            str(audit_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert audit_json.exists()
+    assert audit_html.exists()
+    assert not missing_output.exists()
+    assert str(pydicom.dcmread(source).PatientName) == "SYNTHETIC^DENTAL"
+    audit = json.loads(audit_json.read_text())
+    assert audit["output_path"] == ""
+    assert any(item["keyword"] == "PatientName" for item in audit["actions"])
+    uid_actions = [
+        item for item in audit["actions"] if item["action"] == "regenerate_uid"
+    ]
+    assert uid_actions
+    assert all(item["after"] == "<generated-uid>" for item in uid_actions)
+
+
 def test_demo_pipeline_command(tmp_path: Path) -> None:
     demo_dir = tmp_path / "demo"
 

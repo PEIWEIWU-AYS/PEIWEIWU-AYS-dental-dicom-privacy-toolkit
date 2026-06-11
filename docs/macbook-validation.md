@@ -52,7 +52,21 @@ Expected:
 
 - `Audit chain passed: True`
 
-## 5. Run Recipe Workflow
+## 5. Preview Anonymization Without Writing DICOM
+
+```bash
+ddpt anonymize demo-run/input/sample.synthetic.dcm \
+  --dry-run \
+  --audit demo-run/reports/dry-run-audit.json \
+  --html demo-run/reports/dry-run-audit.html
+```
+
+Expected:
+
+- dry-run audit files are created
+- no new DICOM output is required
+
+## 6. Run Recipe Workflow
 
 ```bash
 ddpt workflow run recipes/dental-demo-workflow.yml \
@@ -65,7 +79,7 @@ Expected:
 - `workflow-run/reports/workflow-run.json` exists
 - overall workflow status is `PASS`
 
-## 6. Open Human-Readable Outputs
+## 7. Open Human-Readable Outputs
 
 Open these files locally:
 
@@ -78,7 +92,7 @@ demo-run/reports/audit.html
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
 
-## 7. Optional Local API Check
+## 8. Optional Local API Check
 
 Run this as a separate long-running command:
 

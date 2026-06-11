@@ -17,16 +17,17 @@ Version 0.1 is successful when a new user can:
 7. Generate PNG previews for visual workflow review.
 8. Run exact tag dump/set/blank/delete operations for expert workflows.
 9. Inspect metadata and receive JSON plus HTML reports.
-10. Apply the `dental-basic` anonymization profile.
-11. Confirm direct identifiers were replaced or removed.
-12. Generate an audit event JSON file.
-13. Validate anonymized output with a pass/fail report.
-14. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-15. Package anonymized files with checksums.
-16. Encrypt the package.
-17. Verify or decrypt the package.
-18. Run local REST API workflow demos for integration testing.
-19. Run automated tests locally and in GitHub Actions.
+10. Preview anonymization actions with dry-run mode.
+11. Apply the `dental-basic` anonymization profile.
+12. Confirm direct identifiers were replaced or removed.
+13. Generate an audit event JSON file.
+14. Validate anonymized output with a pass/fail report.
+15. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+16. Package anonymized files with checksums.
+17. Encrypt the package.
+18. Verify or decrypt the package.
+19. Run local REST API workflow demos for integration testing.
+20. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -247,10 +248,12 @@ Apply a named anonymization profile.
 Required:
 
 - input DICOM
-- output DICOM
+- output DICOM unless dry-run mode is used
 - profile name
 - audit JSON output
 - optional HTML report
+- dry-run mode that writes no DICOM file
+- dry-run planned UID changes represented as placeholders
 
 ### `ddpt package`
 

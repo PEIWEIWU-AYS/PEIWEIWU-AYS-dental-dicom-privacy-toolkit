@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.table import Table
 
 from ddpt import __version__
-from ddpt.anonymize import anonymize_dicom
+from ddpt.anonymize import anonymize_dicom, plan_anonymization_actions
 from ddpt.api import create_api_app
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
@@ -478,17 +478,31 @@ def inspect(
 @app.command()
 def anonymize(
     input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
-    output_path: Annotated[Path, typer.Option("--out", help="Output anonymized DICOM path.")],
+    output_path: Annotated[
+        Path | None, typer.Option("--out", help="Output anonymized DICOM path.")
+    ] = None,
     profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
     audit_json: Annotated[Path | None, typer.Option("--audit", help="Write audit JSON.")] = None,
     audit_html: Annotated[Path | None, typer.Option("--html", help="Write audit HTML.")] = None,
+    dry_run: Annotated[
+        bool, typer.Option("--dry-run", help="Preview changes without writing DICOM.")
+    ] = False,
 ) -> None:
-    audit = anonymize_dicom(input_path, output_path, profile)
+    if dry_run:
+        audit = plan_anonymization_actions(input_path, profile, output_path)
+    else:
+        if output_path is None:
+            console.print("--out is required unless --dry-run is used.")
+            raise typer.Exit(1)
+        audit = anonymize_dicom(input_path, output_path, profile)
     if audit_json:
         write_json(audit_json, model_to_dict(audit))
     if audit_html:
         write_audit_html(audit_html, audit)
-    console.print(f"Anonymized DICOM written to: {output_path}")
+    if dry_run:
+        console.print("Dry run only. No DICOM file was written.")
+    else:
+        console.print(f"Anonymized DICOM written to: {output_path}")
     console.print(f"Actions: {len(audit.actions)}")
 
 

@@ -37,6 +37,7 @@ jobs:
           test -f docs/policy-registry.md
           test -f docs/demo-guide.md
           test -f docs/workflow-recipes.md
+          test -f docs/anonymization-dry-run.md
           test -f docs/macbook-validation.md
           test -f docs/safety-scan.md
           test -f docs/inventory.md

@@ -17,6 +17,7 @@ Core goals:
 - DICOM metadata inspection
 - Directory inventory and privacy risk preflight
 - DICOM anonymization profiles for dental imaging
+- Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
 - YAML workflow recipes for reproducible staged pipelines
 - Local REST API for integration demos
@@ -40,6 +41,7 @@ ddpt safety scan .
 ddpt demo demo-run
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
+ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
 ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-dump.json
@@ -65,6 +67,7 @@ See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limit
 
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
 See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
+See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write anonymization previews.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/local-api.md](docs/local-api.md) for the local REST API demo.
@@ -77,6 +80,7 @@ ddpt inventory demo-run --json demo-run/reports/inventory.json --csv demo-run/re
 ddpt preview demo-run/sample.dcm --out demo-run/reports/sample-preview.png --json demo-run/reports/sample-preview.json
 ddpt tag set demo-run/sample.dcm PatientName ANON^TEST --out demo-run/outputs/sample.tag-set.dcm --audit demo-run/reports/tag-set-audit.json
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
+ddpt anonymize demo-run/sample.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out demo-run/outputs/sample.redacted.dcm --audit demo-run/reports/redaction.json
