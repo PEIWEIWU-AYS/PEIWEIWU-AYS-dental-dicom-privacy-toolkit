@@ -62,6 +62,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - HTML workflow reports for staged pipeline review
 - anonymization dry-run previews before writing DICOM files
 - deterministic date shifting for research-sharing profiles
+- profile comparison reports for transparent configuration review
 - reusable YAML pixel redaction plans for known burned-in regions
 - DCMTK-style exact tag operations with audit JSON
 - Orthanc-inspired local REST API without heavy PACS infrastructure
@@ -111,6 +112,7 @@ The project should add:
 - human-readable HTML report for workflow execution
 - pre-write anonymization dry-run reports for safer profile review
 - research-sharing profile with deterministic date shifting and audited date-shift actions
+- profile comparison JSON and HTML reports for explaining configuration differences
 - PNG preview generation for before/after workflow review
 - percent-based pixel redaction plans for repeated dental export layouts
 - exact tag dump/set/blank/delete commands with write-operation audits

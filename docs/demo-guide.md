@@ -113,6 +113,9 @@ For research-sharing date shifting:
 
 ```bash
 ddpt profile show dental-research-sharing
+ddpt profile compare dental-basic dental-research-sharing \
+  --json demo-run/reports/profile-comparison.json \
+  --html demo-run/reports/profile-comparison.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm \
   --profile dental-research-sharing \
   --dry-run \

@@ -18,6 +18,7 @@ Core goals:
 - Directory inventory and privacy risk preflight
 - DICOM anonymization profiles for dental imaging
 - Research-sharing profile with deterministic date shifting
+- Profile comparison reports for transparent anonymization configuration review
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
 - YAML workflow recipes for reproducible staged pipelines
@@ -55,6 +56,7 @@ ddpt profile show dental-basic
 ddpt profile show dental-research-sharing
 ddpt profile coverage dental-basic
 ddpt profile coverage dental-research-sharing
+ddpt profile compare dental-basic dental-research-sharing --json demo-run/reports/profile-comparison.json --html demo-run/reports/profile-comparison.html
 ddpt profile init profiles/my-dental-profile.yml
 ddpt batch demo-run/input --out demo-run/batch-output
 ddpt audit verify demo-run/reports/audit-chain.json
@@ -77,6 +79,7 @@ See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and ex
 See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
 See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write anonymization previews.
 See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for deterministic date-shift research sharing.
+See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
@@ -136,7 +139,7 @@ Version 0.1 local prototype in active development. The current workflow supports
 synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
 research-sharing date shifting, release-readiness checks, and local evidence
-bundle generation, and package verification receipts.
+bundle generation, package verification receipts, and profile comparison reports.
 
 ## License
 

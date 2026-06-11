@@ -50,6 +50,7 @@ jobs:
           test -f docs/local-api.md
           test -f docs/audit-chain.md
           test -f docs/package-verification-receipts.md
+          test -f docs/profile-comparison.md
           test -f profiles/dental-pixel-redaction.yml
           test -f profiles/dental-research-sharing.yml
           test -f recipes/dental-demo-workflow.yml

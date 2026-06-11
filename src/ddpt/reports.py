@@ -13,6 +13,7 @@ from ddpt.models import (
     InspectionReport,
     InventoryReport,
     PackageVerificationReceipt,
+    ProfileComparisonReport,
     ReleaseAuditReport,
     WorkflowRunReport,
 )
@@ -694,6 +695,79 @@ PACKAGE_RECEIPT_TEMPLATE = Template(
 """
 )
 
+PROFILE_COMPARISON_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Profile Comparison</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .changed { color: #8a5a00; font-weight: 700; }
+    .same { color: #1f6f43; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Profile Comparison</h1>
+  <p class="warning">
+    Synthetic-data profile comparison. This explains configuration differences;
+    it is not legal, regulatory, clinical, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Baseline: {{ report.baseline_profile }}</li>
+    <li>Candidate: {{ report.candidate_profile }}</li>
+    <li>Changed items: {{ report.changed_items }} / {{ report.total_items }}</li>
+    <li>Baseline coverage: {{ report.baseline_covered_items }} / {{ report.total_items }}</li>
+    <li>Candidate coverage: {{ report.candidate_covered_items }} / {{ report.total_items }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Policy Items</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Changed</th>
+        <th>Risk</th>
+        <th>Keyword</th>
+        <th>Category</th>
+        <th>Recommended</th>
+        <th>Baseline</th>
+        <th>Candidate</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.items %}
+      <tr>
+        <td class="{{ "changed" if item.changed else "same" }}">
+          {{ "yes" if item.changed else "no" }}
+        </td>
+        <td>{{ item.risk }}</td>
+        <td>{{ item.keyword }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.recommended_action }}</td>
+        <td>{{ item.baseline_action }}</td>
+        <td>{{ item.candidate_action }}</td>
+        <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -737,6 +811,10 @@ def write_evidence_bundle_html(path: Path, result: EvidenceBundleResult) -> None
 
 def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) -> None:
     _write_html(path, PACKAGE_RECEIPT_TEMPLATE.render(receipt=receipt))
+
+
+def write_profile_comparison_html(path: Path, report: ProfileComparisonReport) -> None:
+    _write_html(path, PROFILE_COMPARISON_TEMPLATE.render(report=report))
 
 
 def _write_html(path: Path, html: str) -> None:

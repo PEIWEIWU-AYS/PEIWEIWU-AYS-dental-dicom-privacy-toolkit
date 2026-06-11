@@ -420,6 +420,34 @@ class ProfileCoverageReport(BaseModel):
     )
 
 
+class ProfileComparisonItem(BaseModel):
+    keyword: str
+    risk: RiskLevel
+    category: str
+    recommended_action: str
+    baseline_action: str
+    candidate_action: str
+    changed: bool
+    note: str
+
+
+class ProfileComparisonReport(BaseModel):
+    baseline_profile: str
+    candidate_profile: str
+    total_items: int
+    changed_items: int
+    baseline_covered_items: int
+    candidate_covered_items: int
+    baseline_high_risk_uncovered: list[str]
+    baseline_medium_risk_uncovered: list[str]
+    candidate_high_risk_uncovered: list[str]
+    candidate_medium_risk_uncovered: list[str]
+    items: list[ProfileComparisonItem]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class AuditChainEntry(BaseModel):
     path: str
     sha256: str

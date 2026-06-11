@@ -42,6 +42,7 @@ ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json wo
 ddpt preview examples/synthetic-dicom/sample.dcm --out reports/sample-preview.png --json reports/sample-preview.json
 ddpt tag dump examples/synthetic-dicom/sample.dcm --json reports/tag-dump.json
 ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --html reports/inspect.html
+ddpt profile compare dental-basic dental-research-sharing --json reports/profile-comparison.json --html reports/profile-comparison.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out outputs/sample.anonymized.dcm --audit reports/audit.json
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-research-sharing --dry-run --audit reports/research-dry-run.json
 ddpt package outputs/ --encrypt --key-out share/package.key --manifest reports/manifest.json --out share/dental-dicom-package.ddpt

@@ -86,6 +86,9 @@ Expected:
 
 ```bash
 ddpt profile show dental-research-sharing
+ddpt profile compare dental-basic dental-research-sharing \
+  --json demo-run/reports/profile-comparison.json \
+  --html demo-run/reports/profile-comparison.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm \
   --profile dental-research-sharing \
   --dry-run \
@@ -96,6 +99,7 @@ ddpt anonymize demo-run/input/sample.synthetic.dcm \
 Expected:
 
 - the profile output lists date-shift keywords
+- the profile comparison report shows date fields changed from `blank` to `date_shift`
 - dry-run audit includes `date_shift` actions for study-level date fields
 - no DICOM output is written during dry run
 

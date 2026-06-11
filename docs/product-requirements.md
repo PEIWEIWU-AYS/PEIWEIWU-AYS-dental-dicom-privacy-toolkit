@@ -20,18 +20,19 @@ Version 0.1 is successful when a new user can:
 10. Preview anonymization actions with dry-run mode.
 11. Apply the `dental-basic` anonymization profile.
 12. Apply the `dental-research-sharing` profile with deterministic date shifting.
-13. Confirm direct identifiers were replaced or removed.
-14. Generate an audit event JSON file.
-15. Validate anonymized output with a pass/fail report.
-16. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-17. Package anonymized files with checksums.
-18. Encrypt the package.
-19. Verify or decrypt the package.
-20. Generate package verification receipts for receiver-side sharing evidence.
-21. Run local REST API workflow demos for integration testing.
-22. Run a release-readiness audit before public GitHub publishing.
-23. Generate a local evidence bundle for MacBook validation and public demonstrations.
-24. Run automated tests locally and in GitHub Actions.
+13. Compare anonymization profiles with JSON and HTML reports.
+14. Confirm direct identifiers were replaced or removed.
+15. Generate an audit event JSON file.
+16. Validate anonymized output with a pass/fail report.
+17. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+18. Package anonymized files with checksums.
+19. Encrypt the package.
+20. Verify or decrypt the package.
+21. Generate package verification receipts for receiver-side sharing evidence.
+22. Run local REST API workflow demos for integration testing.
+23. Run a release-readiness audit before public GitHub publishing.
+24. Generate a local evidence bundle for MacBook validation and public demonstrations.
+25. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -214,6 +215,21 @@ Required:
 - uncovered high-risk keyword list
 - uncovered medium-risk keyword list
 - optional JSON export
+
+### `ddpt profile compare`
+
+Compare two anonymization profiles against the high-risk and medium-risk policy registry.
+
+Required:
+
+- baseline and candidate profile arguments
+- changed item count
+- coverage count for each profile
+- per-keyword baseline action
+- per-keyword candidate action
+- notes for important differences such as deterministic date shifting
+- JSON output
+- optional HTML report
 
 ## Command Requirements
 

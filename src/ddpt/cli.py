@@ -18,7 +18,7 @@ from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
-from ddpt.policy import profile_coverage
+from ddpt.policy import compare_profiles, profile_coverage
 from ddpt.preview import render_dicom_preview
 from ddpt.profiles import built_in_profiles, describe_profile, write_profile_template
 from ddpt.redaction_plan import (
@@ -33,6 +33,7 @@ from ddpt.reports import (
     write_inspection_html,
     write_inventory_html,
     write_package_receipt_html,
+    write_profile_comparison_html,
     write_release_audit_html,
     write_workflow_html,
 )
@@ -502,6 +503,51 @@ def profile_coverage_command(
     console.print(f"Covered: {report.covered_items}/{report.total_items}")
     console.print(f"High-risk uncovered: {len(report.high_risk_uncovered)}")
     console.print(f"Medium-risk uncovered: {len(report.medium_risk_uncovered)}")
+
+
+@profile_app.command("compare")
+def profile_compare_command(
+    baseline_profile: Annotated[str, typer.Argument(help="Baseline profile name or YAML path.")],
+    candidate_profile: Annotated[str, typer.Argument(help="Candidate profile name or YAML path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON comparison report.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML comparison report.")
+    ] = None,
+) -> None:
+    report = compare_profiles(baseline_profile, candidate_profile)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_profile_comparison_html(html_output, report)
+
+    table = Table(
+        title=f"Profile Compare: {report.baseline_profile} -> {report.candidate_profile}"
+    )
+    table.add_column("Changed")
+    table.add_column("Risk")
+    table.add_column("Keyword")
+    table.add_column("Baseline")
+    table.add_column("Candidate")
+    table.add_column("Note")
+    for item in report.items:
+        if item.changed:
+            table.add_row(
+                "yes",
+                item.risk,
+                item.keyword,
+                item.baseline_action,
+                item.candidate_action,
+                item.note,
+            )
+    console.print(table)
+    console.print(f"Changed: {report.changed_items}/{report.total_items}")
+    console.print(
+        f"Coverage: {report.baseline_profile} "
+        f"{report.baseline_covered_items}/{report.total_items}; "
+        f"{report.candidate_profile} {report.candidate_covered_items}/{report.total_items}"
+    )
 
 
 @audit_app.command("chain")

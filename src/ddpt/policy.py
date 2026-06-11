@@ -2,7 +2,14 @@ from __future__ import annotations
 
 from pydicom.dataelem import DataElement
 
-from ddpt.models import ProfileCoverageItem, ProfileCoverageReport, RiskLevel, TagPolicy
+from ddpt.models import (
+    ProfileComparisonItem,
+    ProfileComparisonReport,
+    ProfileCoverageItem,
+    ProfileCoverageReport,
+    RiskLevel,
+    TagPolicy,
+)
 from ddpt.profiles import describe_profile
 
 POLICY_SOURCE = "DICOM PS3.15-inspired dental privacy baseline"
@@ -168,3 +175,61 @@ def profile_coverage(profile_name_or_path: str) -> ProfileCoverageReport:
         medium_risk_uncovered=medium_risk_uncovered,
         items=items,
     )
+
+
+def compare_profiles(
+    baseline_profile: str,
+    candidate_profile: str,
+) -> ProfileComparisonReport:
+    baseline_summary = describe_profile(baseline_profile)
+    candidate_summary = describe_profile(candidate_profile)
+    baseline_coverage = profile_coverage(baseline_profile)
+    candidate_coverage = profile_coverage(candidate_profile)
+    items: list[ProfileComparisonItem] = []
+
+    for policy in policies_by_risk("high", "medium"):
+        baseline_action = profile_action_for_keyword(baseline_summary, policy.keyword)
+        candidate_action = profile_action_for_keyword(candidate_summary, policy.keyword)
+        changed = baseline_action != candidate_action
+        items.append(
+            ProfileComparisonItem(
+                keyword=policy.keyword,
+                risk=policy.risk,
+                category=policy.category,
+                recommended_action=policy.recommended_action,
+                baseline_action=baseline_action,
+                candidate_action=candidate_action,
+                changed=changed,
+                note=_comparison_note(policy, baseline_action, candidate_action),
+            )
+        )
+
+    return ProfileComparisonReport(
+        baseline_profile=str(baseline_summary["name"]),
+        candidate_profile=str(candidate_summary["name"]),
+        total_items=len(items),
+        changed_items=sum(1 for item in items if item.changed),
+        baseline_covered_items=baseline_coverage.covered_items,
+        candidate_covered_items=candidate_coverage.covered_items,
+        baseline_high_risk_uncovered=baseline_coverage.high_risk_uncovered,
+        baseline_medium_risk_uncovered=baseline_coverage.medium_risk_uncovered,
+        candidate_high_risk_uncovered=candidate_coverage.high_risk_uncovered,
+        candidate_medium_risk_uncovered=candidate_coverage.medium_risk_uncovered,
+        items=items,
+    )
+
+
+def _comparison_note(policy: TagPolicy, baseline_action: str, candidate_action: str) -> str:
+    if baseline_action == candidate_action:
+        return "same action"
+    if policy.category == "date" and candidate_action == "date_shift":
+        return "candidate preserves relative timing with deterministic date shifting"
+    if candidate_action == "blank":
+        return "candidate removes the value by blanking"
+    if candidate_action == "replace":
+        return "candidate replaces the value with a configured synthetic value"
+    if candidate_action == "regenerate_uid":
+        return "candidate regenerates linkable UID values"
+    if candidate_action == "unhandled":
+        return "candidate does not handle this policy item"
+    return f"candidate action differs: {candidate_action}"

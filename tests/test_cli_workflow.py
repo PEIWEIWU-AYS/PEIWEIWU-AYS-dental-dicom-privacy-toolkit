@@ -966,6 +966,41 @@ def test_research_sharing_profile_shifts_dates_and_reports_actions(tmp_path: Pat
     assert json.loads(validation_json.read_text())["passed"] is True
 
 
+def test_profile_compare_reports_date_shift_differences(tmp_path: Path) -> None:
+    compare_json = tmp_path / "reports" / "profile-comparison.json"
+    compare_html = tmp_path / "reports" / "profile-comparison.html"
+
+    result = runner.invoke(
+        app,
+        [
+            "profile",
+            "compare",
+            "dental-basic",
+            "dental-research-sharing",
+            "--json",
+            str(compare_json),
+            "--html",
+            str(compare_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert compare_json.exists()
+    assert compare_html.exists()
+    report = json.loads(compare_json.read_text())
+    assert report["baseline_profile"] == "dental-basic"
+    assert report["candidate_profile"] == "dental-research-sharing"
+    assert report["changed_items"] >= 4
+    study_date = next(item for item in report["items"] if item["keyword"] == "StudyDate")
+    assert study_date["baseline_action"] == "blank"
+    assert study_date["candidate_action"] == "date_shift"
+    assert study_date["changed"] is True
+    assert "relative timing" in study_date["note"]
+    html = compare_html.read_text()
+    assert "Dental DICOM Profile Comparison" in html
+    assert "date_shift" in html
+
+
 def test_package_rejects_empty_directory(tmp_path: Path) -> None:
     empty = tmp_path / "empty"
     empty.mkdir()
