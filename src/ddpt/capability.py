@@ -131,6 +131,28 @@ CAPABILITY_SPECS = [
         note="Matches the baseline need to see risky DICOM header values before writing output.",
     ),
     CapabilitySpec(
+        id="synthetic-study-generator",
+        capability="Multi-file synthetic dental study generation for local workflow demos",
+        source_tools=("RSNA CTP", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/synthetic.py",
+            "docs/synthetic-study.md",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt synthetic-study synthetic-study-demo --patients 2 "
+            "--files-per-patient 2 --json synthetic-study-demo/manifest.json"
+        ),
+        differentiator=(
+            "Creates repeated-subject synthetic folders for batch and linkable "
+            "research demonstrations without real patient data."
+        ),
+        note=(
+            "Provides safe multi-file inputs for inventory, batch anonymization, "
+            "and pseudonymization verification."
+        ),
+    ),
+    CapabilitySpec(
         id="configurable-anonymization",
         capability="Configurable metadata anonymization profiles",
         source_tools=("RSNA DICOM Anonymizer", "pydicom anonymization example"),

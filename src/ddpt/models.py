@@ -180,6 +180,29 @@ class PreviewReport(BaseModel):
     )
 
 
+class SyntheticStudyFile(BaseModel):
+    path: str
+    patient_id: str
+    patient_name: str
+    modality: str
+    study_description: str
+    study_instance_uid: str
+    series_instance_uid: str
+    sop_instance_uid: str
+
+
+class SyntheticStudyReport(BaseModel):
+    output_dir: str
+    patient_count: int
+    files_per_patient: int
+    total_files: int
+    modalities: dict[str, int]
+    files: list[SyntheticStudyFile]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class PixelReviewRegion(BaseModel):
     label: str
     x: int

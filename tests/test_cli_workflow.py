@@ -1080,6 +1080,74 @@ def test_batch_workflow_command(tmp_path: Path) -> None:
     assert summary["validation_failures"] == 0
 
 
+def test_synthetic_study_command_feeds_inventory_batch_and_linkable_profile(
+    tmp_path: Path,
+) -> None:
+    study_dir = tmp_path / "synthetic-study"
+    study_json = tmp_path / "reports" / "synthetic-study.json"
+    inventory_json = tmp_path / "reports" / "study-inventory.json"
+    batch_dir = tmp_path / "study-batch"
+
+    result = runner.invoke(
+        app,
+        [
+            "synthetic-study",
+            str(study_dir),
+            "--patients",
+            "2",
+            "--files-per-patient",
+            "2",
+            "--json",
+            str(study_json),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    report = json.loads(study_json.read_text())
+    assert report["patient_count"] == 2
+    assert report["files_per_patient"] == 2
+    assert report["total_files"] == 4
+    assert sum(report["modalities"].values()) == 4
+    assert (study_dir / "patient-001" / "study-001").is_dir()
+
+    result = runner.invoke(
+        app,
+        ["inventory", str(study_dir), "--json", str(inventory_json)],
+    )
+    assert result.exit_code == 0, result.output
+    inventory = json.loads(inventory_json.read_text())
+    assert inventory["total_files"] == 4
+    assert inventory["readable_files"] == 4
+    assert sum(inventory["modalities"].values()) == 4
+
+    result = runner.invoke(
+        app,
+        [
+            "batch",
+            str(study_dir),
+            "--out",
+            str(batch_dir),
+            "--profile",
+            "dental-linkable-research",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    summary = json.loads((batch_dir / "batch-summary.json").read_text())
+    assert summary["total_files"] == 4
+    assert summary["processed_files"] == 4
+    assert summary["validation_failures"] == 0
+
+    patient_one_outputs = sorted((batch_dir / "dicom" / "patient-001").rglob("*.dcm"))
+    patient_two_outputs = sorted((batch_dir / "dicom" / "patient-002").rglob("*.dcm"))
+    assert len(patient_one_outputs) == 2
+    assert len(patient_two_outputs) == 2
+    patient_one_ids = {pydicom.dcmread(path).PatientID for path in patient_one_outputs}
+    patient_two_ids = {pydicom.dcmread(path).PatientID for path in patient_two_outputs}
+    assert len(patient_one_ids) == 1
+    assert len(patient_two_ids) == 1
+    assert patient_one_ids != patient_two_ids
+    assert next(iter(patient_one_ids)).startswith("DDPT-LINK-")
+
+
 def test_demo_asset_script(tmp_path: Path) -> None:
     output_dir = tmp_path / "script-demo"
 

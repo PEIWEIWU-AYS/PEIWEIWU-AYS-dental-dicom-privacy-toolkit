@@ -86,7 +86,31 @@ Expected:
 - `workflow-run/reports/workflow-run.html` exists
 - overall workflow status is `PASS`
 
-## 7. Check Research Sharing Profile
+## 7. Generate Multi-File Synthetic Study
+
+```bash
+ddpt synthetic-study synthetic-study-demo \
+  --patients 2 \
+  --files-per-patient 2 \
+  --json synthetic-study-demo/manifest.json
+
+ddpt inventory synthetic-study-demo \
+  --json synthetic-study-demo/reports/inventory.json \
+  --html synthetic-study-demo/reports/inventory.html
+
+ddpt batch synthetic-study-demo \
+  --out synthetic-study-demo-batch \
+  --profile dental-linkable-research
+```
+
+Expected:
+
+- `synthetic-study-demo/manifest.json` lists 4 synthetic DICOM files
+- inventory reports 4 readable files
+- batch summary reports 4 processed files and 0 validation failures
+- repeated files for the same synthetic patient share the same `DDPT-LINK-` pseudonym
+
+## 8. Check Research Sharing Profile
 
 ```bash
 ddpt policy export \
@@ -140,7 +164,7 @@ Expected:
 - linkable dry-run audit includes `pseudonymize` actions for `PatientName` and `PatientID`
 - no DICOM output is written during dry run
 
-## 8. Run Release Audit
+## 9. Run Release Audit
 
 ```bash
 ddpt release audit . \
@@ -154,7 +178,7 @@ Expected:
 - JSON and HTML release-readiness reports are created
 - README, docs, workflow recipe, CI, safety scan, and profile coverage checks pass
 
-## 9. Run Capability Matrix
+## 10. Run Capability Matrix
 
 ```bash
 ddpt capability matrix \
@@ -169,7 +193,7 @@ Expected:
 - every capability item is `implemented`
 - `capability-matrix.html` shows reference tools, project evidence, and differentiators
 
-## 10. Generate Evidence Bundle
+## 11. Generate Evidence Bundle
 
 ```bash
 ddpt evidence bundle . --out evidence-run
@@ -189,7 +213,7 @@ Expected:
 - `evidence-run/demo-run/reports/package-receipt.html` exists
 - `evidence-run/demo-run/reports/share-readiness.html` exists
 
-## 11. Run Objective Completion Audit
+## 12. Run Objective Completion Audit
 
 ```bash
 ddpt completion audit . \
@@ -203,7 +227,7 @@ Expected:
 - every named reference tool has evidence
 - inherited capabilities and differentiators are mapped to repository files and commands
 
-## 12. Open Human-Readable Outputs
+## 13. Open Human-Readable Outputs
 
 Open these files locally:
 
@@ -224,7 +248,7 @@ demo-run/reports/share-readiness.html
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
 The review dashboard should show quick links, artifact status, and synthetic PNG previews.
 
-## 13. Optional Local API Check
+## 14. Optional Local API Check
 
 Run this as a separate long-running command:
 

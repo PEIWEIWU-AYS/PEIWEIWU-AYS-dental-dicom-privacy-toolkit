@@ -25,6 +25,7 @@ Open-source dental DICOM anonymization, de-identification, deterministic pseudon
 - local browser workbench
 - DICOM web UI
 - objective completion audit
+- multi-file synthetic DICOM study
 - DICOM anonymization dry run
 - medical imaging privacy
 - encrypted DICOM sharing
@@ -50,6 +51,7 @@ Open-source dental DICOM anonymization, de-identification, deterministic pseudon
 - 本地工作台
 - DICOM网页界面
 - 原始目标完成度审计
+- 多文件合成DICOM数据集
 - 脱敏预演
 - 医学影像隐私
 - DICOM接口
@@ -73,6 +75,7 @@ Open-source dental DICOM anonymization, de-identification, deterministic pseudon
 - DICOM local browser workbench
 - dental DICOM web UI
 - DICOM project objective completion audit
+- synthetic dental DICOM study generator
 - DICOM anonymization dry run
 - dental imaging privacy toolkit
 - encrypted DICOM sharing
@@ -85,9 +88,10 @@ Open-source dental DICOM anonymization, de-identification, deterministic pseudon
 - 牙科 DICOM 伪名化
 - 牙科 DICOM 本地工作台
 - 医学影像开源项目完成度审计
+- 牙科合成DICOM数据集生成
 - 医学影像隐私 开源
 - 口腔影像 加密共享
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, anonymization dry-run reports, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, local REST API integration demos, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, local REST API integration demos, encrypted sharing packages, and audit reporting.

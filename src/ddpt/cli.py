@@ -63,7 +63,7 @@ from ddpt.reports import (
 from ddpt.safety import scan_repository_safety
 from ddpt.share_readiness import run_share_readiness
 from ddpt.sharing import create_package, create_verification_receipt, decrypt_package
-from ddpt.synthetic import create_synthetic_dicom
+from ddpt.synthetic import create_synthetic_dicom, create_synthetic_study
 from ddpt.tag_ops import blank_tag_value, delete_tag, dump_tags, set_tag_value
 from ddpt.utils import write_json
 from ddpt.validation import validate_anonymized_dicom
@@ -128,6 +128,44 @@ def synthetic(
 ) -> None:
     path = create_synthetic_dicom(output, patient_name, patient_id, modality, study_description)
     console.print(f"Created synthetic DICOM: {path}")
+
+
+@app.command("synthetic-study")
+def synthetic_study(
+    output_dir: Annotated[Path, typer.Argument(help="Output synthetic study directory.")],
+    patients: Annotated[int, typer.Option(help="Number of synthetic patients.")] = 2,
+    files_per_patient: Annotated[
+        int,
+        typer.Option(help="Number of synthetic DICOM files per patient."),
+    ] = 2,
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write synthetic study manifest JSON.")
+    ] = None,
+) -> None:
+    try:
+        report = create_synthetic_study(
+            output_dir,
+            patient_count=patients,
+            files_per_patient=files_per_patient,
+        )
+    except ValueError as exc:
+        console.print(str(exc))
+        raise typer.Exit(1) from exc
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+
+    table = Table(title="Synthetic Dental Study")
+    table.add_column("Metric")
+    table.add_column("Value")
+    table.add_row("Output directory", report.output_dir)
+    table.add_row("Patients", str(report.patient_count))
+    table.add_row("Files per patient", str(report.files_per_patient))
+    table.add_row("Total files", str(report.total_files))
+    table.add_row(
+        "Modalities",
+        ", ".join(f"{key}:{value}" for key, value in report.modalities.items()),
+    )
+    console.print(table)
 
 
 @app.command()

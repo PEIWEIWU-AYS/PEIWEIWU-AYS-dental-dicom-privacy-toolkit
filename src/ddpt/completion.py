@@ -123,6 +123,21 @@ OBJECTIVE_REQUIREMENTS = [
         note="Supports GitHub search, clinical-domain credibility, and public safety boundaries.",
     ),
     ObjectiveRequirement(
+        id="multi-file-synthetic-workflow",
+        category="differentiation",
+        requirement="Provide multi-file synthetic dental datasets for safe batch workflow demos.",
+        evidence_files=("docs/synthetic-study.md", "src/ddpt/synthetic.py"),
+        capability_ids=("synthetic-study-generator", "pipeline-recipes"),
+        evidence_terms=(
+            ("docs/synthetic-study.md", "ddpt synthetic-study"),
+            ("docs/synthetic-study.md", "dental-linkable-research"),
+        ),
+        note=(
+            "Single files are useful for tests; multi-file synthetic studies better "
+            "demonstrate batch and research workflows."
+        ),
+    ),
+    ObjectiveRequirement(
         id="research-differentiators",
         category="differentiation",
         requirement="Add research-oriented capabilities beyond baseline anonymizers.",

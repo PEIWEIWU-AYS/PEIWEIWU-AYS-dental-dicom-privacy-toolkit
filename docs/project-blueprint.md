@@ -64,6 +64,7 @@ ddpt completion audit . --json objective-audit.json --html objective-audit.html
 ddpt evidence bundle . --out evidence-run
 ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html
 ddpt demo demo-run
+ddpt synthetic-study synthetic-study-demo --patients 2 --files-per-patient 2 --json synthetic-study-demo/manifest.json
 ```
 
 ## Presentation Forms
@@ -79,7 +80,19 @@ Best for:
 - technical reviewers
 - reproducible paper methods
 
-### 2. Static HTML Report
+### 2. Multi-File Synthetic Study
+
+The multi-file synthetic study generator creates repeated-subject folders for
+inventory, batch anonymization, and linkable research pseudonymization demos.
+
+Best for:
+
+- synthetic batch workflow validation
+- demonstrating repeated subjects without real patient data
+- proving linkable pseudonymization across more than one file
+- safe demo inputs for screenshots, evidence bundles, and collaborator review
+
+### 3. Static HTML Report
 
 The HTML report translates DICOM privacy risk into a readable artifact. It can
 show file summary, risky tags, before/after de-identification changes, applied
@@ -92,7 +105,7 @@ Best for:
 - non-programmer readers
 - screenshots in README and papers
 
-### 3. README Demo Assets
+### 4. README Demo Assets
 
 The GitHub front page should eventually include:
 
@@ -102,7 +115,7 @@ The GitHub front page should eventually include:
 - synthetic-only warning
 - copyable install and demo commands
 
-### 4. Local REST API
+### 5. Local REST API
 
 The local API demonstrates integration potential without turning the project into a PACS or public cloud service. It should stay bound to local synthetic or explicitly approved test data.
 
@@ -113,7 +126,7 @@ Best for:
 - future web dashboard experiments
 - showing Orthanc-inspired REST design in a lightweight way
 
-### 5. Local Browser Workbench
+### 6. Local Browser Workbench
 
 The local browser workbench provides GUI-style controls on top of the local API.
 It helps reviewers run synthetic demos, inspect files, anonymize outputs,
@@ -126,7 +139,7 @@ Best for:
 - showing GUI/Web UI lessons from RSNA Anonymizer, DicomCleaner, and Orthanc
 - keeping review local without adding cloud upload or production PACS scope
 
-### 6. Evidence Bundle
+### 7. Evidence Bundle
 
 The evidence bundle collects environment, safety, release, demo, workflow, audit,
 and encrypted sharing proof into one local folder with a human-readable index.
@@ -138,7 +151,7 @@ Best for:
 - paper method appendices
 - collaborator review without real patient data
 
-### 7. Capability Matrix
+### 8. Capability Matrix
 
 The capability matrix turns competitor learning into a repository-evidence
 report. It maps reference tools and inherited capabilities to local files,
@@ -151,7 +164,7 @@ Best for:
 - explaining why this toolkit is dental-specific
 - checking that public claims are backed by evidence
 
-### 8. Objective Completion Audit
+### 9. Objective Completion Audit
 
 The objective completion audit checks whether the repository satisfies the
 original competitor-learning goal. It turns a broad project promise into
@@ -164,7 +177,7 @@ Best for:
 - avoiding vague claims about having learned from reference tools
 - mapping each competitor lesson to concrete files, commands, and reports
 
-### 9. Linkable Research Profile
+### 10. Linkable Research Profile
 
 The linkable research profile demonstrates deterministic pseudonymization for
 synthetic longitudinal studies. It keeps repeated synthetic `PatientID` values
@@ -177,7 +190,7 @@ Best for:
 - explaining the difference between one-time anonymization and linkable pseudonyms
 - showing profile lint and comparison as safety controls
 
-### 10. Static Review Dashboard
+### 11. Static Review Dashboard
 
 The dashboard gathers the strongest evidence bundle reports and synthetic PNG
 previews into one local static HTML entrypoint.

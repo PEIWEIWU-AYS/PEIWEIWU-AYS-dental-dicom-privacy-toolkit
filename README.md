@@ -16,6 +16,7 @@ Core goals:
 
 - DICOM metadata inspection
 - Directory inventory and privacy risk preflight
+- Multi-file synthetic dental study generation
 - DICOM anonymization profiles for dental imaging
 - Research-sharing profile with deterministic date shifting
 - Linkable research profile with deterministic patient pseudonymization
@@ -59,6 +60,7 @@ ddpt completion audit . --json objective-audit.json --html objective-audit.html
 ddpt evidence bundle . --out evidence-run
 ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json
 ddpt demo demo-run
+ddpt synthetic-study synthetic-study-demo --patients 2 --files-per-patient 2 --json synthetic-study-demo/manifest.json
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
@@ -102,6 +104,7 @@ The one-command demo writes a synthetic input file, anonymized and pixel-redacte
 `ddpt inventory` is a read-only directory preflight. It counts files, modalities, high-risk tags, medium-risk tags, readable/unreadable DICOMs, patient field presence, and UID hashes without exporting raw patient names or IDs.
 
 See [docs/inventory.md](docs/inventory.md) for the inventory safety boundary and output formats.
+See [docs/synthetic-study.md](docs/synthetic-study.md) for multi-file synthetic dental study generation.
 See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limits.
 See [docs/pixel-review.md](docs/pixel-review.md) for burned-in annotation region review reports.
 
