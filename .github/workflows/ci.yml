@@ -22,3 +22,4 @@ jobs:
           test -f CITATION.cff
           test -f ROADMAP.md
           test -f docs/data-safety.md
+          test -f docs/discoverability.md
