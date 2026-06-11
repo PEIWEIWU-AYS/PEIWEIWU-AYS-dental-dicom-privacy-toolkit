@@ -56,6 +56,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - bilingual English/Chinese discoverability
 - CLI that works cleanly in CI
 - static HTML reports for non-programmers
+- read-only directory inventory before anonymization
 - JSON audit events and manifests
 - encrypted sharing package demo
 - GitHub-friendly screenshots, docs, and one-command demo
@@ -94,6 +95,7 @@ The project should add:
 
 - dental-specific profile names and documentation
 - audit event JSON output
+- directory inventory with JSON, CSV, and HTML exports
 - static HTML reports
 - encrypted sharing package with manifest and checksums
 - manual pixel redaction audit for known burned-in annotation regions

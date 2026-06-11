@@ -5,6 +5,7 @@ from pathlib import Path
 from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.inspection import inspect_dicom
+from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import DemoPipelineResult
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.reports import (
@@ -12,6 +13,7 @@ from ddpt.reports import (
     write_audit_html,
     write_demo_summary_html,
     write_inspection_html,
+    write_inventory_html,
 )
 from ddpt.sharing import create_package, verify_package
 from ddpt.synthetic import create_synthetic_dicom
@@ -32,6 +34,9 @@ def run_demo_pipeline(
     input_dicom = input_dir / "sample.synthetic.dcm"
     anonymized_dicom = outputs_dir / "sample.anonymized.dcm"
     redacted_dicom = outputs_dir / "sample.redacted.dcm"
+    inventory_json = reports_dir / "inventory.json"
+    inventory_csv = reports_dir / "inventory.csv"
+    inventory_html = reports_dir / "inventory.html"
     inspection_json = reports_dir / "inspect.json"
     inspection_html = reports_dir / "inspect.html"
     audit_json = reports_dir / "audit.json"
@@ -47,6 +52,11 @@ def run_demo_pipeline(
     key_path = share_dir / "package.key"
 
     create_synthetic_dicom(input_dicom)
+
+    inventory = build_inventory(input_dir)
+    write_json(inventory_json, model_to_dict(inventory))
+    write_inventory_csv(inventory_csv, inventory)
+    write_inventory_html(inventory_html, inventory)
 
     inspection = inspect_dicom(input_dicom)
     write_json(inspection_json, model_to_dict(inspection))
@@ -78,6 +88,9 @@ def run_demo_pipeline(
     result = DemoPipelineResult(
         output_dir=str(output_dir),
         input_dicom=str(input_dicom),
+        inventory_json=str(inventory_json),
+        inventory_csv=str(inventory_csv),
+        inventory_html=str(inventory_html),
         anonymized_dicom=str(anonymized_dicom),
         redacted_dicom=str(redacted_dicom),
         inspection_json=str(inspection_json),

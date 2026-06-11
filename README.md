@@ -15,6 +15,7 @@ The toolkit explores practical privacy controls for dental imaging workflows.
 Core goals:
 
 - DICOM metadata inspection
+- Directory inventory and privacy risk preflight
 - DICOM anonymization profiles for dental imaging
 - Encrypted sharing package prototypes
 - Audit reports for de-identification and transfer events
@@ -32,6 +33,7 @@ source .venv/bin/activate
 python -m pip install -e ".[dev]"
 
 ddpt demo demo-run
+ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt profile show dental-basic
 ddpt profile coverage dental-basic
 ddpt profile init profiles/my-dental-profile.yml
@@ -41,12 +43,17 @@ ddpt audit verify demo-run/reports/audit-chain.json
 
 The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, JSON reports, HTML reports, an encrypted package, and a summary page to `demo-run/`.
 
+`ddpt inventory` is a read-only directory preflight. It counts files, modalities, high-risk tags, medium-risk tags, readable/unreadable DICOMs, patient field presence, and UID hashes without exporting raw patient names or IDs.
+
+See [docs/inventory.md](docs/inventory.md) for the inventory safety boundary and output formats.
+
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
 
 ## Manual Step-by-Step Demo
 
 ```bash
 ddpt synthetic demo-run/sample.dcm
+ddpt inventory demo-run --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json

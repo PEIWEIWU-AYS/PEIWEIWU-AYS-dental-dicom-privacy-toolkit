@@ -12,11 +12,17 @@ from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
 from ddpt.inspection import inspect_dicom
+from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.policy import profile_coverage
 from ddpt.profiles import built_in_profiles, describe_profile, write_profile_template
-from ddpt.reports import model_to_dict, write_audit_html, write_inspection_html
+from ddpt.reports import (
+    model_to_dict,
+    write_audit_html,
+    write_inspection_html,
+    write_inventory_html,
+)
 from ddpt.sharing import create_package, decrypt_package, verify_package
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.utils import write_json
@@ -93,6 +99,46 @@ def batch(
     console.print(f"Summary HTML: {output_dir / 'batch-summary.html'}")
     if summary.failed_files or summary.validation_failures:
         raise typer.Exit(1)
+
+
+@app.command()
+def inventory(
+    input_dir: Annotated[Path, typer.Argument(help="Directory containing DICOM files.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write inventory JSON.")
+    ] = None,
+    csv_output: Annotated[
+        Path | None, typer.Option("--csv", help="Write inventory CSV.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write inventory HTML.")
+    ] = None,
+    recursive: Annotated[
+        bool, typer.Option("--recursive/--no-recursive", help="Recurse through input directory.")
+    ] = True,
+    include_hash: Annotated[
+        bool, typer.Option("--hash/--no-hash", help="Include SHA-256 file hashes.")
+    ] = True,
+) -> None:
+    report = build_inventory(input_dir, recursive=recursive, include_hash=include_hash)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if csv_output:
+        write_inventory_csv(csv_output, report)
+    if html_output:
+        write_inventory_html(html_output, report)
+
+    table = Table(title="DICOM Directory Inventory")
+    table.add_column("Metric")
+    table.add_column("Value")
+    table.add_row("Total files", str(report.total_files))
+    table.add_row("Readable files", str(report.readable_files))
+    table.add_row("Unreadable files", str(report.unreadable_files))
+    table.add_row("High-risk tags", str(report.high_risk_tags))
+    table.add_row("Medium-risk tags", str(report.medium_risk_tags))
+    modalities = ", ".join(f"{key}:{value}" for key, value in report.modalities.items())
+    table.add_row("Modalities", modalities)
+    console.print(table)
 
 
 @profile_app.command("list")

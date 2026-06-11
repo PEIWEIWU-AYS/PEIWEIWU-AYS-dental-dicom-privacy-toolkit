@@ -16,6 +16,9 @@ The generated `demo-run/` directory contains:
 ```text
 demo-run/
   input/sample.synthetic.dcm
+  reports/inventory.json
+  reports/inventory.csv
+  reports/inventory.html
   outputs/sample.anonymized.dcm
   outputs/sample.redacted.dcm
   reports/inspect.json
@@ -46,6 +49,7 @@ demo-run/reports/audit.html
 The demo should show:
 
 - synthetic DICOM input creation
+- read-only directory inventory before anonymization
 - high-risk metadata detection
 - dental-basic anonymization
 - direct identifier replacement or blanking
@@ -67,12 +71,22 @@ For step-by-step inspection:
 
 ```bash
 ddpt synthetic demo-run/sample.dcm
+ddpt inventory demo-run --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out demo-run/outputs/sample.redacted.dcm --audit demo-run/reports/redaction.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
 ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key
+```
+
+For a directory-level preflight before batch anonymization:
+
+```bash
+ddpt inventory demo-run/input \
+  --json demo-run/reports/inventory.json \
+  --csv demo-run/reports/inventory.csv \
+  --html demo-run/reports/inventory.html
 ```
 
 ## Safety

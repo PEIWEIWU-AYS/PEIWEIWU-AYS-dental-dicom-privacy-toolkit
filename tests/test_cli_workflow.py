@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 import subprocess
 import sys
@@ -150,6 +151,9 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
 
     assert result.exit_code == 0, result.output
     assert (demo_dir / "input" / "sample.synthetic.dcm").exists()
+    assert (demo_dir / "reports" / "inventory.json").exists()
+    assert (demo_dir / "reports" / "inventory.csv").exists()
+    assert (demo_dir / "reports" / "inventory.html").exists()
     assert (demo_dir / "outputs" / "sample.anonymized.dcm").exists()
     assert (demo_dir / "outputs" / "sample.redacted.dcm").exists()
     assert (demo_dir / "reports" / "inspect.html").exists()
@@ -162,6 +166,58 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "share" / "package.ddpt").exists()
     assert (demo_dir / "share" / "manifest.json").exists()
     assert (demo_dir / "share" / "package.key").exists()
+
+
+def test_inventory_command_exports_safe_directory_report(tmp_path: Path) -> None:
+    input_dir = tmp_path / "inventory-input"
+    nested_dir = input_dir / "nested"
+    first = input_dir / "first.dcm"
+    second = nested_dir / "second.dicom"
+    broken = input_dir / "broken.dcm"
+    inventory_json = tmp_path / "reports" / "inventory.json"
+    inventory_csv = tmp_path / "reports" / "inventory.csv"
+    inventory_html = tmp_path / "reports" / "inventory.html"
+    nested_dir.mkdir(parents=True)
+
+    assert runner.invoke(app, ["synthetic", str(first)]).exit_code == 0
+    assert runner.invoke(app, ["synthetic", str(second)]).exit_code == 0
+    broken.write_text("not a dicom file", encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        [
+            "inventory",
+            str(input_dir),
+            "--json",
+            str(inventory_json),
+            "--csv",
+            str(inventory_csv),
+            "--html",
+            str(inventory_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert inventory_json.exists()
+    assert inventory_csv.exists()
+    assert inventory_html.exists()
+    report = json.loads(inventory_json.read_text())
+    assert report["total_files"] == 3
+    assert report["readable_files"] == 2
+    assert report["unreadable_files"] == 1
+    assert report["modalities"] == {"DX": 2}
+    assert report["high_risk_tags"] >= 6
+    assert "SYNTHETIC^DENTAL" not in inventory_json.read_text()
+    readable = [item for item in report["files"] if item["readable"]]
+    assert all(item["patient_name_present"] for item in readable)
+    assert all(item["study_instance_uid_hash"] for item in readable)
+    assert any(item["error"] for item in report["files"])
+
+    with inventory_csv.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    assert len(rows) == 3
+    first_row = next(row for row in rows if row["path"] == "first.dcm")
+    assert first_row["patient_name_present"] == "True"
 
 
 def test_audit_chain_detects_tampering(tmp_path: Path) -> None:

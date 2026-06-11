@@ -10,16 +10,17 @@ Version 0.1 is successful when a new user can:
 
 1. Install the Python package in a virtual environment.
 2. Generate a synthetic DICOM file.
-3. Inspect metadata and receive JSON plus HTML reports.
-4. Apply the `dental-basic` anonymization profile.
-5. Confirm direct identifiers were replaced or removed.
-6. Generate an audit event JSON file.
-7. Validate anonymized output with a pass/fail report.
-8. Apply manual pixel redaction for known burned-in annotation regions.
-9. Package anonymized files with checksums.
-10. Encrypt the package.
-11. Verify or decrypt the package.
-12. Run automated tests locally and in GitHub Actions.
+3. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
+4. Inspect metadata and receive JSON plus HTML reports.
+5. Apply the `dental-basic` anonymization profile.
+6. Confirm direct identifiers were replaced or removed.
+7. Generate an audit event JSON file.
+8. Validate anonymized output with a pass/fail report.
+9. Apply manual pixel redaction for known burned-in annotation regions.
+10. Package anonymized files with checksums.
+11. Encrypt the package.
+12. Verify or decrypt the package.
+13. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -28,6 +29,7 @@ Run the complete synthetic privacy workflow in one command.
 Required:
 
 - synthetic DICOM generation
+- read-only directory inventory
 - metadata inspection
 - anonymization
 - validation
@@ -37,6 +39,22 @@ Required:
 - JSON reports
 - HTML reports
 - summary HTML page
+
+### `ddpt inventory`
+
+Run a read-only preflight scan before anonymization or batch processing.
+
+Required:
+
+- recursive DICOM discovery
+- readable and unreadable file counts
+- modality counts
+- high-risk and medium-risk tag counts
+- patient field presence flags without exporting raw patient names or IDs
+- UID hashes rather than raw UID values
+- JSON output
+- CSV output
+- optional HTML report
 
 ### `ddpt batch`
 

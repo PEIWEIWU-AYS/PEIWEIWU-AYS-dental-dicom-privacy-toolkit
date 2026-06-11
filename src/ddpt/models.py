@@ -112,6 +112,9 @@ class PixelRedactionAudit(BaseModel):
 class DemoPipelineResult(BaseModel):
     output_dir: str
     input_dicom: str
+    inventory_json: str
+    inventory_csv: str
+    inventory_html: str
     anonymized_dicom: str
     redacted_dicom: str
     inspection_json: str
@@ -153,6 +156,46 @@ class BatchSummary(BaseModel):
     failed_files: int
     validation_failures: int
     files: list[BatchFileResult]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
+class InventoryFileRecord(BaseModel):
+    path: str
+    readable: bool
+    error: str | None = None
+    file_sha256: str | None = None
+    modality: str | None = None
+    sop_class_uid: str | None = None
+    study_instance_uid_hash: str | None = None
+    series_instance_uid_hash: str | None = None
+    sop_instance_uid_hash: str | None = None
+    patient_name_present: bool = False
+    patient_id_present: bool = False
+    patient_birth_date_present: bool = False
+    burned_in_annotation: str | None = None
+    rows: int | None = None
+    columns: int | None = None
+    transfer_syntax_uid: str | None = None
+    high_risk_tags: int = 0
+    medium_risk_tags: int = 0
+    low_risk_tags: int = 0
+    unknown_risk_tags: int = 0
+    recommended_actions: list[str] = Field(default_factory=list)
+    high_risk_keywords: list[str] = Field(default_factory=list)
+
+
+class InventoryReport(BaseModel):
+    root_dir: str
+    recursive: bool
+    total_files: int
+    readable_files: int
+    unreadable_files: int
+    high_risk_tags: int
+    medium_risk_tags: int
+    modalities: dict[str, int]
+    files: list[InventoryFileRecord]
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )

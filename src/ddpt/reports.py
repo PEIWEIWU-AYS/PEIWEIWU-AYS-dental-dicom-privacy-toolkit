@@ -5,7 +5,13 @@ from typing import Any
 
 from jinja2 import Template
 
-from ddpt.models import AnonymizationAudit, BatchSummary, DemoPipelineResult, InspectionReport
+from ddpt.models import (
+    AnonymizationAudit,
+    BatchSummary,
+    DemoPipelineResult,
+    InspectionReport,
+    InventoryReport,
+)
 from ddpt.utils import ensure_parent
 
 INSPECTION_TEMPLATE = Template(
@@ -177,6 +183,9 @@ DEMO_SUMMARY_TEMPLATE = Template(
     <thead><tr><th>Artifact</th><th>Path</th></tr></thead>
     <tbody>
       <tr><td>Input synthetic DICOM</td><td><code>{{ result.input_dicom }}</code></td></tr>
+      <tr><td>Inventory JSON</td><td><code>{{ result.inventory_json }}</code></td></tr>
+      <tr><td>Inventory CSV</td><td><code>{{ result.inventory_csv }}</code></td></tr>
+      <tr><td>Inventory HTML</td><td><code>{{ result.inventory_html }}</code></td></tr>
       <tr><td>Anonymized DICOM</td><td><code>{{ result.anonymized_dicom }}</code></td></tr>
       <tr><td>Pixel-redacted DICOM</td><td><code>{{ result.redacted_dicom }}</code></td></tr>
       <tr><td>Inspection HTML</td><td><code>{{ result.inspection_html }}</code></td></tr>
@@ -261,6 +270,97 @@ BATCH_SUMMARY_TEMPLATE = Template(
 """
 )
 
+INVENTORY_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Inventory Report</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Inventory Report</h1>
+  <p class="warning">
+    Inventory is a read-only preflight scan. It records presence, counts, hashes, and
+    risk signals without exporting raw patient names or IDs.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Root directory: <code>{{ report.root_dir }}</code></li>
+    <li>Total files: {{ report.total_files }}</li>
+    <li>Readable files: {{ report.readable_files }}</li>
+    <li>Unreadable files: {{ report.unreadable_files }}</li>
+    <li>High-risk tags: {{ report.high_risk_tags }}</li>
+    <li>Medium-risk tags: {{ report.medium_risk_tags }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Modalities</h2>
+  <table>
+    <thead><tr><th>Modality</th><th>Files</th></tr></thead>
+    <tbody>
+      {% for modality, count in report.modalities.items() %}
+      <tr><td>{{ modality }}</td><td>{{ count }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Files</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Readable</th>
+        <th>Modality</th>
+        <th>Size</th>
+        <th>Patient Fields</th>
+        <th>Risk Tags</th>
+        <th>Recommended Actions</th>
+        <th>Error</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.files %}
+      <tr>
+        <td><code>{{ item.path }}</code></td>
+        <td class="{{ "ok" if item.readable else "fail" }}">
+          {{ "yes" if item.readable else "no" }}
+        </td>
+        <td>{{ item.modality or "" }}</td>
+        <td>
+          {% if item.rows and item.columns %}
+          {{ item.rows }} x {{ item.columns }}
+          {% endif %}
+        </td>
+        <td>
+          name={{ item.patient_name_present }},
+          id={{ item.patient_id_present }},
+          birth_date={{ item.patient_birth_date_present }}
+        </td>
+        <td>high={{ item.high_risk_tags }}, medium={{ item.medium_risk_tags }}</td>
+        <td>{{ ", ".join(item.recommended_actions) }}</td>
+        <td>{{ item.error or "" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -276,6 +376,10 @@ def write_demo_summary_html(path: Path, result: DemoPipelineResult) -> None:
 
 def write_batch_summary_html(path: Path, summary: BatchSummary) -> None:
     _write_html(path, BATCH_SUMMARY_TEMPLATE.render(summary=summary))
+
+
+def write_inventory_html(path: Path, report: InventoryReport) -> None:
+    _write_html(path, INVENTORY_TEMPLATE.render(report=report))
 
 
 def _write_html(path: Path, html: str) -> None:
