@@ -13,6 +13,7 @@ from ddpt.pipeline import run_demo_pipeline
 from ddpt.policy import policy_registry_report, write_policy_registry_csv
 from ddpt.profiles import lint_profile
 from ddpt.quality_gate import run_workflow_quality_gate
+from ddpt.regression import run_privacy_regression_suite
 from ddpt.release import run_release_audit
 from ddpt.reports import (
     model_to_dict,
@@ -22,6 +23,7 @@ from ddpt.reports import (
     write_evidence_bundle_html,
     write_objective_audit_html,
     write_policy_registry_html,
+    write_privacy_regression_html,
     write_profile_lint_html,
     write_release_audit_html,
     write_review_dashboard_html,
@@ -39,6 +41,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     reports_dir = output_dir / "reports"
     workflow_dir = output_dir / "workflow-run"
     demo_dir = output_dir / "demo-run"
+    regression_dir = output_dir / "regression-run"
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -112,6 +115,12 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     workflow_html = reports_dir / "workflow-run.html"
     write_json(workflow_json, model_to_dict(workflow_report))
     write_workflow_html(workflow_html, workflow_report)
+
+    regression_report = run_privacy_regression_suite(regression_dir)
+    regression_json = reports_dir / "privacy-regression-suite.json"
+    regression_html = reports_dir / "privacy-regression-suite.html"
+    write_json(regression_json, model_to_dict(regression_report))
+    write_privacy_regression_html(regression_html, regression_report)
 
     dashboard_json = reports_dir / "review-dashboard.json"
     dashboard_html = reports_dir / "review-dashboard.html"
@@ -302,6 +311,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            regression_html,
+            "Privacy regression suite HTML",
+            "quality",
+            "Synthetic adversarial privacy regression evidence.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "remediation-plan.html",
             "Privacy remediation plan HTML",
             "planning",
@@ -397,6 +413,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             and demo_result.audit_chain_passed
             and quality_report.passed
             and workflow_report.passed
+            and regression_report.passed
         ),
         doctor_passed=doctor_report.passed,
         safety_passed=safety_report.passed,

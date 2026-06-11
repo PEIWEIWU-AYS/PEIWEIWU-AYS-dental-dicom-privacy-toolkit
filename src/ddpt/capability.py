@@ -616,6 +616,35 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="privacy-regression-suite",
+        capability="Synthetic adversarial privacy regression suite",
+        source_tools=(
+            "RSNA DICOM Anonymizer",
+            "PixelMed DicomCleaner",
+            "RSNA CTP",
+            "pydicom anonymization example",
+        ),
+        evidence_files=(
+            "src/ddpt/regression.py",
+            "docs/privacy-regression-suite.md",
+            "tests/test_cli_workflow.py",
+            "src/ddpt/evidence.py",
+        ),
+        command=(
+            "ddpt regression suite regression-run --json "
+            "regression-run/reports/privacy-regression-suite.json "
+            "--html regression-run/reports/privacy-regression-suite.html"
+        ),
+        differentiator=(
+            "Generates adversarial synthetic cases for metadata identifiers, "
+            "filename risk, private tags, pixel review signals, and linkable pseudonyms."
+        ),
+        note=(
+            "Moves the project beyond a happy-path demo by proving key guardrails "
+            "fire on known synthetic leakage scenarios."
+        ),
+    ),
+    CapabilitySpec(
         id="deid-certificate",
         capability="De-identification certificate for synthetic sharing handoff",
         source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "PixelMed DicomCleaner"),

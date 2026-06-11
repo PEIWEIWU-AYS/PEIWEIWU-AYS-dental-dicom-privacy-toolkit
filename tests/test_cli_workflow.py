@@ -798,6 +798,50 @@ def test_orthanc_plan_command_exports_review_only_payload(tmp_path: Path) -> Non
     assert "Review-only Orthanc REST anonymization plan" in html
 
 
+def test_privacy_regression_suite_generates_adversarial_evidence(
+    tmp_path: Path,
+) -> None:
+    output_dir = tmp_path / "regression-run"
+    report_json = output_dir / "reports" / "privacy-regression-suite.json"
+    report_html = output_dir / "reports" / "privacy-regression-suite.html"
+
+    result = runner.invoke(
+        app,
+        [
+            "regression",
+            "suite",
+            str(output_dir),
+            "--json",
+            str(report_json),
+            "--html",
+            str(report_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert report_json.exists()
+    assert report_html.exists()
+    report = json.loads(report_json.read_text())
+    assert report["passed"] is True
+    assert report["passed_cases"] == report["total_cases"]
+    case_ids = {case["id"] for case in report["cases"]}
+    assert "metadata-direct-identifiers" in case_ids
+    assert "filename-private-tags" in case_ids
+    assert "pixel-burned-in-risk" in case_ids
+    assert "linkable-pseudonym" in case_ids
+    filename_case = next(
+        case for case in report["cases"] if case["id"] == "filename-private-tags"
+    )
+    assert any(check["id"] == "filename-risk-detected" for check in filename_case["checks"])
+    pixel_case = next(
+        case for case in report["cases"] if case["id"] == "pixel-burned-in-risk"
+    )
+    assert any(check["id"] == "pixel-risk-detected" for check in pixel_case["checks"])
+    html = report_html.read_text()
+    assert "Dental DICOM Privacy Regression Suite" in html
+    assert "adversarial" in html
+
+
 def test_pixel_review_command_generates_overlay_and_report(tmp_path: Path) -> None:
     source = tmp_path / "sample.dcm"
     review_dir = tmp_path / "reports" / "pixel-review"
@@ -1159,6 +1203,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "share-readiness-gate" in capability_ids
     assert "workflow-quality-gate" in capability_ids
     assert "residual-risk-score" in capability_ids
+    assert "privacy-regression-suite" in capability_ids
     assert "deid-certificate" in capability_ids
     assert "secure-sharing" in capability_ids
     assert "competitor-coverage-report" in capability_ids
@@ -1209,6 +1254,7 @@ def test_competitor_coverage_reports_reference_tool_mapping(tmp_path: Path) -> N
     assert "dicom-json-export" in capability_ids
     assert "orthanc-anonymize-plan" in capability_ids
     assert "dcmodify-plan-export" in capability_ids
+    assert "privacy-regression-suite" in capability_ids
     assert "competitor-coverage-report" in capability_ids
     html = coverage_html.read_text()
     assert "Dental DICOM Competitor Coverage" in html
@@ -1247,6 +1293,7 @@ def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) ->
     assert "study-pydicom-example" in item_ids
     assert "shareable-proof-package" in item_ids
     assert "residual-risk-score" in item_ids
+    assert "privacy-regression-suite" in item_ids
     assert "deid-certificate-handoff" in item_ids
     assert "profile-conformance-proof" in item_ids
     assert "dicom-confidentiality-alignment" in item_ids
@@ -1280,6 +1327,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "policy-registry.csv").exists()
     assert (output_dir / "reports" / "policy-registry.html").exists()
     assert (output_dir / "reports" / "confidentiality-alignment.html").exists()
+    assert (output_dir / "reports" / "privacy-regression-suite.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-basic.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
@@ -1313,6 +1361,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/objective-audit.html" in artifact_paths
     assert "reports/policy-registry.html" in artifact_paths
     assert "reports/confidentiality-alignment.html" in artifact_paths
+    assert "reports/privacy-regression-suite.html" in artifact_paths
     assert "reports/profile-lint-dental-basic.html" in artifact_paths
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
     assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
@@ -1342,6 +1391,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Competitor coverage HTML" in html
     assert "Objective completion audit HTML" in html
     assert "Release audit HTML" in html
+    assert "Privacy regression suite HTML" in html
     assert "De-identification certificate HTML" in html
     assert "Workflow quality gate HTML" in html
     assert "Residual privacy risk HTML" in html

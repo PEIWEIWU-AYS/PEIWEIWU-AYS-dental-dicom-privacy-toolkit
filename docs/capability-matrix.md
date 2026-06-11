@@ -45,6 +45,7 @@ The matrix reviews whether the repository has evidence for:
 - workflow-level de-identification certificate generation
 - workflow quality gate for reproducible public review evidence
 - residual privacy risk score across generated workflow evidence
+- synthetic adversarial privacy regression suite
 - local Orthanc-inspired REST API
 - Orthanc-inspired safe DICOM metadata JSON export
 - local browser workbench for GUI-style synthetic workflow review

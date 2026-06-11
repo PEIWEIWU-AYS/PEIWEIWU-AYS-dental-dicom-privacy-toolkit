@@ -774,6 +774,35 @@ class ResidualRiskReport(BaseModel):
     )
 
 
+class PrivacyRegressionCheck(BaseModel):
+    id: str
+    passed: bool
+    message: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class PrivacyRegressionCaseResult(BaseModel):
+    id: str
+    title: str
+    passed: bool
+    input_paths: list[str]
+    artifact_paths: list[str]
+    checks: list[PrivacyRegressionCheck]
+
+
+class PrivacyRegressionSuiteReport(BaseModel):
+    output_dir: str
+    passed: bool
+    total_cases: int
+    passed_cases: int
+    failed_cases: int
+    cases: list[PrivacyRegressionCaseResult]
+    boundary_notes: list[str] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class PrivacyRemediationItem(BaseModel):
     tag: str
     keyword: str

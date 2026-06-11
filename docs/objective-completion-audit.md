@@ -39,6 +39,7 @@ The audit checks evidence for:
 - DICOM PS3.15-inspired confidentiality alignment evidence
 - portable proof artifacts for MacBook demos and collaborator review
 - residual privacy risk score evidence for reviewer decision support
+- synthetic privacy regression evidence for adversarial known-risk cases
 - de-identification certificate evidence for synthetic sharing handoff
 - competitor coverage evidence for reference-tool mapping and safety boundaries
 

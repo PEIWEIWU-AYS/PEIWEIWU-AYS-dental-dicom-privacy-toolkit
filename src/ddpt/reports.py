@@ -27,6 +27,7 @@ from ddpt.models import (
     PixelReviewReport,
     PixelRiskScanReport,
     PolicyRegistryReport,
+    PrivacyRegressionSuiteReport,
     PrivacyRemediationPlanReport,
     ProfileComparisonReport,
     ProfileConformanceReport,
@@ -940,6 +941,94 @@ RESIDUAL_RISK_TEMPLATE = Template(
       {% endfor %}
     </tbody>
   </table>
+</body>
+</html>
+"""
+)
+
+PRIVACY_REGRESSION_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Privacy Regression Suite</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .pass { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Privacy Regression Suite</h1>
+  <p class="warning">
+    Synthetic adversarial regression suite only. A pass means expected guardrails
+    fired on known synthetic cases; it is not legal, clinical, regulatory, or
+    complete de-identification certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Output directory: <code>{{ report.output_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "pass" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Cases: {{ report.passed_cases }} / {{ report.total_cases }}</li>
+    <li>Failed cases: {{ report.failed_cases }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Boundary Notes</h2>
+  <ul>
+    {% for note in report.boundary_notes %}
+    <li>{{ note }}</li>
+    {% endfor %}
+  </ul>
+  {% for case in report.cases %}
+  <h2>{{ case.title }}</h2>
+  <p>
+    <span class="{{ "pass" if case.passed else "fail" }}">
+      {{ "PASS" if case.passed else "FAIL" }}
+    </span>
+    <code>{{ case.id }}</code>
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Check</th>
+        <th>Message</th>
+        <th>Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for check in case.checks %}
+      <tr>
+        <td class="{{ "pass" if check.passed else "fail" }}">
+          {{ "PASS" if check.passed else "FAIL" }}
+        </td>
+        <td>{{ check.id }}</td>
+        <td>{{ check.message }}</td>
+        <td>
+          {% for item in check.evidence %}
+          <code>{{ item }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endfor %}
 </body>
 </html>
 """
@@ -2739,6 +2828,13 @@ def write_residual_risk_html(path: Path, report: ResidualRiskReport) -> None:
     _write_html(path, RESIDUAL_RISK_TEMPLATE.render(report=report))
 
 
+def write_privacy_regression_html(
+    path: Path,
+    report: PrivacyRegressionSuiteReport,
+) -> None:
+    _write_html(path, PRIVACY_REGRESSION_TEMPLATE.render(report=report))
+
+
 def write_filename_privacy_html(path: Path, report: FilenamePrivacyScanReport) -> None:
     _write_html(path, FILENAME_PRIVACY_TEMPLATE.render(report=report))
 
@@ -2809,6 +2905,7 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
         "Objective completion audit HTML",
         "Release audit HTML",
         "Residual privacy risk HTML",
+        "Privacy regression suite HTML",
         "Orthanc anonymization plan HTML",
         "Pixel review HTML",
         "Package verification receipt",

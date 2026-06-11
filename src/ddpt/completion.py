@@ -315,6 +315,29 @@ OBJECTIVE_REQUIREMENTS = [
         ),
     ),
     ObjectiveRequirement(
+        id="privacy-regression-suite",
+        category="differentiation",
+        requirement=(
+            "Prove privacy guardrails on adversarial synthetic regression cases, "
+            "not only on happy-path demos."
+        ),
+        evidence_files=(
+            "docs/privacy-regression-suite.md",
+            "src/ddpt/regression.py",
+            "tests/test_cli_workflow.py",
+        ),
+        capability_ids=("privacy-regression-suite",),
+        evidence_terms=(
+            ("docs/privacy-regression-suite.md", "ddpt regression suite"),
+            ("docs/privacy-regression-suite.md", "adversarial"),
+            ("src/ddpt/evidence.py", "run_privacy_regression_suite"),
+        ),
+        note=(
+            "Covers direct metadata identifiers, filename/path risk, private-tag "
+            "removal, burned-in pixel risk signals, and stable linkable pseudonyms."
+        ),
+    ),
+    ObjectiveRequirement(
         id="deid-certificate-handoff",
         category="differentiation",
         requirement=(

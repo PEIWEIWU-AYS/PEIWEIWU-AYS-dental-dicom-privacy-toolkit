@@ -241,12 +241,17 @@ Expected:
 
 ```bash
 ddpt evidence bundle . --out evidence-run
+ddpt regression suite regression-run \
+  --json regression-run/reports/privacy-regression-suite.json \
+  --html regression-run/reports/privacy-regression-suite.html
 ```
 
 Expected:
 
 - overall evidence bundle status is `PASS`
+- overall privacy regression suite status is `PASS`
 - `evidence-run/reports/evidence-bundle.html` exists
+- `evidence-run/reports/privacy-regression-suite.html` exists
 - `evidence-run/reports/review-dashboard.html` exists
 - `evidence-run/reports/capability-matrix.html` exists
 - `evidence-run/reports/competitor-coverage.html` exists
@@ -293,6 +298,7 @@ capability-matrix.html
 objective-audit.html
 evidence-run/reports/evidence-bundle.html
 evidence-run/reports/review-dashboard.html
+evidence-run/reports/privacy-regression-suite.html
 demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
 workflow-run/reports/filename-privacy.html

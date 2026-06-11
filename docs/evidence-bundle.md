@@ -22,6 +22,7 @@ The bundle includes:
 - environment doctor JSON
 - public repository safety scan JSON
 - release-readiness audit JSON and HTML
+- privacy regression suite JSON and HTML
 - competitor-informed capability matrix JSON and HTML
 - competitor coverage JSON and HTML
 - policy registry JSON, CSV, and HTML
@@ -59,6 +60,8 @@ evidence-run/
     safety-scan.json
     release-audit.json
     release-audit.html
+    privacy-regression-suite.json
+    privacy-regression-suite.html
     capability-matrix.json
     capability-matrix.html
     competitor-coverage.json
@@ -106,6 +109,7 @@ evidence-run/
       pixel-risk.html
       residual-risk.html
     share/
+  regression-run/
 ```
 
 Open the index:

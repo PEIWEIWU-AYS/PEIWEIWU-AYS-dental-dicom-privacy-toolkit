@@ -32,6 +32,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Public Repository Safety Scan](safety-scan.md)
 - [Release Audit](release-audit.md)
 - [Evidence Bundle](evidence-bundle.md)
+- [Privacy Regression Suite](privacy-regression-suite.md)
 - [Review Dashboard](review-dashboard.md)
 - [Package Verification Receipts](package-verification-receipts.md)
 - [Share Readiness](share-readiness.md)

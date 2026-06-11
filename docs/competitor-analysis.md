@@ -88,6 +88,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - JSON audit events and manifests
 - release-readiness audit for docs, discoverability, workflow coverage, CI, safety, and profile coverage
 - local evidence bundle that packages environment, safety, release, demo, workflow, audit, and sharing proof
+- synthetic adversarial privacy regression suite for known leakage scenarios
 - encrypted sharing package demo
 - receiver-side package verification receipts for sharing evidence
 - GitHub-friendly screenshots, docs, and one-command demo
@@ -158,6 +159,7 @@ The project should add:
 - side-by-side de-identification comparison HTML for reviewer-friendly evidence
 - portable de-identification certificate for synthetic sharing handoff evidence
 - evidence bundle with JSON and HTML index for MacBook validation and public demonstrations
+- privacy regression suite with adversarial synthetic metadata, filename, private tag, pixel, and pseudonym cases
 - encrypted sharing package with manifest and checksums
 - package verification receipts with JSON and HTML outputs
 - share-readiness gate that combines privacy, pixel, package, and audit evidence

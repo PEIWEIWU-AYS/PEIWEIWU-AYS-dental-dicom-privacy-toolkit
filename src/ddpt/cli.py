@@ -51,6 +51,7 @@ from ddpt.redaction_plan import (
     rectangles_from_plan,
     write_redaction_plan_template,
 )
+from ddpt.regression import run_privacy_regression_suite
 from ddpt.release import run_release_audit
 from ddpt.remediation import build_privacy_remediation_plan
 from ddpt.reports import (
@@ -72,6 +73,7 @@ from ddpt.reports import (
     write_pixel_review_html,
     write_pixel_risk_scan_html,
     write_policy_registry_html,
+    write_privacy_regression_html,
     write_privacy_remediation_html,
     write_profile_comparison_html,
     write_profile_conformance_html,
@@ -120,6 +122,7 @@ share_app = typer.Typer(help="Check sharing readiness gates.")
 quality_app = typer.Typer(help="Run workflow quality gates.")
 remediation_app = typer.Typer(help="Build privacy remediation plans.")
 risk_app = typer.Typer(help="Score residual privacy risk from generated evidence.")
+regression_app = typer.Typer(help="Run synthetic privacy regression suites.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(confidentiality_app, name="confidentiality")
@@ -146,6 +149,7 @@ app.add_typer(share_app, name="share")
 app.add_typer(quality_app, name="quality")
 app.add_typer(remediation_app, name="remediation")
 app.add_typer(risk_app, name="risk")
+app.add_typer(regression_app, name="regression")
 console = Console()
 
 
@@ -850,6 +854,42 @@ def residual_risk_score(
     console.print(f"Residual risk: {report.residual_risk}")
     console.print(f"Blocking findings: {report.blocking_findings}")
     console.print(f"Warning findings: {report.warning_findings}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@regression_app.command("suite")
+def privacy_regression_suite(
+    output_dir: Annotated[
+        Path,
+        typer.Argument(help="Output directory for synthetic regression artifacts."),
+    ],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write regression suite JSON.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write regression suite HTML.")
+    ] = None,
+) -> None:
+    report = run_privacy_regression_suite(output_dir)
+    json_output = json_output or output_dir / "reports" / "privacy-regression-suite.json"
+    html_output = html_output or output_dir / "reports" / "privacy-regression-suite.html"
+    write_json(json_output, model_to_dict(report))
+    write_privacy_regression_html(html_output, report)
+
+    table = Table(title="Dental DICOM Privacy Regression Suite")
+    table.add_column("Status")
+    table.add_column("Case")
+    table.add_column("Checks")
+    for case in report.cases:
+        table.add_row(
+            "PASS" if case.passed else "FAIL",
+            case.id,
+            f"{sum(1 for check in case.checks if check.passed)}/{len(case.checks)}",
+        )
+    console.print(table)
+    console.print(f"Cases: {report.passed_cases}/{report.total_cases}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)

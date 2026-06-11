@@ -50,7 +50,8 @@ Version 0.1 is successful when a new user can:
 40. Run a workflow quality gate that verifies public review evidence.
 41. Export a review-only Orthanc REST anonymization plan from a dental profile.
 42. Run a residual privacy risk score across generated workflow evidence.
-43. Run automated tests locally and in GitHub Actions.
+43. Run a synthetic adversarial privacy regression suite.
+44. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
