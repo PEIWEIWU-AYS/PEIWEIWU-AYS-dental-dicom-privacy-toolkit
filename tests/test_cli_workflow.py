@@ -163,6 +163,9 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
 def test_profile_commands(tmp_path: Path) -> None:
     profile_json = tmp_path / "profile.json"
     coverage_json = tmp_path / "coverage.json"
+    custom_profile = tmp_path / "custom-profile.yml"
+    custom_source = tmp_path / "custom-source.dcm"
+    custom_output = tmp_path / "custom-output.dcm"
 
     result = runner.invoke(app, ["profile", "list"])
     assert result.exit_code == 0, result.output
@@ -182,6 +185,35 @@ def test_profile_commands(tmp_path: Path) -> None:
     assert coverage["high_risk_uncovered"] == []
     assert coverage["medium_risk_uncovered"] == []
     assert coverage["covered_items"] == coverage["total_items"]
+
+    result = runner.invoke(app, ["profile", "init", str(custom_profile)])
+    assert result.exit_code == 0, result.output
+    assert custom_profile.exists()
+
+    result = runner.invoke(app, ["profile", "init", str(custom_profile)])
+    assert result.exit_code == 1
+
+    result = runner.invoke(
+        app,
+        ["profile", "show", str(custom_profile), "--json", str(tmp_path / "custom.json")],
+    )
+    assert result.exit_code == 0, result.output
+
+    result = runner.invoke(app, ["synthetic", str(custom_source)])
+    assert result.exit_code == 0, result.output
+    result = runner.invoke(
+        app,
+        [
+            "anonymize",
+            str(custom_source),
+            "--out",
+            str(custom_output),
+            "--profile",
+            str(custom_profile),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert pydicom.dcmread(custom_output).PatientID == "DDPT-SYNTHETIC-ID"
 
 
 def test_package_rejects_empty_directory(tmp_path: Path) -> None:

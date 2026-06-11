@@ -66,6 +66,15 @@ def built_in_profiles() -> list[str]:
     return ["dental-basic"]
 
 
+def write_profile_template(output_path: Path, overwrite: bool = False) -> Path:
+    if output_path.exists() and not overwrite:
+        raise FileExistsError(f"Profile already exists: {output_path}")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("w", encoding="utf-8") as handle:
+        yaml.safe_dump(DEFAULT_PROFILE, handle, sort_keys=False, allow_unicode=True)
+    return output_path
+
+
 def describe_profile(name_or_path: str) -> dict[str, Any]:
     profile = load_profile(name_or_path)
     return {

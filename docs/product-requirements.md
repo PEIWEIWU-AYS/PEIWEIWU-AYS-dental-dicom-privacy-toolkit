@@ -51,6 +51,17 @@ Required:
 - show private tag policy
 - optional JSON export
 
+### `ddpt profile init`
+
+Create a user-editable YAML profile from the built-in dental baseline.
+
+Required:
+
+- write profile YAML
+- refuse to overwrite by default
+- support explicit overwrite
+- generated profile must be usable with `ddpt anonymize --profile`
+
 ### `ddpt profile coverage`
 
 Compare an anonymization profile against the toolkit's high-risk and medium-risk policy registry.

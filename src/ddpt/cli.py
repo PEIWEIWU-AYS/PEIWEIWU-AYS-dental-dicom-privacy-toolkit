@@ -13,7 +13,7 @@ from ddpt.inspection import inspect_dicom
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.policy import profile_coverage
-from ddpt.profiles import built_in_profiles, describe_profile
+from ddpt.profiles import built_in_profiles, describe_profile, write_profile_template
 from ddpt.reports import model_to_dict, write_audit_html, write_inspection_html
 from ddpt.sharing import create_package, decrypt_package, verify_package
 from ddpt.synthetic import create_synthetic_dicom
@@ -98,6 +98,21 @@ def profile_show(
     table.add_row("regenerate_uid", ", ".join(summary["regenerate_uid_keywords"]) or "-")
     table.add_row("remove_private_tags", str(summary["remove_private_tags"]))
     console.print(table)
+
+
+@profile_app.command("init")
+def profile_init(
+    output_path: Annotated[Path, typer.Argument(help="Output YAML profile path.")],
+    overwrite: Annotated[
+        bool, typer.Option("--overwrite", help="Overwrite existing file.")
+    ] = False,
+) -> None:
+    try:
+        path = write_profile_template(output_path, overwrite=overwrite)
+    except FileExistsError as exc:
+        console.print(str(exc))
+        raise typer.Exit(1) from exc
+    console.print(f"Profile template written to: {path}")
 
 
 @profile_app.command("coverage")
