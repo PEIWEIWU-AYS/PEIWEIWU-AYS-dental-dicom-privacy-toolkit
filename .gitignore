@@ -40,6 +40,8 @@ demo-run/
 demo-*/
 workflow-run/
 workflow-*/
+evidence-run/
+evidence-*/
 
 # Private clinical material
 private/

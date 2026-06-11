@@ -9,6 +9,7 @@ from ddpt.models import (
     AnonymizationAudit,
     BatchSummary,
     DemoPipelineResult,
+    EvidenceBundleResult,
     InspectionReport,
     InventoryReport,
     ReleaseAuditReport,
@@ -541,6 +542,78 @@ RELEASE_AUDIT_TEMPLATE = Template(
 """
 )
 
+EVIDENCE_BUNDLE_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Evidence Bundle</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    a { color: #0b65c2; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Evidence Bundle</h1>
+  <p class="warning">
+    Synthetic-data evidence bundle for local demonstration and open-source review.
+    It is not clinical, legal, regulatory, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Repository root: <code>{{ result.repository_root }}</code></li>
+    <li>Output directory: <code>{{ result.output_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if result.passed else "fail" }}">
+        {{ "PASS" if result.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Doctor: {{ "PASS" if result.doctor_passed else "FAIL" }}</li>
+    <li>Safety scan: {{ "PASS" if result.safety_passed else "FAIL" }}</li>
+    <li>Release audit: {{ "PASS" if result.release_audit_passed else "FAIL" }}</li>
+    <li>Demo workflow: {{ "PASS" if result.demo_passed else "FAIL" }}</li>
+    <li>YAML workflow: {{ "PASS" if result.workflow_passed else "FAIL" }}</li>
+    <li>Generated at: {{ result.generated_at }}</li>
+  </ul>
+  <h2>Artifacts</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Artifact</th>
+        <th>Path</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in result.artifacts %}
+      <tr>
+        <td>{{ item.category }}</td>
+        <td>{{ item.label }}</td>
+        <td><a href="../{{ item.path }}"><code>{{ item.path }}</code></a></td>
+        <td>{{ item.description }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -576,6 +649,10 @@ def write_workflow_html(path: Path, report: WorkflowRunReport) -> None:
 
 def write_release_audit_html(path: Path, report: ReleaseAuditReport) -> None:
     _write_html(path, RELEASE_AUDIT_TEMPLATE.render(report=report))
+
+
+def write_evidence_bundle_html(path: Path, result: EvidenceBundleResult) -> None:
+    _write_html(path, EVIDENCE_BUNDLE_TEMPLATE.render(result=result))
 
 
 def _write_html(path: Path, html: str) -> None:

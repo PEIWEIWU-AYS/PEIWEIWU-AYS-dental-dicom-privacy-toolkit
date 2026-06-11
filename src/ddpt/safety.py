@@ -14,6 +14,7 @@ EXCLUDED_DIR_NAMES = {
     "__pycache__",
     "build",
     "dist",
+    "evidence-run",
     "node_modules",
     "outputs",
     "reports",
@@ -101,6 +102,8 @@ def _is_excluded(path: Path, root_dir: Path) -> bool:
         if part in EXCLUDED_DIR_NAMES:
             return True
         if part.startswith("demo-"):
+            return True
+        if part.startswith("evidence-"):
             return True
         if part.startswith("workflow-"):
             return True

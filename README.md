@@ -22,6 +22,7 @@ Core goals:
 - YAML workflow recipes for reproducible staged pipelines
 - Local REST API for integration demos
 - Release-readiness audit for public GitHub publishing
+- Local evidence bundle for MacBook validation and project demonstrations
 - Encrypted sharing package prototypes
 - Audit reports for de-identification and transfer events
 - Synthetic examples for safe testing
@@ -40,6 +41,7 @@ python -m pip install -e ".[dev]"
 ddpt doctor
 ddpt safety scan .
 ddpt release audit . --json release-audit.json --html release-audit.html
+ddpt evidence bundle . --out evidence-run
 ddpt demo demo-run
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
@@ -73,6 +75,7 @@ See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
+See [docs/evidence-bundle.md](docs/evidence-bundle.md) for one-command local evidence generation.
 See [docs/local-api.md](docs/local-api.md) for the local REST API demo.
 
 ## Manual Step-by-Step Demo
@@ -126,7 +129,7 @@ Sensitive local materials should stay outside the repository, for example:
 Version 0.1 local prototype in active development. The current workflow supports
 synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
-and release-readiness checks.
+release-readiness checks, and local evidence bundle generation.
 
 ## License
 

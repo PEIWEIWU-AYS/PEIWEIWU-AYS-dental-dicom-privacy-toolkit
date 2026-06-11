@@ -662,6 +662,31 @@ def test_release_audit_fails_incomplete_repository(tmp_path: Path) -> None:
     assert "readme-discoverability" in failed
 
 
+def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> None:
+    output_dir = tmp_path / "evidence"
+
+    result = runner.invoke(app, ["evidence", "bundle", ".", "--out", str(output_dir)])
+
+    assert result.exit_code == 0, result.output
+    evidence_json = output_dir / "reports" / "evidence-bundle.json"
+    evidence_html = output_dir / "reports" / "evidence-bundle.html"
+    assert evidence_json.exists()
+    assert evidence_html.exists()
+    assert (output_dir / "reports" / "release-audit.html").exists()
+    assert (output_dir / "reports" / "workflow-run.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
+    assert (output_dir / "demo-run" / "share" / "package.ddpt").exists()
+    report = json.loads(evidence_json.read_text())
+    assert report["passed"] is True
+    artifact_paths = {item["path"] for item in report["artifacts"]}
+    assert "reports/release-audit.html" in artifact_paths
+    assert "reports/workflow-run.html" in artifact_paths
+    assert "demo-run/reports/demo-summary.html" in artifact_paths
+    html = evidence_html.read_text()
+    assert "Dental DICOM Evidence Bundle" in html
+    assert "Release audit HTML" in html
+
+
 def test_safety_scan_flags_private_material(tmp_path: Path) -> None:
     (tmp_path / "README.md").write_text("# Safe public docs\n", encoding="utf-8")
     (tmp_path / "examples" / "synthetic-dicom").mkdir(parents=True)
@@ -678,6 +703,11 @@ def test_safety_scan_flags_private_material(tmp_path: Path) -> None:
     (tmp_path / ".env").write_text("TOKEN=secret\n", encoding="utf-8")
     (tmp_path / "reports").mkdir()
     (tmp_path / "reports" / "generated-preview.png").write_bytes(b"ignored generated file")
+    (tmp_path / "evidence-run" / "share").mkdir(parents=True)
+    (tmp_path / "evidence-run" / "share" / "generated.key").write_text(
+        "ignored generated key",
+        encoding="utf-8",
+    )
     safety_json = tmp_path / "safety.json"
 
     result = runner.invoke(app, ["safety", "scan", str(tmp_path), "--json", str(safety_json)])
@@ -691,6 +721,7 @@ def test_safety_scan_flags_private_material(tmp_path: Path) -> None:
     assert "clinic-exports/appointments.csv" in finding_paths
     assert "examples/synthetic-dicom/synthetic-example.dcm" not in finding_paths
     assert "reports/generated-preview.png" not in finding_paths
+    assert "evidence-run/share/generated.key" not in finding_paths
 
 
 def test_audit_chain_detects_tampering(tmp_path: Path) -> None:

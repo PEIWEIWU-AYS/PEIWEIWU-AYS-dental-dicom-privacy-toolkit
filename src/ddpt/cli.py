@@ -13,6 +13,7 @@ from ddpt.api import create_api_app
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
 from ddpt.doctor import run_doctor
+from ddpt.evidence import run_evidence_bundle
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
@@ -51,6 +52,7 @@ tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
 api_app = typer.Typer(help="Run local REST API demo.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
+evidence_app = typer.Typer(help="Build local demonstration evidence bundles.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
@@ -59,6 +61,7 @@ app.add_typer(tag_app, name="tag")
 app.add_typer(api_app, name="api")
 app.add_typer(workflow_app, name="workflow")
 app.add_typer(release_app, name="release")
+app.add_typer(evidence_app, name="evidence")
 console = Console()
 
 
@@ -291,6 +294,28 @@ def release_audit(
     console.print(f"Passed checks: {report.passed_checks}/{len(report.checks)}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
+        raise typer.Exit(1)
+
+
+@evidence_app.command("bundle")
+def evidence_bundle(
+    repository_root: Annotated[Path, typer.Argument(help="Repository root to validate.")],
+    output_dir: Annotated[
+        Path, typer.Option("--out", help="Output evidence bundle directory.")
+    ],
+) -> None:
+    result = run_evidence_bundle(repository_root, output_dir)
+    table = Table(title="Dental DICOM Evidence Bundle")
+    table.add_column("Category")
+    table.add_column("Artifact")
+    table.add_column("Path")
+    for artifact in result.artifacts:
+        table.add_row(artifact.category, artifact.label, artifact.path)
+    console.print(table)
+    console.print(f"Evidence bundle: {result.output_dir}")
+    console.print(f"Summary HTML: {Path(result.output_dir) / 'reports' / 'evidence-bundle.html'}")
+    console.print(f"Overall: {'PASS' if result.passed else 'FAIL'}")
+    if not result.passed:
         raise typer.Exit(1)
 
 

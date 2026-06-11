@@ -36,6 +36,7 @@ jobs:
           test -f docs/product-requirements.md
           test -f docs/policy-registry.md
           test -f docs/demo-guide.md
+          test -f docs/evidence-bundle.md
           test -f docs/workflow-recipes.md
           test -f docs/anonymization-dry-run.md
           test -f docs/macbook-validation.md
@@ -59,6 +60,9 @@ jobs:
 
       - name: Run public repository safety scan
         run: python -m ddpt safety scan . --json safety-scan.json
+
+      - name: Generate local evidence bundle
+        run: python -m ddpt evidence bundle . --out evidence-run
 
       - name: Run lint
         run: ruff check .

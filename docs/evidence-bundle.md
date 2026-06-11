@@ -1,0 +1,80 @@
+# Evidence Bundle | 本地证据包
+
+`ddpt evidence bundle` creates a local demonstration bundle that gathers the
+project's strongest proof artifacts into one folder.
+
+`ddpt evidence bundle` 会把项目最重要的本地验证证据集中生成到一个目录里，方便
+MacBook 验收、GitHub 展示、论文方法学说明和协作者沟通。
+
+## Command
+
+```bash
+ddpt evidence bundle . --out evidence-run
+```
+
+The command uses synthetic DICOM data only. It does not require real patient
+DICOM, radiographs, photos, consent forms, spreadsheets, or clinic exports.
+
+## Included Evidence
+
+The bundle includes:
+
+- environment doctor JSON
+- public repository safety scan JSON
+- release-readiness audit JSON and HTML
+- one-command synthetic demo output
+- demo summary HTML with synthetic PNG previews
+- encrypted sharing package from anonymized synthetic DICOM files
+- tamper-evident demo audit chain
+- YAML workflow JSON and HTML report
+- evidence bundle JSON and HTML index
+
+## Output Structure
+
+```text
+evidence-run/
+  reports/
+    doctor.json
+    safety-scan.json
+    release-audit.json
+    release-audit.html
+    workflow-run.json
+    workflow-run.html
+    evidence-bundle.json
+    evidence-bundle.html
+  demo-run/
+    reports/demo-summary.html
+    reports/audit-chain.json
+    share/package.ddpt
+    share/package.key
+  workflow-run/
+    input/sample.synthetic.dcm
+    outputs/sample.anonymized.dcm
+    outputs/sample.redacted.dcm
+    reports/
+    share/
+```
+
+Open the index:
+
+```bash
+open evidence-run/reports/evidence-bundle.html
+```
+
+## Why This Matters
+
+Many DICOM tools can anonymize files, modify tags, or run server-side workflows.
+This evidence bundle focuses on public demonstration value:
+
+- a new user can validate the project locally
+- reviewers can inspect human-readable reports
+- CI can exercise the same proof path
+- GitHub visitors can understand the workflow without real patient data
+- collaborators can see environment, safety, release, workflow, audit, and package
+  evidence together
+
+## Safety Notes
+
+`evidence-run/` and `evidence-*/` are ignored by Git. They may contain generated
+DICOM, encryption keys, and package files from synthetic examples. Do not commit
+evidence bundle output unless you intentionally curate a safe public sample.

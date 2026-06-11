@@ -106,6 +106,13 @@ For reusable burned-in label removal, inspect the sample percent-based plan:
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
 ```
 
+For a complete local evidence bundle:
+
+```bash
+ddpt evidence bundle . --out evidence-run
+open evidence-run/reports/evidence-bundle.html
+```
+
 ## Safety
 
 The demo uses synthetic DICOM data only. Do not copy real patient DICOM files, clinical photos, PDFs, spreadsheets, or clinic exports into the repository.

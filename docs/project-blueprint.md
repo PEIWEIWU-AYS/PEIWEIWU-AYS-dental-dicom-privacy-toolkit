@@ -47,6 +47,8 @@ ddpt package outputs/ --encrypt --manifest reports/manifest.json --out share/den
 ddpt verify share/dental-dicom-package.zip
 ddpt decrypt share/dental-dicom-package.zip --out restored/
 ddpt api serve demo-run
+ddpt release audit . --json release-audit.json --html release-audit.html
+ddpt evidence bundle . --out evidence-run
 ddpt demo demo-run
 ```
 
@@ -94,6 +96,18 @@ Best for:
 - local workflow automation
 - future web dashboard experiments
 - showing Orthanc-inspired REST design in a lightweight way
+
+### 5. Evidence Bundle
+
+The evidence bundle collects environment, safety, release, demo, workflow, audit,
+and encrypted sharing proof into one local folder with a human-readable index.
+
+Best for:
+
+- MacBook validation
+- GitHub project walkthroughs
+- paper method appendices
+- collaborator review without real patient data
 
 ## Languages
 

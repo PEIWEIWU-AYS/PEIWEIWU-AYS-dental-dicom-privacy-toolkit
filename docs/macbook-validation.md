@@ -95,12 +95,27 @@ Expected:
 - JSON and HTML release-readiness reports are created
 - README, docs, workflow recipe, CI, safety scan, and profile coverage checks pass
 
-## 8. Open Human-Readable Outputs
+## 8. Generate Evidence Bundle
+
+```bash
+ddpt evidence bundle . --out evidence-run
+```
+
+Expected:
+
+- overall evidence bundle status is `PASS`
+- `evidence-run/reports/evidence-bundle.html` exists
+- `evidence-run/reports/release-audit.html` exists
+- `evidence-run/reports/workflow-run.html` exists
+- `evidence-run/demo-run/reports/demo-summary.html` exists
+
+## 9. Open Human-Readable Outputs
 
 Open these files locally:
 
 ```text
 release-audit.html
+evidence-run/reports/evidence-bundle.html
 demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
 demo-run/reports/inspect.html
@@ -109,7 +124,7 @@ demo-run/reports/audit.html
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
 
-## 9. Optional Local API Check
+## 10. Optional Local API Check
 
 Run this as a separate long-running command:
 

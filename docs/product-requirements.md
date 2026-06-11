@@ -28,7 +28,8 @@ Version 0.1 is successful when a new user can:
 18. Verify or decrypt the package.
 19. Run local REST API workflow demos for integration testing.
 20. Run a release-readiness audit before public GitHub publishing.
-21. Run automated tests locally and in GitHub Actions.
+21. Generate a local evidence bundle for MacBook validation and public demonstrations.
+22. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -95,6 +96,22 @@ Required:
 - JSON output
 - optional HTML report
 - non-zero exit status when any release-readiness check fails
+
+### `ddpt evidence bundle`
+
+Generate a local evidence bundle for reviewers and collaborators.
+
+Required:
+
+- environment doctor JSON
+- public repository safety scan JSON
+- release-readiness audit JSON and HTML
+- one-command synthetic demo artifacts
+- YAML workflow JSON and HTML reports
+- evidence index JSON and HTML
+- links to demo summary, audit chain, encrypted package, and workflow report
+- non-zero exit status when any major evidence gate fails
+- documentation that generated evidence output must not be committed by default
 
 ### `ddpt workflow run`
 
@@ -424,5 +441,6 @@ To call Version 0.1 complete, we need:
 - a generated HTML report from synthetic data
 - a one-command demo pipeline that generates all core artifacts
 - a release-readiness audit command with JSON and HTML outputs
+- a local evidence bundle command with JSON and HTML index outputs
 - README demo commands updated
 - CI passing locally or documented if remote CI is not available

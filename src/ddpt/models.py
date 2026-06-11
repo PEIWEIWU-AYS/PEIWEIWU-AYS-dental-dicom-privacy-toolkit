@@ -199,6 +199,28 @@ class ReleaseAuditReport(BaseModel):
         return sum(1 for check in self.checks if not check.passed)
 
 
+class EvidenceArtifact(BaseModel):
+    label: str
+    category: str
+    path: str
+    description: str
+
+
+class EvidenceBundleResult(BaseModel):
+    repository_root: str
+    output_dir: str
+    passed: bool
+    doctor_passed: bool
+    safety_passed: bool
+    release_audit_passed: bool
+    demo_passed: bool
+    workflow_passed: bool
+    artifacts: list[EvidenceArtifact]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DicomTagRecord(BaseModel):
     tag: str
     keyword: str
