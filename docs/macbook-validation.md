@@ -85,6 +85,10 @@ Expected:
 ## 7. Check Research Sharing Profile
 
 ```bash
+ddpt policy export \
+  --json demo-run/reports/policy-registry.json \
+  --csv demo-run/reports/policy-registry.csv \
+  --html demo-run/reports/policy-registry.html
 ddpt profile show dental-research-sharing
 ddpt profile compare dental-basic dental-research-sharing \
   --json demo-run/reports/profile-comparison.json \
@@ -98,6 +102,7 @@ ddpt anonymize demo-run/input/sample.synthetic.dcm \
 
 Expected:
 
+- policy registry JSON, CSV, and HTML files are created
 - the profile output lists date-shift keywords
 - the profile comparison report shows date fields changed from `blank` to `date_shift`
 - dry-run audit includes `date_shift` actions for study-level date fields

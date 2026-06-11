@@ -22,6 +22,7 @@ The bundle includes:
 - environment doctor JSON
 - public repository safety scan JSON
 - release-readiness audit JSON and HTML
+- policy registry JSON, CSV, and HTML
 - one-command synthetic demo output
 - demo summary HTML with synthetic PNG previews
 - encrypted sharing package from anonymized synthetic DICOM files
@@ -39,6 +40,9 @@ evidence-run/
     safety-scan.json
     release-audit.json
     release-audit.html
+    policy-registry.json
+    policy-registry.csv
+    policy-registry.html
     workflow-run.json
     workflow-run.html
     evidence-bundle.json

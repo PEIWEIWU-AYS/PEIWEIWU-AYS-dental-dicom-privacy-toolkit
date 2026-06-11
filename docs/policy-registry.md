@@ -36,6 +36,33 @@ ddpt profile coverage dental-basic
 
 This compares the `dental-basic` profile against high-risk and medium-risk registry items. A strong profile should cover all high-risk items and clearly explain any uncovered medium-risk items.
 
+## Export
+
+Use:
+
+```bash
+ddpt policy export \
+  --json reports/policy-registry.json \
+  --csv reports/policy-registry.csv \
+  --html reports/policy-registry.html
+```
+
+Filter by risk:
+
+```bash
+ddpt policy export --risk high --risk medium --html reports/policy-high-medium.html
+```
+
+Outputs:
+
+- JSON for reproducible tests and downstream tooling
+- CSV for spreadsheet review
+- HTML for collaborators and GitHub screenshots
+
+The exported report includes item counts by risk level, DICOM keywords,
+recommended actions, DICOM-inspired confidentiality action codes, and short
+human-readable reasons.
+
 ## Safety
 
 Metadata policy coverage does not prove that a DICOM file is fully de-identified. Pixel data, burned-in annotations, rare private tags, external filenames, clinical context, and longitudinal uniqueness can still create re-identification risk.

@@ -63,6 +63,7 @@ DOCUMENTED_COMMANDS = [
     "ddpt preview",
     "ddpt redact-pixels",
     "ddpt tag dump",
+    "ddpt policy export",
     "ddpt profile coverage",
     "ddpt profile compare",
     "ddpt package",

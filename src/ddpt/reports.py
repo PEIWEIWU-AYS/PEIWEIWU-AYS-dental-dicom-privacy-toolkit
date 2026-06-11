@@ -13,6 +13,7 @@ from ddpt.models import (
     InspectionReport,
     InventoryReport,
     PackageVerificationReceipt,
+    PolicyRegistryReport,
     ProfileComparisonReport,
     ReleaseAuditReport,
     WorkflowRunReport,
@@ -768,6 +769,74 @@ PROFILE_COMPARISON_TEMPLATE = Template(
 """
 )
 
+POLICY_REGISTRY_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Policy Registry</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .high { color: #b00020; font-weight: 700; }
+    .medium { color: #8a5a00; font-weight: 700; }
+    .low { color: #1f6f43; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Policy Registry</h1>
+  <p class="warning">
+    DICOM PS3.15-inspired dental privacy baseline for explanation and testing.
+    This is not regulatory certification or complete DICOM conformance.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Source: {{ report.source }}</li>
+    <li>Total items: {{ report.total_items }}</li>
+    <li>High-risk items: {{ report.high_risk_items }}</li>
+    <li>Medium-risk items: {{ report.medium_risk_items }}</li>
+    <li>Low-risk items: {{ report.low_risk_items }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Policy Items</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Risk</th>
+        <th>Keyword</th>
+        <th>Category</th>
+        <th>Recommended</th>
+        <th>DICOM Code</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.items %}
+      <tr>
+        <td class="{{ item.risk }}">{{ item.risk }}</td>
+        <td><code>{{ item.keyword }}</code></td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.recommended_action }}</td>
+        <td>{{ item.dicom_action_code }}</td>
+        <td>{{ item.reason }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -815,6 +884,10 @@ def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) 
 
 def write_profile_comparison_html(path: Path, report: ProfileComparisonReport) -> None:
     _write_html(path, PROFILE_COMPARISON_TEMPLATE.render(report=report))
+
+
+def write_policy_registry_html(path: Path, report: PolicyRegistryReport) -> None:
+    _write_html(path, POLICY_REGISTRY_TEMPLATE.render(report=report))
 
 
 def _write_html(path: Path, html: str) -> None:

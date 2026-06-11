@@ -398,6 +398,18 @@ class TagPolicy(BaseModel):
     source: str
 
 
+class PolicyRegistryReport(BaseModel):
+    source: str
+    total_items: int
+    high_risk_items: int
+    medium_risk_items: int
+    low_risk_items: int
+    items: list[TagPolicy]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class ProfileCoverageItem(BaseModel):
     keyword: str
     risk: RiskLevel

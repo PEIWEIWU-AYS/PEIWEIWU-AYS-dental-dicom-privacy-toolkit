@@ -21,18 +21,19 @@ Version 0.1 is successful when a new user can:
 11. Apply the `dental-basic` anonymization profile.
 12. Apply the `dental-research-sharing` profile with deterministic date shifting.
 13. Compare anonymization profiles with JSON and HTML reports.
-14. Confirm direct identifiers were replaced or removed.
-15. Generate an audit event JSON file.
-16. Validate anonymized output with a pass/fail report.
-17. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-18. Package anonymized files with checksums.
-19. Encrypt the package.
-20. Verify or decrypt the package.
-21. Generate package verification receipts for receiver-side sharing evidence.
-22. Run local REST API workflow demos for integration testing.
-23. Run a release-readiness audit before public GitHub publishing.
-24. Generate a local evidence bundle for MacBook validation and public demonstrations.
-25. Run automated tests locally and in GitHub Actions.
+14. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
+15. Confirm direct identifiers were replaced or removed.
+16. Generate an audit event JSON file.
+17. Validate anonymized output with a pass/fail report.
+18. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+19. Package anonymized files with checksums.
+20. Encrypt the package.
+21. Verify or decrypt the package.
+22. Generate package verification receipts for receiver-side sharing evidence.
+23. Run local REST API workflow demos for integration testing.
+24. Run a release-readiness audit before public GitHub publishing.
+25. Generate a local evidence bundle for MacBook validation and public demonstrations.
+26. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -229,6 +230,19 @@ Required:
 - per-keyword candidate action
 - notes for important differences such as deterministic date shifting
 - JSON output
+- optional HTML report
+
+### `ddpt policy export`
+
+Export the DICOM privacy policy registry for review and documentation.
+
+Required:
+
+- list registry items with keyword, risk, category, recommended action, DICOM code, reason, and source
+- count high-risk, medium-risk, and low-risk items
+- optional risk filters
+- JSON output
+- CSV output
 - optional HTML report
 
 ## Command Requirements

@@ -5,10 +5,12 @@ from pathlib import Path
 from ddpt.doctor import run_doctor
 from ddpt.models import EvidenceArtifact, EvidenceBundleResult
 from ddpt.pipeline import run_demo_pipeline
+from ddpt.policy import policy_registry_report, write_policy_registry_csv
 from ddpt.release import run_release_audit
 from ddpt.reports import (
     model_to_dict,
     write_evidence_bundle_html,
+    write_policy_registry_html,
     write_release_audit_html,
     write_workflow_html,
 )
@@ -29,15 +31,22 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     doctor_report = run_doctor()
     safety_report = scan_repository_safety(repository_root)
     release_report = run_release_audit(repository_root)
+    policy_report = policy_registry_report()
 
     doctor_json = reports_dir / "doctor.json"
     safety_json = reports_dir / "safety-scan.json"
     release_json = reports_dir / "release-audit.json"
     release_html = reports_dir / "release-audit.html"
+    policy_json = reports_dir / "policy-registry.json"
+    policy_csv = reports_dir / "policy-registry.csv"
+    policy_html = reports_dir / "policy-registry.html"
     write_json(doctor_json, model_to_dict(doctor_report))
     write_json(safety_json, model_to_dict(safety_report))
     write_json(release_json, model_to_dict(release_report))
     write_release_audit_html(release_html, release_report)
+    write_json(policy_json, model_to_dict(policy_report))
+    write_policy_registry_csv(policy_csv, policy_report)
+    write_policy_registry_html(policy_html, policy_report)
 
     demo_result = run_demo_pipeline(demo_dir)
 
@@ -80,6 +89,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "Release audit HTML",
             "release",
             "Human-readable release-readiness report.",
+        ),
+        _artifact(
+            output_dir,
+            policy_html,
+            "Policy registry HTML",
+            "policy",
+            "Human-readable DICOM privacy policy registry.",
         ),
         _artifact(
             output_dir,

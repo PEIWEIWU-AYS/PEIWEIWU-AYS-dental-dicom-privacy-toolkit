@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import csv
+from pathlib import Path
+
 from pydicom.dataelem import DataElement
 
 from ddpt.models import (
+    PolicyRegistryReport,
     ProfileComparisonItem,
     ProfileComparisonReport,
     ProfileCoverageItem,
@@ -11,6 +15,7 @@ from ddpt.models import (
     TagPolicy,
 )
 from ddpt.profiles import describe_profile
+from ddpt.utils import ensure_parent
 
 POLICY_SOURCE = "DICOM PS3.15-inspired dental privacy baseline"
 
@@ -96,6 +101,53 @@ def policy_for_keyword(keyword: str) -> TagPolicy | None:
 def policies_by_risk(*risks: RiskLevel) -> list[TagPolicy]:
     risk_set = set(risks)
     return [policy for policy in TAG_POLICIES.values() if policy.risk in risk_set]
+
+
+def policy_registry_report(risks: list[RiskLevel] | None = None) -> PolicyRegistryReport:
+    risk_filter = set(risks or [])
+    policies = [
+        policy
+        for policy in TAG_POLICIES.values()
+        if not risk_filter or policy.risk in risk_filter
+    ]
+    return PolicyRegistryReport(
+        source=POLICY_SOURCE,
+        total_items=len(policies),
+        high_risk_items=sum(1 for policy in policies if policy.risk == "high"),
+        medium_risk_items=sum(1 for policy in policies if policy.risk == "medium"),
+        low_risk_items=sum(1 for policy in policies if policy.risk == "low"),
+        items=policies,
+    )
+
+
+def write_policy_registry_csv(path: Path, report: PolicyRegistryReport) -> None:
+    ensure_parent(path)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=[
+                "keyword",
+                "risk",
+                "category",
+                "recommended_action",
+                "dicom_action_code",
+                "reason",
+                "source",
+            ],
+        )
+        writer.writeheader()
+        for item in report.items:
+            writer.writerow(
+                {
+                    "keyword": item.keyword,
+                    "risk": item.risk,
+                    "category": item.category,
+                    "recommended_action": item.recommended_action,
+                    "dicom_action_code": item.dicom_action_code,
+                    "reason": item.reason,
+                    "source": item.source,
+                }
+            )
 
 
 def classify_element(element: DataElement) -> tuple[RiskLevel, str, str, str, str]:

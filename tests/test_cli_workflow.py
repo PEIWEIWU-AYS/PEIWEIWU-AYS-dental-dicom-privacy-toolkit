@@ -699,6 +699,9 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert evidence_json.exists()
     assert evidence_html.exists()
     assert (output_dir / "reports" / "release-audit.html").exists()
+    assert (output_dir / "reports" / "policy-registry.json").exists()
+    assert (output_dir / "reports" / "policy-registry.csv").exists()
+    assert (output_dir / "reports" / "policy-registry.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
     assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
@@ -707,6 +710,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert report["passed"] is True
     artifact_paths = {item["path"] for item in report["artifacts"]}
     assert "reports/release-audit.html" in artifact_paths
+    assert "reports/policy-registry.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
     assert "demo-run/reports/package-receipt.html" in artifact_paths
@@ -999,6 +1003,56 @@ def test_profile_compare_reports_date_shift_differences(tmp_path: Path) -> None:
     html = compare_html.read_text()
     assert "Dental DICOM Profile Comparison" in html
     assert "date_shift" in html
+
+
+def test_policy_registry_export_outputs_json_csv_and_html(tmp_path: Path) -> None:
+    policy_json = tmp_path / "reports" / "policy-registry.json"
+    policy_csv = tmp_path / "reports" / "policy-registry.csv"
+    policy_html = tmp_path / "reports" / "policy-registry.html"
+    high_json = tmp_path / "reports" / "policy-high.json"
+
+    result = runner.invoke(
+        app,
+        [
+            "policy",
+            "export",
+            "--json",
+            str(policy_json),
+            "--csv",
+            str(policy_csv),
+            "--html",
+            str(policy_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert policy_json.exists()
+    assert policy_csv.exists()
+    assert policy_html.exists()
+    report = json.loads(policy_json.read_text())
+    assert report["source"] == "DICOM PS3.15-inspired dental privacy baseline"
+    assert report["high_risk_items"] >= 8
+    assert report["medium_risk_items"] >= 20
+    assert any(item["keyword"] == "PatientName" for item in report["items"])
+    assert any(item["dicom_action_code"] == "U" for item in report["items"])
+
+    with policy_csv.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    assert len(rows) == report["total_items"]
+    assert any(row["keyword"] == "PatientName" for row in rows)
+
+    html = policy_html.read_text()
+    assert "Dental DICOM Policy Registry" in html
+    assert "PatientName" in html
+
+    result = runner.invoke(
+        app,
+        ["policy", "export", "--risk", "high", "--json", str(high_json)],
+    )
+    assert result.exit_code == 0, result.output
+    high_report = json.loads(high_json.read_text())
+    assert high_report["medium_risk_items"] == 0
+    assert {item["risk"] for item in high_report["items"]} == {"high"}
 
 
 def test_package_rejects_empty_directory(tmp_path: Path) -> None:

@@ -41,6 +41,7 @@ ddpt inventory examples/synthetic-dicom --json reports/inventory.json --csv repo
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json
 ddpt preview examples/synthetic-dicom/sample.dcm --out reports/sample-preview.png --json reports/sample-preview.json
 ddpt tag dump examples/synthetic-dicom/sample.dcm --json reports/tag-dump.json
+ddpt policy export --json reports/policy-registry.json --csv reports/policy-registry.csv --html reports/policy-registry.html
 ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --html reports/inspect.html
 ddpt profile compare dental-basic dental-research-sharing --json reports/profile-comparison.json --html reports/profile-comparison.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out outputs/sample.anonymized.dcm --audit reports/audit.json

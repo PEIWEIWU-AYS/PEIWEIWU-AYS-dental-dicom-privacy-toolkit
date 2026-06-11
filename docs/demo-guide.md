@@ -112,6 +112,10 @@ ddpt redaction-plan show profiles/dental-pixel-redaction.yml
 For research-sharing date shifting:
 
 ```bash
+ddpt policy export \
+  --json demo-run/reports/policy-registry.json \
+  --csv demo-run/reports/policy-registry.csv \
+  --html demo-run/reports/policy-registry.html
 ddpt profile show dental-research-sharing
 ddpt profile compare dental-basic dental-research-sharing \
   --json demo-run/reports/profile-comparison.json \

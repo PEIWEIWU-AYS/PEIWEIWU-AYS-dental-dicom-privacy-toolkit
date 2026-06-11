@@ -18,7 +18,12 @@ from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
-from ddpt.policy import compare_profiles, profile_coverage
+from ddpt.policy import (
+    compare_profiles,
+    policy_registry_report,
+    profile_coverage,
+    write_policy_registry_csv,
+)
 from ddpt.preview import render_dicom_preview
 from ddpt.profiles import built_in_profiles, describe_profile, write_profile_template
 from ddpt.redaction_plan import (
@@ -33,6 +38,7 @@ from ddpt.reports import (
     write_inspection_html,
     write_inventory_html,
     write_package_receipt_html,
+    write_policy_registry_html,
     write_profile_comparison_html,
     write_release_audit_html,
     write_workflow_html,
@@ -47,6 +53,7 @@ from ddpt.workflow import run_workflow
 
 app = typer.Typer(help="Dental DICOM Privacy Toolkit", invoke_without_command=True)
 profile_app = typer.Typer(help="Inspect anonymization profiles.")
+policy_app = typer.Typer(help="Inspect the DICOM privacy policy registry.")
 audit_app = typer.Typer(help="Create and verify audit chains.")
 safety_app = typer.Typer(help="Run public repository safety checks.")
 redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.")
@@ -56,6 +63,7 @@ workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
 evidence_app = typer.Typer(help="Build local demonstration evidence bundles.")
 app.add_typer(profile_app, name="profile")
+app.add_typer(policy_app, name="policy")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
 app.add_typer(redaction_plan_app, name="redaction-plan")
@@ -550,6 +558,53 @@ def profile_compare_command(
     )
 
 
+@policy_app.command("export")
+def policy_export_command(
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write policy registry JSON.")
+    ] = None,
+    csv_output: Annotated[
+        Path | None, typer.Option("--csv", help="Write policy registry CSV.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write policy registry HTML.")
+    ] = None,
+    risk: Annotated[
+        list[str] | None,
+        typer.Option("--risk", help="Filter by risk: high, medium, or low. Can repeat."),
+    ] = None,
+) -> None:
+    risks = _validate_policy_risks(risk or [])
+    report = policy_registry_report(risks)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if csv_output:
+        write_policy_registry_csv(csv_output, report)
+    if html_output:
+        write_policy_registry_html(html_output, report)
+
+    table = Table(title="Dental DICOM Policy Registry")
+    table.add_column("Risk")
+    table.add_column("Keyword")
+    table.add_column("Recommended")
+    table.add_column("DICOM Code")
+    table.add_column("Reason")
+    for item in report.items:
+        table.add_row(
+            item.risk,
+            item.keyword,
+            item.recommended_action,
+            item.dicom_action_code,
+            item.reason,
+        )
+    console.print(table)
+    console.print(f"Total: {report.total_items}")
+    console.print(
+        f"High: {report.high_risk_items}; "
+        f"Medium: {report.medium_risk_items}; Low: {report.low_risk_items}"
+    )
+
+
 @audit_app.command("chain")
 def audit_chain_command(
     root_dir: Annotated[Path, typer.Argument(help="Directory of artifacts to hash.")],
@@ -754,6 +809,18 @@ def _write_tag_audit(audit, audit_json: Path | None) -> None:
             f"{action.action} {action.tag} {action.keyword}: "
             f"{action.before!r} -> {action.after!r}"
         )
+
+
+def _validate_policy_risks(values: list[str]) -> list[str]:
+    allowed = {"high", "medium", "low", "unknown"}
+    risks = []
+    for value in values:
+        normalized = value.lower()
+        if normalized not in allowed:
+            console.print(f"Unsupported risk filter: {value}")
+            raise typer.Exit(1)
+        risks.append(normalized)
+    return risks
 
 
 def _print_inspection_table(report) -> None:
