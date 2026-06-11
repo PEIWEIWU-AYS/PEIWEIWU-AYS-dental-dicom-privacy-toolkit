@@ -18,6 +18,7 @@
 
 - Basic de-identification profile
 - Dental imaging profile
+- Research-sharing profile with deterministic date shifting
 - Configurable tag handling
 - Validation report
 
@@ -32,4 +33,6 @@
 
 - CLI prototype
 - Synthetic end-to-end example
+- Release-readiness audit
+- Local evidence bundle
 - Documentation for paper and open-source release

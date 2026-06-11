@@ -19,17 +19,18 @@ Version 0.1 is successful when a new user can:
 9. Inspect metadata and receive JSON plus HTML reports.
 10. Preview anonymization actions with dry-run mode.
 11. Apply the `dental-basic` anonymization profile.
-12. Confirm direct identifiers were replaced or removed.
-13. Generate an audit event JSON file.
-14. Validate anonymized output with a pass/fail report.
-15. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-16. Package anonymized files with checksums.
-17. Encrypt the package.
-18. Verify or decrypt the package.
-19. Run local REST API workflow demos for integration testing.
-20. Run a release-readiness audit before public GitHub publishing.
-21. Generate a local evidence bundle for MacBook validation and public demonstrations.
-22. Run automated tests locally and in GitHub Actions.
+12. Apply the `dental-research-sharing` profile with deterministic date shifting.
+13. Confirm direct identifiers were replaced or removed.
+14. Generate an audit event JSON file.
+15. Validate anonymized output with a pass/fail report.
+16. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+17. Package anonymized files with checksums.
+18. Encrypt the package.
+19. Verify or decrypt the package.
+20. Run local REST API workflow demos for integration testing.
+21. Run a release-readiness audit before public GitHub publishing.
+22. Generate a local evidence bundle for MacBook validation and public demonstrations.
+23. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -179,8 +180,10 @@ Expose anonymization profile behavior so users can see what the toolkit will cha
 Required:
 
 - list built-in profiles
+- include `dental-basic` and `dental-research-sharing`
 - show replacement keywords
 - show blanking keywords
+- show date-shift keywords and offset days
 - show UID regeneration keywords
 - show private tag policy
 - optional JSON export
@@ -374,6 +377,14 @@ The initial `dental-basic` profile should:
 - replace accession and study identifiers where appropriate
 - remove private tags by default
 - preserve enough technical metadata for the synthetic file to remain readable
+
+The `dental-research-sharing` profile should:
+
+- keep the direct identifier replacement/blanking baseline
+- shift study-level dates deterministically rather than exposing original dates
+- preserve relative date intervals for synthetic research demonstrations
+- show date-shift actions in dry-run and audit reports
+- avoid claiming that date shifting alone guarantees de-identification
 
 ## Risk Classification Requirements
 

@@ -42,6 +42,7 @@ jobs:
           test -f docs/macbook-validation.md
           test -f docs/safety-scan.md
           test -f docs/release-audit.md
+          test -f docs/research-sharing-profile.md
           test -f docs/inventory.md
           test -f docs/preview.md
           test -f docs/pixel-redaction-plans.md
@@ -49,6 +50,7 @@ jobs:
           test -f docs/local-api.md
           test -f docs/audit-chain.md
           test -f profiles/dental-pixel-redaction.yml
+          test -f profiles/dental-research-sharing.yml
           test -f recipes/dental-demo-workflow.yml
           test -f scripts/generate_demo_assets.py
 

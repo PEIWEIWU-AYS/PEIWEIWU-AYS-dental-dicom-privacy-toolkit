@@ -17,6 +17,7 @@ Core goals:
 - DICOM metadata inspection
 - Directory inventory and privacy risk preflight
 - DICOM anonymization profiles for dental imaging
+- Research-sharing profile with deterministic date shifting
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
 - YAML workflow recipes for reproducible staged pipelines
@@ -50,7 +51,9 @@ ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-pr
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
 ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-dump.json
 ddpt profile show dental-basic
+ddpt profile show dental-research-sharing
 ddpt profile coverage dental-basic
+ddpt profile coverage dental-research-sharing
 ddpt profile init profiles/my-dental-profile.yml
 ddpt batch demo-run/input --out demo-run/batch-output
 ddpt audit verify demo-run/reports/audit-chain.json
@@ -72,6 +75,7 @@ See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limit
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
 See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
 See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write anonymization previews.
+See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for deterministic date-shift research sharing.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
@@ -129,7 +133,8 @@ Sensitive local materials should stay outside the repository, for example:
 Version 0.1 local prototype in active development. The current workflow supports
 synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
-release-readiness checks, and local evidence bundle generation.
+research-sharing date shifting, release-readiness checks, and local evidence
+bundle generation.
 
 ## License
 

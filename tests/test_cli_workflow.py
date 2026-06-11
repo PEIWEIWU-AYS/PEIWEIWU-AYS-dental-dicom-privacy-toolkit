@@ -5,6 +5,7 @@ import json
 import subprocess
 import sys
 import zipfile
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pydicom
@@ -800,6 +801,7 @@ def test_profile_commands(tmp_path: Path) -> None:
     result = runner.invoke(app, ["profile", "list"])
     assert result.exit_code == 0, result.output
     assert "dental-basic" in result.output
+    assert "dental-research-sharing" in result.output
 
     result = runner.invoke(app, ["profile", "show", "dental-basic", "--json", str(profile_json)])
     assert result.exit_code == 0, result.output
@@ -846,6 +848,97 @@ def test_profile_commands(tmp_path: Path) -> None:
     assert pydicom.dcmread(custom_output).PatientID == "DDPT-SYNTHETIC-ID"
 
 
+def test_research_sharing_profile_shifts_dates_and_reports_actions(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    research_output = tmp_path / "outputs" / "sample.research.dcm"
+    dry_run_audit = tmp_path / "reports" / "research-dry-run.json"
+    profile_json = tmp_path / "reports" / "research-profile.json"
+    coverage_json = tmp_path / "reports" / "research-coverage.json"
+    validation_json = tmp_path / "reports" / "research-validation.json"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    source_dataset = pydicom.dcmread(source)
+    expected_study_date = _shift_date(source_dataset.StudyDate, -3650)
+
+    result = runner.invoke(
+        app,
+        ["profile", "show", "dental-research-sharing", "--json", str(profile_json)],
+    )
+    assert result.exit_code == 0, result.output
+    profile = json.loads(profile_json.read_text())
+    assert profile["date_shift_offset_days"] == -3650
+    assert "StudyDate" in profile["date_shift_keywords"]
+
+    result = runner.invoke(
+        app,
+        [
+            "anonymize",
+            str(source),
+            "--profile",
+            "dental-research-sharing",
+            "--dry-run",
+            "--audit",
+            str(dry_run_audit),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    dry_run = json.loads(dry_run_audit.read_text())
+    date_shift_actions = [
+        item for item in dry_run["actions"] if item["action"] == "date_shift"
+    ]
+    assert {item["keyword"] for item in date_shift_actions} == {
+        "StudyDate",
+        "SeriesDate",
+        "AcquisitionDate",
+        "ContentDate",
+    }
+    study_date_action = next(
+        item for item in date_shift_actions if item["keyword"] == "StudyDate"
+    )
+    assert study_date_action["before"] == source_dataset.StudyDate
+    assert study_date_action["after"] == expected_study_date
+
+    result = runner.invoke(
+        app,
+        [
+            "anonymize",
+            str(source),
+            "--profile",
+            "dental-research-sharing",
+            "--out",
+            str(research_output),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    research_dataset = pydicom.dcmread(research_output)
+    assert str(research_dataset.PatientName) == "ANONYMIZED^DENTAL"
+    assert research_dataset.PatientID == "DDPT-SYNTHETIC-ID"
+    assert research_dataset.StudyDate == expected_study_date
+    assert research_dataset.SeriesDate == _shift_date(source_dataset.SeriesDate, -3650)
+    assert research_dataset.AcquisitionDate == _shift_date(
+        source_dataset.AcquisitionDate,
+        -3650,
+    )
+    assert research_dataset.ContentDate == _shift_date(source_dataset.ContentDate, -3650)
+    assert research_dataset.StudyTime == ""
+
+    result = runner.invoke(
+        app,
+        ["profile", "coverage", "dental-research-sharing", "--json", str(coverage_json)],
+    )
+    assert result.exit_code == 0, result.output
+    coverage = json.loads(coverage_json.read_text())
+    assert coverage["high_risk_uncovered"] == []
+    assert coverage["medium_risk_uncovered"] == []
+
+    result = runner.invoke(
+        app,
+        ["validate", str(research_output), "--json", str(validation_json)],
+    )
+    assert result.exit_code == 0, result.output
+    assert json.loads(validation_json.read_text())["passed"] is True
+
+
 def test_package_rejects_empty_directory(tmp_path: Path) -> None:
     empty = tmp_path / "empty"
     empty.mkdir()
@@ -865,3 +958,9 @@ def test_verify_rejects_unsafe_zip_path(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="Unsafe path"):
         verify_package(package)
+
+
+def _shift_date(value: str, offset_days: int) -> str:
+    return (datetime.strptime(value, "%Y%m%d").date() + timedelta(days=offset_days)).strftime(
+        "%Y%m%d"
+    )

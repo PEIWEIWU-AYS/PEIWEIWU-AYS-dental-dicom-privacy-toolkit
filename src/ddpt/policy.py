@@ -124,6 +124,8 @@ def profile_action_for_keyword(profile_summary: dict, keyword: str) -> str:
         return "replace"
     if keyword in profile_summary["blank_keywords"]:
         return "blank"
+    if keyword in profile_summary["date_shift_keywords"]:
+        return "date_shift"
     if keyword in profile_summary["regenerate_uid_keywords"]:
         return "regenerate_uid"
     return "unhandled"
@@ -134,7 +136,11 @@ def profile_coverage(profile_name_or_path: str) -> ProfileCoverageReport:
     items: list[ProfileCoverageItem] = []
     for policy in policies_by_risk("high", "medium"):
         profile_action = profile_action_for_keyword(summary, policy.keyword)
-        covered = profile_action == policy.recommended_action
+        covered = profile_action == policy.recommended_action or (
+            policy.category == "date"
+            and policy.recommended_action == "blank"
+            and profile_action == "date_shift"
+        )
         items.append(
             ProfileCoverageItem(
                 keyword=policy.keyword,

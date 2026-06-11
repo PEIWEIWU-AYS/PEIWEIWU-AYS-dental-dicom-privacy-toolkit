@@ -37,9 +37,11 @@ def create_synthetic_dicom(
     dataset.SeriesInstanceUID = generate_uid()
     dataset.StudyDate = now.strftime("%Y%m%d")
     dataset.SeriesDate = now.strftime("%Y%m%d")
+    dataset.AcquisitionDate = now.strftime("%Y%m%d")
     dataset.ContentDate = now.strftime("%Y%m%d")
     dataset.StudyTime = now.strftime("%H%M%S")
     dataset.SeriesTime = now.strftime("%H%M%S")
+    dataset.AcquisitionTime = now.strftime("%H%M%S")
     dataset.ContentTime = now.strftime("%H%M%S")
     dataset.AccessionNumber = "SYNTHETIC-ACCESS"
     dataset.StudyDescription = study_description

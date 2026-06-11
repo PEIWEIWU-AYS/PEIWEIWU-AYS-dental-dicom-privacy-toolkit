@@ -11,6 +11,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Demo Guide](demo-guide.md)
 - [Workflow Recipes](workflow-recipes.md)
 - [Anonymization Dry Run](anonymization-dry-run.md)
+- [Research Sharing Profile](research-sharing-profile.md)
 - [MacBook Validation](macbook-validation.md)
 - [Public Repository Safety Scan](safety-scan.md)
 - [Release Audit](release-audit.md)

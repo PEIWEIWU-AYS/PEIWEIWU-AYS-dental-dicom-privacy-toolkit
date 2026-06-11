@@ -18,6 +18,7 @@ Expected:
 - no output DICOM is written
 - JSON and HTML audit files list planned actions
 - regenerated UID values are shown as `<generated-uid>` placeholders
+- research-sharing date shifts are shown as `date_shift` actions with planned shifted dates
 
 ## Why It Matters
 
@@ -26,6 +27,7 @@ Dry run mode gives reviewers a safe step before modifying files. It is useful fo
 - reviewing profile behavior
 - explaining planned changes to non-programmer collaborators
 - comparing profiles during method development
+- checking deterministic date shifting before writing a research-sharing copy
 - avoiding accidental edits during demos
 
 ## Safety Boundary

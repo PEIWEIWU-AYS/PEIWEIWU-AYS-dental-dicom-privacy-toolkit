@@ -81,7 +81,24 @@ Expected:
 - `workflow-run/reports/workflow-run.html` exists
 - overall workflow status is `PASS`
 
-## 7. Run Release Audit
+## 7. Check Research Sharing Profile
+
+```bash
+ddpt profile show dental-research-sharing
+ddpt anonymize demo-run/input/sample.synthetic.dcm \
+  --profile dental-research-sharing \
+  --dry-run \
+  --audit demo-run/reports/research-dry-run.json \
+  --html demo-run/reports/research-dry-run.html
+```
+
+Expected:
+
+- the profile output lists date-shift keywords
+- dry-run audit includes `date_shift` actions for study-level date fields
+- no DICOM output is written during dry run
+
+## 8. Run Release Audit
 
 ```bash
 ddpt release audit . \
@@ -95,7 +112,7 @@ Expected:
 - JSON and HTML release-readiness reports are created
 - README, docs, workflow recipe, CI, safety scan, and profile coverage checks pass
 
-## 8. Generate Evidence Bundle
+## 9. Generate Evidence Bundle
 
 ```bash
 ddpt evidence bundle . --out evidence-run
@@ -109,7 +126,7 @@ Expected:
 - `evidence-run/reports/workflow-run.html` exists
 - `evidence-run/demo-run/reports/demo-summary.html` exists
 
-## 9. Open Human-Readable Outputs
+## 10. Open Human-Readable Outputs
 
 Open these files locally:
 
@@ -124,7 +141,7 @@ demo-run/reports/audit.html
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
 
-## 10. Optional Local API Check
+## 11. Optional Local API Check
 
 Run this as a separate long-running command:
 

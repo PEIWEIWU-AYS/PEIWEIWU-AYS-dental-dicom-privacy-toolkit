@@ -448,6 +448,10 @@ def profile_show(
     table.add_column("Keywords")
     table.add_row("replace", ", ".join(summary["replace_keywords"]) or "-")
     table.add_row("blank", ", ".join(summary["blank_keywords"]) or "-")
+    table.add_row(
+        f"date_shift ({summary['date_shift_offset_days']} days)",
+        ", ".join(summary["date_shift_keywords"]) or "-",
+    )
     table.add_row("regenerate_uid", ", ".join(summary["regenerate_uid_keywords"]) or "-")
     table.add_row("remove_private_tags", str(summary["remove_private_tags"]))
     console.print(table)

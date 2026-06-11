@@ -1,0 +1,42 @@
+name: dental-research-sharing
+description: Dental research sharing profile with deterministic date shifting.
+replace:
+  PatientName: ANONYMIZED^DENTAL
+  PatientID: DDPT-SYNTHETIC-ID
+  AccessionNumber: DDPT-RES-ACC
+  StudyDescription: Research Dental Imaging Study
+  SeriesDescription: Research Dental Imaging Series
+  InstitutionName: Research Dental Institution
+blank:
+  - PatientBirthDate
+  - PatientAddress
+  - PatientTelephoneNumbers
+  - OtherPatientIDs
+  - OtherPatientNames
+  - PatientMotherBirthName
+  - ReferringPhysicianName
+  - RequestingPhysician
+  - OperatorsName
+  - PhysiciansOfRecord
+  - PerformingPhysicianName
+  - InstitutionAddress
+  - DeviceSerialNumber
+  - StationName
+  - ProtocolName
+  - StudyTime
+  - SeriesTime
+  - AcquisitionTime
+  - ContentTime
+date_shift:
+  offset_days: -3650
+  keywords:
+    - StudyDate
+    - SeriesDate
+    - AcquisitionDate
+    - ContentDate
+regenerate_uids:
+  - StudyInstanceUID
+  - SeriesInstanceUID
+  - SOPInstanceUID
+  - FrameOfReferenceUID
+remove_private_tags: true

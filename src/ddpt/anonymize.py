@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +26,16 @@ def anonymize_dicom(input_path: Path, output_path: Path, profile_name: str) -> A
         if keyword in dataset:
             actions.append(_action(dataset, keyword, "blank", ""))
             dataset.data_element(keyword).value = ""
+
+    date_shift = _date_shift_config(profile)
+    for keyword in date_shift["keywords"]:
+        if keyword in dataset:
+            shifted = _shift_dicom_date(
+                value_to_text(dataset.data_element(keyword).value),
+                date_shift["offset_days"],
+            )
+            actions.append(_action(dataset, keyword, "date_shift", shifted))
+            dataset.data_element(keyword).value = shifted
 
     for keyword in profile.get("regenerate_uids", []):
         if keyword in dataset:
@@ -67,6 +78,15 @@ def plan_anonymization_actions(
         if keyword in dataset:
             actions.append(_action(dataset, keyword, "blank", ""))
 
+    date_shift = _date_shift_config(profile)
+    for keyword in date_shift["keywords"]:
+        if keyword in dataset:
+            shifted = _shift_dicom_date(
+                value_to_text(dataset.data_element(keyword).value),
+                date_shift["offset_days"],
+            )
+            actions.append(_action(dataset, keyword, "date_shift", shifted))
+
     for keyword in profile.get("regenerate_uids", []):
         if keyword in dataset:
             actions.append(_action(dataset, keyword, "regenerate_uid", "<generated-uid>"))
@@ -90,3 +110,24 @@ def _action(dataset: Any, keyword: str, action: str, after: Any) -> Anonymizatio
         before=value_to_text(element.value),
         after=value_to_text(after),
     )
+
+
+def _date_shift_config(profile: dict[str, Any]) -> dict[str, Any]:
+    config = profile.get("date_shift") or {}
+    if not isinstance(config, dict):
+        return {"offset_days": 0, "keywords": []}
+    return {
+        "offset_days": int(config.get("offset_days", 0) or 0),
+        "keywords": list(config.get("keywords", [])),
+    }
+
+
+def _shift_dicom_date(value: str, offset_days: int) -> str:
+    if not value or len(value) != 8 or not value.isdigit():
+        return ""
+    try:
+        date_value = datetime.strptime(value, "%Y%m%d").date()
+    except ValueError:
+        return ""
+    shifted = date_value + timedelta(days=offset_days)
+    return shifted.strftime("%Y%m%d")
