@@ -18,7 +18,8 @@ Expected result:
 - every named reference tool is mapped to repository evidence
 - inherited capabilities are backed by implemented capability IDs
 - differentiators such as dental focus, bilingual discovery, date shifting,
-  linkable pseudonymization, evidence bundle, and share-readiness are checked
+  linkable pseudonymization, evidence bundle, share-readiness, and
+  de-identification certificate handoff are checked
 - release, safety, and capability gates pass
 
 ## What It Audits
@@ -34,6 +35,7 @@ The audit checks evidence for:
 - dental-specific positioning, bilingual search, and synthetic-only safety
 - research differentiators such as date shifting and linkable pseudonymization
 - portable proof artifacts for MacBook demos and collaborator review
+- de-identification certificate evidence for synthetic sharing handoff
 
 ## Why This Matters
 

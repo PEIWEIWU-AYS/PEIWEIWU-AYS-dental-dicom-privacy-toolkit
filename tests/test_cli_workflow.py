@@ -263,6 +263,8 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "reports" / "package-receipt.html").exists()
     assert (demo_dir / "reports" / "share-readiness.json").exists()
     assert (demo_dir / "reports" / "share-readiness.html").exists()
+    assert (demo_dir / "reports" / "deid-certificate.json").exists()
+    assert (demo_dir / "reports" / "deid-certificate.html").exists()
     assert (demo_dir / "share" / "package.ddpt").exists()
     assert (demo_dir / "share" / "manifest.json").exists()
     assert (demo_dir / "share" / "package.key").exists()
@@ -831,6 +833,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
     assert "share-readiness-gate" in capability_ids
+    assert "deid-certificate" in capability_ids
     assert "secure-sharing" in capability_ids
     html = matrix_html.read_text()
     assert "Dental DICOM Capability Matrix" in html
@@ -868,6 +871,7 @@ def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) ->
     assert "study-dcmtk-dcmodify" in item_ids
     assert "study-pydicom-example" in item_ids
     assert "shareable-proof-package" in item_ids
+    assert "deid-certificate-handoff" in item_ids
     assert "capability-matrix-gate" in item_ids
     rsna = next(item for item in report["items"] if item["id"] == "study-rsna-anonymizer")
     assert "capability:configurable-anonymization" in rsna["evidence"]
@@ -903,6 +907,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
     assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
     assert (output_dir / "demo-run" / "reports" / "share-readiness.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "deid-certificate.html").exists()
     assert (output_dir / "demo-run" / "share" / "package.ddpt").exists()
     report = json.loads(evidence_json.read_text())
     assert report["passed"] is True
@@ -921,12 +926,59 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "demo-run/reports/pixel-review.html" in artifact_paths
     assert "demo-run/reports/package-receipt.html" in artifact_paths
     assert "demo-run/reports/share-readiness.html" in artifact_paths
+    assert "demo-run/reports/deid-certificate.html" in artifact_paths
     html = evidence_html.read_text()
     assert "Dental DICOM Evidence Bundle" in html
     assert "Review dashboard HTML" in html
     assert "Capability matrix HTML" in html
     assert "Objective completion audit HTML" in html
     assert "Release audit HTML" in html
+    assert "De-identification certificate HTML" in html
+
+
+def test_certificate_command_builds_handoff_certificate(tmp_path: Path) -> None:
+    demo_dir = tmp_path / "demo"
+    certificate_json = tmp_path / "reports" / "deid-certificate.json"
+    certificate_html = tmp_path / "reports" / "deid-certificate.html"
+
+    demo_result = runner.invoke(app, ["demo", str(demo_dir)])
+    assert demo_result.exit_code == 0, demo_result.output
+
+    result = runner.invoke(
+        app,
+        [
+            "certificate",
+            "create",
+            str(demo_dir),
+            "--json",
+            str(certificate_json),
+            "--html",
+            str(certificate_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert certificate_json.exists()
+    assert certificate_html.exists()
+    report = json.loads(certificate_json.read_text())
+    assert report["passed"] is True
+    assert report["passed_checks"] == report["total_checks"]
+    assert report["profile"] == "dental-basic"
+    assert report["package_sha256"]
+    assert report["private_tags_after"] == 0
+    assert report["residual_high_risk_keywords"] == []
+    check_ids = {item["id"] for item in report["checks"]}
+    assert {
+        "validation",
+        "deid-comparison",
+        "pixel-review",
+        "package-receipt",
+        "audit-chain",
+        "share-readiness",
+    }.issubset(check_ids)
+    html = certificate_html.read_text()
+    assert "Dental DICOM De-identification Certificate" in html
+    assert "package-receipt" in html
 
 
 def test_dashboard_build_command_summarizes_evidence_bundle(tmp_path: Path) -> None:

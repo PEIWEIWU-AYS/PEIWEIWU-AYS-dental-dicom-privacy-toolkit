@@ -29,7 +29,8 @@ flowchart LR
     G --> H["Redact known pixel region"]
     H --> I["Generate audit report"]
     I --> J["Encrypt sharing package"]
-    J --> K["Verify or decrypt package"]
+    J --> K["Verify package"]
+    K --> L["Create de-identification certificate"]
 ```
 
 ## User-Facing Commands
@@ -55,6 +56,7 @@ ddpt pixel-review outputs/sample.anonymized.dcm --out-dir reports/pixel-review -
 ddpt package outputs/ --encrypt --key-out share/package.key --manifest reports/manifest.json --out share/dental-dicom-package.ddpt
 ddpt verify share/dental-dicom-package.ddpt --key share/package.key --receipt reports/package-receipt.json --html reports/package-receipt.html
 ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
+ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
 ddpt decrypt share/dental-dicom-package.ddpt --key share/package.key --out restored/
 ddpt api serve demo-run
 open http://127.0.0.1:8765/workbench
@@ -177,7 +179,20 @@ Best for:
 - avoiding vague claims about having learned from reference tools
 - mapping each competitor lesson to concrete files, commands, and reports
 
-### 10. Linkable Research Profile
+### 10. De-identification Certificate
+
+The de-identification certificate gathers anonymization, validation,
+before/after comparison, pixel review, encrypted package receipt, audit-chain,
+and share-readiness evidence into one JSON/HTML handoff artifact.
+
+Best for:
+
+- MacBook validation
+- collaborator handoff
+- screenshots for GitHub and paper supplements
+- explaining that the project produces evidence, not only transformed files
+
+### 11. Linkable Research Profile
 
 The linkable research profile demonstrates deterministic pseudonymization for
 synthetic longitudinal studies. It keeps repeated synthetic `PatientID` values
@@ -190,7 +205,7 @@ Best for:
 - explaining the difference between one-time anonymization and linkable pseudonyms
 - showing profile lint and comparison as safety controls
 
-### 11. Static Review Dashboard
+### 12. Static Review Dashboard
 
 The dashboard gathers the strongest evidence bundle reports and synthetic PNG
 previews into one local static HTML entrypoint.
@@ -360,6 +375,7 @@ dental-dicom-privacy-toolkit/
 - Validate that known sensitive fields are absent or replaced
 - Compare original and anonymized files with side-by-side policy evidence
 - Check synthetic share-readiness before handoff
+- Create a de-identification certificate for handoff evidence
 
 ### Phase 5: Encrypted Sharing Package
 
@@ -368,6 +384,7 @@ dental-dicom-privacy-toolkit/
 - Encrypt package
 - Verify package integrity
 - Generate share-readiness report
+- Generate de-identification certificate
 - Produce audit event JSON
 
 ### Phase 6: Public Demo
@@ -403,12 +420,14 @@ The repository should repeatedly and accurately include:
 - 牙科 DICOM 脱敏加密共享工具包
 - DICOM anonymization
 - DICOM de-identification
+- de-identification certificate
 - dental imaging privacy
 - medical imaging privacy
 - encrypted DICOM sharing
 - CBCT privacy
 - 牙科影像
 - DICOM脱敏
+- 牙科 DICOM 去标识化证明书
 - 医学影像隐私
 - 患者隐私保护
 

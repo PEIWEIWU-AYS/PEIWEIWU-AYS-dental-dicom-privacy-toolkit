@@ -161,13 +161,41 @@ OBJECTIVE_REQUIREMENTS = [
             "docs/evidence-bundle.md",
             "docs/review-dashboard.md",
             "docs/share-readiness.md",
+            "docs/deid-certificate.md",
         ),
-        capability_ids=("audit-evidence-bundle", "static-review-dashboard", "secure-sharing"),
+        capability_ids=(
+            "audit-evidence-bundle",
+            "static-review-dashboard",
+            "secure-sharing",
+            "deid-certificate",
+        ),
         evidence_terms=(
             ("docs/evidence-bundle.md", "ddpt evidence bundle"),
             ("docs/share-readiness.md", "ddpt share readiness"),
+            ("docs/deid-certificate.md", "ddpt certificate create"),
         ),
-        note="Covers release audit, safety scan, evidence bundle, dashboard, package receipt.",
+        note=(
+            "Covers release audit, safety scan, evidence bundle, dashboard, "
+            "package receipt, and handoff certificate."
+        ),
+    ),
+    ObjectiveRequirement(
+        id="deid-certificate-handoff",
+        category="differentiation",
+        requirement=(
+            "Produce a reviewer-friendly de-identification certificate that "
+            "summarizes handoff evidence."
+        ),
+        evidence_files=("docs/deid-certificate.md", "src/ddpt/certificate.py"),
+        capability_ids=("deid-certificate", "share-readiness-gate"),
+        evidence_terms=(
+            ("docs/deid-certificate.md", "De-identification Certificate"),
+            ("src/ddpt/certificate.py", "build_deidentification_certificate"),
+        ),
+        note=(
+            "Collects anonymization, validation, comparison, pixel review, "
+            "package receipt, audit chain, and share-readiness evidence."
+        ),
     ),
     ObjectiveRequirement(
         id="public-release-readiness",

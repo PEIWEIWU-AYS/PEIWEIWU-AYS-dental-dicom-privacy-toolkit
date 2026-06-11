@@ -355,6 +355,29 @@ CAPABILITY_SPECS = [
         note="Turns individual reports into a final reviewer-friendly sharing checklist.",
     ),
     CapabilitySpec(
+        id="deid-certificate",
+        capability="De-identification certificate for synthetic sharing handoff",
+        source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "PixelMed DicomCleaner"),
+        evidence_files=(
+            "src/ddpt/certificate.py",
+            "docs/deid-certificate.md",
+            "src/ddpt/pipeline.py",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt certificate create demo-run --json demo-run/reports/"
+            "deid-certificate.json --html demo-run/reports/deid-certificate.html"
+        ),
+        differentiator=(
+            "A portable JSON/HTML handoff certificate gathers privacy, pixel, "
+            "package, audit, and readiness proof in one artifact."
+        ),
+        note=(
+            "This is project evidence for synthetic demos, not legal, clinical, "
+            "regulatory, or security certification."
+        ),
+    ),
+    CapabilitySpec(
         id="audit-evidence-bundle",
         capability="Audit chain, release audit, safety scan, and evidence bundle",
         source_tools=("RSNA CTP", "Orthanc"),

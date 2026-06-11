@@ -225,6 +225,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            Path(demo_result.deid_certificate_html),
+            "De-identification certificate HTML",
+            "certificate",
+            "Portable certificate summarizing de-identification handoff evidence.",
+        ),
+        _artifact(
+            output_dir,
             workflow_json,
             "Workflow report JSON",
             "workflow",

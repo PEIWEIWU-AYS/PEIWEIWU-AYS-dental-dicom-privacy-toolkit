@@ -135,6 +135,7 @@ The project should add:
 - capability matrix with JSON and HTML output for competitor-informed project review
 - static review dashboard that gathers report links and synthetic PNG previews
 - side-by-side de-identification comparison HTML for reviewer-friendly evidence
+- portable de-identification certificate for synthetic sharing handoff evidence
 - evidence bundle with JSON and HTML index for MacBook validation and public demonstrations
 - encrypted sharing package with manifest and checksums
 - package verification receipts with JSON and HTML outputs

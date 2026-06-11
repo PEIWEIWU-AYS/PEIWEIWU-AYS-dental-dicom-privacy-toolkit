@@ -71,6 +71,7 @@ The demo should show:
 - tamper-evident audit chain
 - encrypted package with manifest and checksums
 - package verification receipt for receiver-side evidence
+- de-identification certificate for synthetic sharing handoff evidence
 
 ## CLI Equivalent
 
@@ -97,6 +98,7 @@ ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
 ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key --receipt demo-run/reports/package-receipt.json --html demo-run/reports/package-receipt.html
 ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
+ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
 ```
 
 For a directory-level preflight before batch anonymization:
@@ -145,6 +147,7 @@ ddpt evidence bundle . --out evidence-run
 ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html
 open evidence-run/reports/review-dashboard.html
 open evidence-run/reports/evidence-bundle.html
+open evidence-run/demo-run/reports/deid-certificate.html
 ```
 
 ## Safety

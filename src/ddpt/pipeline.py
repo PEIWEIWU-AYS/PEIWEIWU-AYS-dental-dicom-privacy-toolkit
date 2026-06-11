@@ -4,6 +4,7 @@ from pathlib import Path
 
 from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
+from ddpt.certificate import build_deidentification_certificate
 from ddpt.deid_compare import compare_deidentification
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
@@ -14,6 +15,7 @@ from ddpt.preview import render_dicom_preview
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
+    write_deid_certificate_html,
     write_deid_comparison_html,
     write_demo_summary_html,
     write_inspection_html,
@@ -70,6 +72,8 @@ def run_demo_pipeline(
     package_receipt_html = reports_dir / "package-receipt.html"
     share_readiness_json = reports_dir / "share-readiness.json"
     share_readiness_html = reports_dir / "share-readiness.html"
+    deid_certificate_json = reports_dir / "deid-certificate.json"
+    deid_certificate_html = reports_dir / "deid-certificate.html"
 
     create_synthetic_dicom(input_dicom)
     render_dicom_preview(input_dicom, input_preview_png)
@@ -129,6 +133,10 @@ def run_demo_pipeline(
     write_json(share_readiness_json, model_to_dict(share_readiness))
     write_share_readiness_html(share_readiness_html, share_readiness)
 
+    certificate = build_deidentification_certificate(output_dir)
+    write_json(deid_certificate_json, model_to_dict(certificate))
+    write_deid_certificate_html(deid_certificate_html, certificate)
+
     result = DemoPipelineResult(
         output_dir=str(output_dir),
         input_dicom=str(input_dicom),
@@ -157,6 +165,8 @@ def run_demo_pipeline(
         key_path=str(key_path),
         package_receipt_json=str(package_receipt_json),
         package_receipt_html=str(package_receipt_html),
+        deid_certificate_json=str(deid_certificate_json),
+        deid_certificate_html=str(deid_certificate_html),
         audit_chain_json=str(audit_chain_json),
         audit_chain_verify_json=str(audit_chain_verify_json),
         summary_html=str(summary_html),

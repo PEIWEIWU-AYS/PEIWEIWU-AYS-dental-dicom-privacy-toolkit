@@ -33,7 +33,7 @@ release-readiness check fails.
 - core implementation modules
 - Python package metadata and dependencies
 - GitHub Actions gates for doctor, release audit, capability matrix, evidence
-  bundle, dashboard build, safety scan, lint, and tests
+  bundle, de-identification certificate, dashboard build, safety scan, lint, and tests
 - YAML workflow recipe coverage for the complete synthetic privacy pipeline
 - `dental-basic` profile coverage for high-risk and medium-risk policy items
 - public repository safety scan results
@@ -71,6 +71,7 @@ ddpt safety scan .
 ddpt release audit . --json release-audit.json --html release-audit.html
 ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
 ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
+ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
 ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
 ddpt evidence bundle . --out evidence-run
 ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html

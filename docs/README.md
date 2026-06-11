@@ -10,6 +10,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Product Requirements](product-requirements.md)
 - [Policy Registry](policy-registry.md)
 - [De-identification Comparison](deid-comparison.md)
+- [De-identification Certificate](deid-certificate.md)
 - [Demo Guide](demo-guide.md)
 - [Workflow Recipes](workflow-recipes.md)
 - [Anonymization Dry Run](anonymization-dry-run.md)

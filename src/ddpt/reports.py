@@ -9,6 +9,7 @@ from ddpt.models import (
     AnonymizationAudit,
     BatchSummary,
     CapabilityMatrixReport,
+    DeidentificationCertificate,
     DeidentificationComparisonReport,
     DemoPipelineResult,
     EvidenceBundleResult,
@@ -248,6 +249,14 @@ DEMO_SUMMARY_TEMPLATE = Template(
       <tr><td>Package key</td><td><code>{{ result.key_path }}</code></td></tr>
       <tr><td>Package receipt JSON</td><td><code>{{ result.package_receipt_json }}</code></td></tr>
       <tr><td>Package receipt HTML</td><td><code>{{ result.package_receipt_html }}</code></td></tr>
+      <tr>
+        <td>De-identification certificate JSON</td>
+        <td><code>{{ result.deid_certificate_json }}</code></td>
+      </tr>
+      <tr>
+        <td>De-identification certificate HTML</td>
+        <td><code>{{ result.deid_certificate_html }}</code></td>
+      </tr>
       <tr><td>Audit chain</td><td><code>{{ result.audit_chain_json }}</code></td></tr>
       <tr>
         <td>Audit chain verification</td>
@@ -1131,6 +1140,95 @@ SHARE_READINESS_TEMPLATE = Template(
 """
 )
 
+DEID_CERTIFICATE_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM De-identification Certificate</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM De-identification Certificate</h1>
+  <p class="warning">
+    Synthetic-data certificate for local demonstration and collaborator review.
+    This summarizes project evidence only; it is not legal, regulatory,
+    clinical, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Root directory: <code>{{ certificate.root_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if certificate.passed else "fail" }}">
+        {{ "PASS" if certificate.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Profile: <code>{{ certificate.profile }}</code></li>
+    <li>Input: <code>{{ certificate.input_path }}</code></li>
+    <li>Anonymized: <code>{{ certificate.anonymized_path }}</code></li>
+    <li>Checks: {{ certificate.passed_checks }} / {{ certificate.total_checks }}</li>
+    <li>Private tags after: {{ certificate.private_tags_after }}</li>
+    <li>Residual high-risk keywords: {{ certificate.residual_high_risk_keywords|join(", ") }}</li>
+    <li>
+      Residual medium-risk keywords:
+      {{ certificate.residual_medium_risk_keywords|join(", ") }}
+    </li>
+    <li>Pixel review regions: {{ certificate.pixel_review_regions }}</li>
+    <li>Package entries: {{ certificate.package_entries }}</li>
+    <li>Package: <code>{{ certificate.package_path or "" }}</code></li>
+    <li>Package SHA-256: <code>{{ certificate.package_sha256 or "" }}</code></li>
+    <li>Share readiness: {{ "PASS" if certificate.share_readiness_passed else "FAIL" }}</li>
+    <li>Generated at: {{ certificate.generated_at }}</li>
+  </ul>
+  <h2>Evidence Checks</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Check</th>
+        <th>Category</th>
+        <th>Summary</th>
+        <th>Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for check in certificate.checks %}
+      <tr>
+        <td class="{{ "ok" if check.passed else "fail" }}">
+          {{ "PASS" if check.passed else "FAIL" }}
+        </td>
+        <td>{{ check.id }}</td>
+        <td>{{ check.category }}</td>
+        <td>{{ check.summary }}</td>
+        <td>
+          {% for item in check.evidence %}
+          <code>{{ item }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 PACKAGE_RECEIPT_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -1589,6 +1687,7 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
         "Evidence bundle HTML",
         "Demo summary HTML",
         "De-identification comparison HTML",
+        "De-identification certificate HTML",
         "Share readiness HTML",
         "Capability matrix HTML",
         "Objective completion audit HTML",
@@ -1617,6 +1716,10 @@ def write_deid_comparison_html(
 
 def write_share_readiness_html(path: Path, report: ShareReadinessReport) -> None:
     _write_html(path, SHARE_READINESS_TEMPLATE.render(report=report))
+
+
+def write_deid_certificate_html(path: Path, certificate: DeidentificationCertificate) -> None:
+    _write_html(path, DEID_CERTIFICATE_TEMPLATE.render(certificate=certificate))
 
 
 def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) -> None:

@@ -44,6 +44,7 @@ Expected key artifacts:
 - `demo-run/reports/audit-chain.json`
 - `demo-run/reports/package-receipt.html`
 - `demo-run/reports/share-readiness.html`
+- `demo-run/reports/deid-certificate.html`
 - `demo-run/share/package.ddpt`
 - `demo-run/share/package.key`
 
@@ -139,6 +140,9 @@ ddpt compare deid \
 ddpt share readiness demo-run \
   --json demo-run/reports/share-readiness.json \
   --html demo-run/reports/share-readiness.html
+ddpt certificate create demo-run \
+  --json demo-run/reports/deid-certificate.json \
+  --html demo-run/reports/deid-certificate.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm \
   --profile dental-research-sharing \
   --dry-run \
@@ -160,6 +164,7 @@ Expected:
 - the linkable profile comparison report shows direct identifiers changed to `pseudonymize`
 - the de-identification comparison report passes and shows direct identifiers changed
 - the share-readiness report passes all sharing gates
+- the de-identification certificate passes and summarizes handoff evidence
 - dry-run audit includes `date_shift` actions for study-level date fields
 - linkable dry-run audit includes `pseudonymize` actions for `PatientName` and `PatientID`
 - no DICOM output is written during dry run
@@ -212,6 +217,7 @@ Expected:
 - `evidence-run/demo-run/reports/pixel-review.html` exists
 - `evidence-run/demo-run/reports/package-receipt.html` exists
 - `evidence-run/demo-run/reports/share-readiness.html` exists
+- `evidence-run/demo-run/reports/deid-certificate.html` exists
 
 ## 12. Run Objective Completion Audit
 
@@ -240,6 +246,7 @@ evidence-run/reports/review-dashboard.html
 demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
 demo-run/reports/deid-comparison.html
+demo-run/reports/deid-certificate.html
 demo-run/reports/inspect.html
 demo-run/reports/audit.html
 demo-run/reports/share-readiness.html

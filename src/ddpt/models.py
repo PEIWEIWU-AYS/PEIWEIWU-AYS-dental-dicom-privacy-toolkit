@@ -115,6 +115,36 @@ class ShareReadinessReport(BaseModel):
         return sum(1 for check in self.checks if not check.passed)
 
 
+class CertificateEvidenceItem(BaseModel):
+    id: str
+    category: str
+    passed: bool
+    summary: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class DeidentificationCertificate(BaseModel):
+    root_dir: str
+    passed: bool
+    profile: str
+    input_path: str
+    anonymized_path: str
+    package_path: str | None = None
+    package_sha256: str | None = None
+    passed_checks: int
+    total_checks: int
+    residual_high_risk_keywords: list[str] = Field(default_factory=list)
+    residual_medium_risk_keywords: list[str] = Field(default_factory=list)
+    private_tags_after: int | None = None
+    pixel_review_regions: int = 0
+    package_entries: int = 0
+    share_readiness_passed: bool = False
+    checks: list[CertificateEvidenceItem] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class ValidationCheck(BaseModel):
     name: str
     passed: bool
@@ -515,6 +545,8 @@ class DemoPipelineResult(BaseModel):
     key_path: str
     package_receipt_json: str
     package_receipt_html: str
+    deid_certificate_json: str
+    deid_certificate_html: str
     audit_chain_json: str
     audit_chain_verify_json: str
     summary_html: str

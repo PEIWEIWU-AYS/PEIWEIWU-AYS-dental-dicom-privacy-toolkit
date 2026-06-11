@@ -44,6 +44,7 @@ The dashboard includes:
 - overall evidence bundle status
 - artifact availability counts
 - quick links to the strongest reports
+- de-identification certificate link when present
 - synthetic input, anonymized, redacted, and pixel-review PNG previews
 - all evidence artifacts with status, category, path, and description
 

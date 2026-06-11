@@ -39,6 +39,7 @@ The matrix reviews whether the repository has evidence for:
 - original objective completion audit with requirement-level evidence
 - encrypted sharing packages
 - package verification receipts
+- de-identification certificate for synthetic sharing handoff evidence
 - audit chains, safety scan, release audit, and evidence bundles
 - bilingual GitHub discoverability and synthetic-data safety positioning
 

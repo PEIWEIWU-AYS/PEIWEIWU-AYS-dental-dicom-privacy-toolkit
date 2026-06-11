@@ -36,6 +36,7 @@ jobs:
           test -f docs/product-requirements.md
           test -f docs/policy-registry.md
           test -f docs/demo-guide.md
+          test -f docs/deid-certificate.md
           test -f docs/evidence-bundle.md
           test -f docs/workflow-recipes.md
           test -f docs/anonymization-dry-run.md
@@ -93,6 +94,9 @@ jobs:
 
       - name: Run de-identification comparison
         run: python -m ddpt compare deid evidence-run/demo-run/input/sample.synthetic.dcm evidence-run/demo-run/outputs/sample.anonymized.dcm --json deid-comparison.json --html deid-comparison.html
+
+      - name: Build de-identification certificate
+        run: python -m ddpt certificate create evidence-run/demo-run --json deid-certificate.json --html deid-certificate.html
 
       - name: Run share readiness gate
         run: python -m ddpt share readiness evidence-run/demo-run --json share-readiness.json --html share-readiness.html

@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -26,6 +26,7 @@ Core goals:
 - Competitor-informed capability matrix with repository evidence
 - Objective completion audit against the original competitor-learning goal
 - Before/after de-identification comparison reports
+- De-identification certificate for synthetic sharing handoff evidence
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
 - Pixel review reports with original, overlay, and redacted PNG previews
@@ -65,6 +66,7 @@ ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json wo
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
+ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
 ddpt pixel-review demo-run/outputs/sample.anonymized.dcm --out-dir demo-run/reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json demo-run/reports/pixel-review.json --html demo-run/reports/pixel-review.html
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
@@ -117,6 +119,7 @@ See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile confi
 See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
 See [docs/deid-comparison.md](docs/deid-comparison.md) for before/after de-identification comparison reports.
+See [docs/deid-certificate.md](docs/deid-certificate.md) for the synthetic de-identification certificate.
 See [docs/capability-matrix.md](docs/capability-matrix.md) for competitor-informed capability evidence.
 See [docs/objective-completion-audit.md](docs/objective-completion-audit.md) for requirement-level evidence against the original goal.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
@@ -144,6 +147,7 @@ ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out d
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental-pixel-redaction.yml --out demo-run/outputs/sample.plan-redacted.dcm --audit demo-run/reports/plan-redaction.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
 ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key --receipt demo-run/reports/package-receipt.json --html demo-run/reports/package-receipt.html
+ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
 ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
 ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out demo-run/restored
 ```
@@ -185,8 +189,8 @@ local browser workbench, research-sharing date shifting, linkable research pseud
 objective completion audit, release-readiness checks, and local evidence bundle generation,
 package verification receipts, profile comparison reports,
 profile lint checks, policy registry exports, capability matrix reports, static
-review dashboards, de-identification comparison reports, and pixel review
-reports, plus share-readiness gates.
+review dashboards, de-identification comparison reports, de-identification
+certificates, and pixel review reports, plus share-readiness gates.
 
 ## License
 

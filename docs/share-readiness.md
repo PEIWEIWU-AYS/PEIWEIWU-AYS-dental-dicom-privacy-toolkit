@@ -44,6 +44,8 @@ demo-run/reports/share-readiness.html
 ```
 
 The evidence bundle includes the HTML readiness report as a sharing artifact.
+The de-identification certificate summarizes this gate together with
+anonymization, comparison, pixel review, package receipt, and audit-chain proof.
 
 ## Safety Notes
 
