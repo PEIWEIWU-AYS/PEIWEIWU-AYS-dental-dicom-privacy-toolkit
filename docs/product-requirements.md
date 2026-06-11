@@ -15,10 +15,11 @@ Version 0.1 is successful when a new user can:
 5. Confirm direct identifiers were replaced or removed.
 6. Generate an audit event JSON file.
 7. Validate anonymized output with a pass/fail report.
-8. Package anonymized files with checksums.
-9. Encrypt the package.
-10. Verify or decrypt the package.
-11. Run automated tests locally and in GitHub Actions.
+8. Apply manual pixel redaction for known burned-in annotation regions.
+9. Package anonymized files with checksums.
+10. Encrypt the package.
+11. Verify or decrypt the package.
+12. Run automated tests locally and in GitHub Actions.
 
 ## Command Requirements
 
@@ -69,6 +70,18 @@ Required:
 - ZIP package
 - optional Fernet encryption
 - optional key output
+
+### `ddpt redact-pixels`
+
+Apply manual rectangular pixel redaction for known burned-in annotation regions.
+
+Required:
+
+- one or more `x,y,width,height` rectangles
+- output DICOM
+- audit JSON output
+- bounds checking
+- documentation that this does not automatically find all burned-in identifiers
 
 ### `ddpt verify`
 

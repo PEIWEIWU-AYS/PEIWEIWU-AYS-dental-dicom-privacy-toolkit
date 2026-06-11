@@ -10,6 +10,7 @@ from rich.table import Table
 from ddpt import __version__
 from ddpt.anonymize import anonymize_dicom
 from ddpt.inspection import inspect_dicom
+from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.reports import model_to_dict, write_audit_html, write_inspection_html
 from ddpt.sharing import create_package, decrypt_package, verify_package
 from ddpt.synthetic import create_synthetic_dicom
@@ -97,6 +98,28 @@ def validate(
 
     if not report.passed:
         raise typer.Exit(1)
+
+
+@app.command("redact-pixels")
+def redact_pixels_command(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    output_path: Annotated[Path, typer.Option("--out", help="Output redacted DICOM path.")],
+    rect: Annotated[
+        list[str],
+        typer.Option(
+            "--rect",
+            help="Rectangle to redact in x,y,width,height format. Can be repeated.",
+        ),
+    ],
+    fill_value: Annotated[int, typer.Option(help="Pixel fill value.")] = 0,
+    audit_json: Annotated[Path | None, typer.Option("--audit", help="Write audit JSON.")] = None,
+) -> None:
+    rectangles = [parse_rectangle(value) for value in rect]
+    audit = redact_pixels(input_path, output_path, rectangles, fill_value)
+    if audit_json:
+        write_json(audit_json, model_to_dict(audit))
+    console.print(f"Pixel-redacted DICOM written to: {output_path}")
+    console.print(f"Rectangles redacted: {len(rectangles)}")
 
 
 @app.command("package")

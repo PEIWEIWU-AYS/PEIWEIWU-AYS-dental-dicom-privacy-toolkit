@@ -96,6 +96,7 @@ The project should add:
 - audit event JSON output
 - static HTML reports
 - encrypted sharing package with manifest and checksums
+- manual pixel redaction audit for known burned-in annotation regions
 - one-command synthetic demo path
 - GitHub topics and bilingual keyword strategy
 - report screenshots in later milestones

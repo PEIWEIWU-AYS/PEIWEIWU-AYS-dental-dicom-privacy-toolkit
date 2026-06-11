@@ -21,6 +21,8 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     audit_json = tmp_path / "reports" / "audit.json"
     audit_html = tmp_path / "reports" / "audit.html"
     validation_json = tmp_path / "reports" / "validation.json"
+    redacted = tmp_path / "outputs" / "sample.redacted.dcm"
+    redaction_audit = tmp_path / "reports" / "redaction.json"
     package = tmp_path / "share" / "package.ddpt"
     manifest = tmp_path / "share" / "manifest.json"
     key = tmp_path / "share" / "package.key"
@@ -83,6 +85,25 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     result = runner.invoke(
         app,
         [
+            "redact-pixels",
+            str(anonymized),
+            "--out",
+            str(redacted),
+            "--rect",
+            "1,0,1,1",
+            "--audit",
+            str(redaction_audit),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert redaction_audit.exists()
+    redacted_dataset = pydicom.dcmread(redacted)
+    assert int(dataset.pixel_array[0, 1]) == 64
+    assert int(redacted_dataset.pixel_array[0, 1]) == 0
+
+    result = runner.invoke(
+        app,
+        [
             "package",
             str(anonymized.parent),
             "--out",
@@ -102,7 +123,7 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     result = runner.invoke(app, ["verify", str(package), "--key", str(key)])
     assert result.exit_code == 0, result.output
     verified_manifest = verify_package(package, key)
-    assert len(verified_manifest.entries) == 1
+    assert len(verified_manifest.entries) == 2
 
     result = runner.invoke(
         app,

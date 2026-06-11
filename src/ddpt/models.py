@@ -86,3 +86,21 @@ class ValidationReport(BaseModel):
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
+
+
+class PixelRectangle(BaseModel):
+    x: int
+    y: int
+    width: int
+    height: int
+
+
+class PixelRedactionAudit(BaseModel):
+    input_path: str
+    output_path: str
+    rectangles: list[PixelRectangle]
+    fill_value: int
+    note: str
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
