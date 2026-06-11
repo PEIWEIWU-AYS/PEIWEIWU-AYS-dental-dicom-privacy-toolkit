@@ -57,6 +57,7 @@ Version 0.1 is successful when a new user can:
 47. Run a GitHub publish preflight before creating or pushing the public repository.
 48. Run automated tests locally and in GitHub Actions.
 49. Run a one-command MacBook validation report for local acceptance and GitHub readiness.
+50. Publish community health files for safe issues, PRs, support, and security reporting.
 
 ### `ddpt demo`
 
@@ -886,3 +887,20 @@ To call Version 0.1 complete, we need:
 - a local evidence bundle command with JSON and HTML index outputs
 - README demo commands updated
 - CI passing locally or documented if remote CI is not available
+
+### Community Health Files
+
+Prepare the public repository for safe open-source collaboration.
+
+Required:
+
+- contribution guide
+- security policy
+- support policy
+- code of conduct
+- pull request template
+- bug report issue template
+- feature request issue template
+- privacy/safety issue template
+- issue template config that discourages blank public issues
+- documentation explaining synthetic-only collaboration boundaries

@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest an improvement to the synthetic dental DICOM privacy workflow.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the workflow need without sharing real patient data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What workflow gap are you trying to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should the toolkit do?
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Related tools or standards
+      description: Mention RSNA, DicomCleaner, Orthanc, RSNA CTP, DCMTK, pydicom, DICOM PS3.15, or other relevant sources.
+    validations:
+      required: false
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: This request can be discussed and tested with synthetic data only.
+          required: true

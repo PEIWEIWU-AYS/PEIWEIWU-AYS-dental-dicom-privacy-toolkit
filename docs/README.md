@@ -50,5 +50,6 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Local REST API](local-api.md)
 - [Audit Chain](audit-chain.md)
 - [Data Safety](data-safety.md)
+- [Community Health](community-health.md)
 - [Discoverability Profile](discoverability.md)
 - [Project Charter](project-charter.md)

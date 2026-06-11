@@ -1427,6 +1427,15 @@ def test_release_audit_reports_repository_readiness(tmp_path: Path) -> None:
     assert "competitor-learning" in check_ids
     assert "workflow-recipe" in check_ids
     assert "repository-safety" in check_ids
+    assert Path("CONTRIBUTING.md").exists()
+    assert Path("SECURITY.md").exists()
+    assert Path("SUPPORT.md").exists()
+    assert Path("CODE_OF_CONDUCT.md").exists()
+    assert Path(".github/PULL_REQUEST_TEMPLATE.md").exists()
+    assert Path(".github/ISSUE_TEMPLATE/privacy_safety.yml").exists()
+    assert Path("docs/community-health.md").exists()
+    assert "Community Health" in Path("docs/README.md").read_text(encoding="utf-8")
+    assert "community health" in Path("README.md").read_text(encoding="utf-8")
     html = audit_html.read_text()
     assert "Dental DICOM Release Audit" in html
     assert "readme-discoverability" in html

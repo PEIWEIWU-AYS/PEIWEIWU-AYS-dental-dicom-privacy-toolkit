@@ -29,7 +29,17 @@ jobs:
           test -f LICENSE
           test -f CITATION.cff
           test -f ROADMAP.md
+          test -f CONTRIBUTING.md
+          test -f SECURITY.md
+          test -f SUPPORT.md
+          test -f CODE_OF_CONDUCT.md
+          test -f .github/PULL_REQUEST_TEMPLATE.md
+          test -f .github/ISSUE_TEMPLATE/bug_report.yml
+          test -f .github/ISSUE_TEMPLATE/feature_request.yml
+          test -f .github/ISSUE_TEMPLATE/privacy_safety.yml
+          test -f .github/ISSUE_TEMPLATE/config.yml
           test -f docs/data-safety.md
+          test -f docs/community-health.md
           test -f docs/discoverability.md
           test -f docs/dcmodify-plan.md
           test -f docs/project-blueprint.md
