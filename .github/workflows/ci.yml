@@ -34,6 +34,7 @@ jobs:
           test -f docs/dcmodify-plan.md
           test -f docs/project-blueprint.md
           test -f docs/competitor-analysis.md
+          test -f docs/competitor-coverage.md
           test -f docs/product-requirements.md
           test -f docs/policy-registry.md
           test -f docs/remediation-plan.md
@@ -83,6 +84,9 @@ jobs:
 
       - name: Run competitor-informed capability matrix
         run: python -m ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
+
+      - name: Run competitor coverage report
+        run: python -m ddpt competitor coverage --root . --json competitor-coverage.json --html competitor-coverage.html
 
       - name: Run original objective completion audit
         run: python -m ddpt completion audit . --json objective-audit.json --html objective-audit.html

@@ -14,6 +14,7 @@ from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
 from ddpt.capability import build_capability_matrix
 from ddpt.certificate import build_deidentification_certificate
+from ddpt.competitor import build_competitor_coverage
 from ddpt.completion import run_objective_audit
 from ddpt.dashboard import build_review_dashboard_report
 from ddpt.dcmodify_plan import build_dcmodify_plan, write_dcmodify_script
@@ -53,6 +54,7 @@ from ddpt.reports import (
     model_to_dict,
     write_audit_html,
     write_capability_matrix_html,
+    write_competitor_coverage_html,
     write_dcmodify_plan_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
@@ -99,6 +101,7 @@ workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
 evidence_app = typer.Typer(help="Build local demonstration evidence bundles.")
 capability_app = typer.Typer(help="Audit competitor-informed project capabilities.")
+competitor_app = typer.Typer(help="Audit reference-tool coverage and differentiators.")
 certificate_app = typer.Typer(help="Create de-identification certificates.")
 completion_app = typer.Typer(help="Audit original project objective completion.")
 dashboard_app = typer.Typer(help="Build static local review dashboards.")
@@ -121,6 +124,7 @@ app.add_typer(workflow_app, name="workflow")
 app.add_typer(release_app, name="release")
 app.add_typer(evidence_app, name="evidence")
 app.add_typer(capability_app, name="capability")
+app.add_typer(competitor_app, name="competitor")
 app.add_typer(certificate_app, name="certificate")
 app.add_typer(completion_app, name="completion")
 app.add_typer(dashboard_app, name="dashboard")
@@ -459,6 +463,47 @@ def capability_matrix(
     console.print(f"Implemented: {report.implemented_items}/{report.total_items}")
     console.print(f"Partial: {report.partial_items}")
     console.print(f"Missing: {report.missing_items}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@competitor_app.command("coverage")
+def competitor_coverage_command(
+    root: Annotated[
+        Path, typer.Option("--root", help="Repository root to audit.")
+    ] = Path("."),
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON competitor coverage.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML competitor coverage.")
+    ] = None,
+) -> None:
+    report = build_competitor_coverage(root)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_competitor_coverage_html(html_output, report)
+
+    table = Table(title="Reference Tool Coverage")
+    table.add_column("Status")
+    table.add_column("Tool")
+    table.add_column("Implemented")
+    table.add_column("Category")
+    for tool in report.tools:
+        table.add_row(
+            tool.status,
+            tool.name,
+            str(tool.implemented_capabilities),
+            tool.category,
+        )
+    console.print(table)
+    console.print(f"Covered tools: {report.covered_tools}/{report.total_tools}")
+    console.print(
+        f"Implemented capabilities: "
+        f"{report.implemented_capabilities}/{report.total_capabilities}"
+    )
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)

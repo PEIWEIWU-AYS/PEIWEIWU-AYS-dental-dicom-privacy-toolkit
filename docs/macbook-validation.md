@@ -225,6 +225,7 @@ Expected:
 - `evidence-run/reports/evidence-bundle.html` exists
 - `evidence-run/reports/review-dashboard.html` exists
 - `evidence-run/reports/capability-matrix.html` exists
+- `evidence-run/reports/competitor-coverage.html` exists
 - `evidence-run/reports/release-audit.html` exists
 - `evidence-run/reports/workflow-run.html` exists
 - `evidence-run/workflow-run/reports/filename-privacy.html` exists

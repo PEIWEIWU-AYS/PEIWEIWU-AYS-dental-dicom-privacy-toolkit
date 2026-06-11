@@ -147,6 +147,7 @@ The project should add:
 - static HTML reports
 - release-readiness audit with JSON and HTML output before public GitHub milestones
 - capability matrix with JSON and HTML output for competitor-informed project review
+- competitor coverage report with JSON and HTML output for reference-tool mapping
 - static review dashboard that gathers report links and synthetic PNG previews
 - side-by-side de-identification comparison HTML for reviewer-friendly evidence
 - portable de-identification certificate for synthetic sharing handoff evidence

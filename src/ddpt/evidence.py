@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ddpt.capability import build_capability_matrix
+from ddpt.competitor import build_competitor_coverage
 from ddpt.completion import run_objective_audit
 from ddpt.dashboard import build_review_dashboard_report
 from ddpt.doctor import run_doctor
@@ -15,6 +16,7 @@ from ddpt.release import run_release_audit
 from ddpt.reports import (
     model_to_dict,
     write_capability_matrix_html,
+    write_competitor_coverage_html,
     write_evidence_bundle_html,
     write_objective_audit_html,
     write_policy_registry_html,
@@ -43,6 +45,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     release_report = run_release_audit(repository_root)
     policy_report = policy_registry_report()
     capability_report = build_capability_matrix(repository_root)
+    competitor_report = build_competitor_coverage(repository_root)
     objective_report = run_objective_audit(repository_root)
     basic_lint_report = lint_profile("dental-basic")
     research_lint_report = lint_profile("dental-research-sharing")
@@ -57,6 +60,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     policy_html = reports_dir / "policy-registry.html"
     capability_json = reports_dir / "capability-matrix.json"
     capability_html = reports_dir / "capability-matrix.html"
+    competitor_json = reports_dir / "competitor-coverage.json"
+    competitor_html = reports_dir / "competitor-coverage.html"
     objective_json = reports_dir / "objective-audit.json"
     objective_html = reports_dir / "objective-audit.html"
     basic_lint_json = reports_dir / "profile-lint-dental-basic.json"
@@ -74,6 +79,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_policy_registry_html(policy_html, policy_report)
     write_json(capability_json, model_to_dict(capability_report))
     write_capability_matrix_html(capability_html, capability_report)
+    write_json(competitor_json, model_to_dict(competitor_report))
+    write_competitor_coverage_html(competitor_html, competitor_report)
     write_json(objective_json, model_to_dict(objective_report))
     write_objective_audit_html(objective_html, objective_report)
     write_json(basic_lint_json, model_to_dict(basic_lint_report))
@@ -152,6 +159,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "Capability matrix HTML",
             "strategy",
             "Competitor-informed capability and evidence report.",
+        ),
+        _artifact(
+            output_dir,
+            competitor_html,
+            "Competitor coverage HTML",
+            "strategy",
+            "Reference-tool coverage report with differentiators and boundaries.",
         ),
         _artifact(
             output_dir,
@@ -317,6 +331,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             and safety_report.passed
             and release_report.passed
             and capability_report.passed
+            and competitor_report.passed
             and objective_report.passed
             and basic_lint_report.passed
             and research_lint_report.passed

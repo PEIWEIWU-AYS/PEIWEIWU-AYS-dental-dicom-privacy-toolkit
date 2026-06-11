@@ -9,6 +9,7 @@ from ddpt.models import (
     AnonymizationAudit,
     BatchSummary,
     CapabilityMatrixReport,
+    CompetitorCoverageReport,
     DcmodifyPlanReport,
     DeidentificationCertificate,
     DeidentificationComparisonReport,
@@ -1313,6 +1314,117 @@ CAPABILITY_MATRIX_TEMPLATE = Template(
 """
 )
 
+COMPETITOR_COVERAGE_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Competitor Coverage</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .covered { color: #1f6f43; font-weight: 700; }
+    .partial { color: #8a5a00; font-weight: 700; }
+    .missing { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    a { color: #0b65c2; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Competitor Coverage</h1>
+  <p class="warning">
+    This report maps the project against RSNA DICOM Anonymizer, PixelMed
+    DicomCleaner, Orthanc, RSNA CTP, DCMTK dcmodify, and pydicom anonymization
+    examples. It documents inherited strengths, repository evidence, and
+    explicit safety boundaries.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Repository root: <code>{{ report.root_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "covered" if report.passed else "missing" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Covered tools: {{ report.covered_tools }} / {{ report.total_tools }}</li>
+    <li>
+      Implemented capabilities:
+      {{ report.implemented_capabilities }} / {{ report.total_capabilities }}
+    </li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Boundaries</h2>
+  <ul>
+    {% for note in report.boundary_notes %}
+    <li>{{ note }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Coverage by Reference Tool</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Reference Tool</th>
+        <th>Strengths Learned</th>
+        <th>Project Response</th>
+        <th>Implemented Capabilities</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tool in report.tools %}
+      <tr>
+        <td class="{{ tool.status }}">{{ tool.status }}</td>
+        <td>
+          <a href="{{ tool.url }}">{{ tool.name }}</a><br>
+          <small>{{ tool.category }}</small><br>
+          <small>
+            {{ tool.implemented_capabilities }} implemented,
+            {{ tool.partial_capabilities }} partial,
+            {{ tool.missing_capabilities }} missing
+          </small>
+        </td>
+        <td>
+          {% for item in tool.strengths_learned %}
+          {{ item }}{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% for item in tool.project_responses %}
+          {{ item }}{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% for capability in tool.capabilities %}
+          <strong>{{ capability.capability }}</strong>
+          <span class="{{ capability.status }}">({{ capability.status }})</span><br>
+          {{ capability.differentiator }}<br>
+          {% if capability.command %}
+          <code>{{ capability.command }}</code><br>
+          {% endif %}
+          {% for evidence in capability.evidence %}
+          <code>{{ evidence }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+          {% if not loop.last %}<hr>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 OBJECTIVE_AUDIT_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -2237,6 +2349,13 @@ def write_evidence_bundle_html(path: Path, result: EvidenceBundleResult) -> None
 
 def write_capability_matrix_html(path: Path, report: CapabilityMatrixReport) -> None:
     _write_html(path, CAPABILITY_MATRIX_TEMPLATE.render(report=report))
+
+
+def write_competitor_coverage_html(
+    path: Path,
+    report: CompetitorCoverageReport,
+) -> None:
+    _write_html(path, COMPETITOR_COVERAGE_TEMPLATE.render(report=report))
 
 
 def write_objective_audit_html(path: Path, report: ObjectiveAuditReport) -> None:

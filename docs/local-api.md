@@ -26,6 +26,7 @@ http://127.0.0.1:8765/workbench
 - `POST /inventory`
 - `POST /inspect`
 - `POST /dicom-json`
+- `GET /competitor-coverage`
 - `POST /anonymize`
 - `POST /validate`
 - `POST /preview`
@@ -44,6 +45,12 @@ Safe metadata JSON export:
 curl -X POST http://127.0.0.1:8765/dicom-json \
   -H "Content-Type: application/json" \
   -d '{"path":"input/sample.synthetic.dcm"}'
+```
+
+Competitor coverage report, when the API root is inside this repository:
+
+```bash
+curl http://127.0.0.1:8765/competitor-coverage
 ```
 
 ## Path Safety

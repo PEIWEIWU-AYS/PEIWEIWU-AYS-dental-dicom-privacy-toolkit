@@ -42,10 +42,11 @@ Version 0.1 is successful when a new user can:
 32. Run local REST API workflow demos for integration testing.
 33. Run a release-readiness audit before public GitHub publishing.
 34. Run a competitor-informed capability matrix that maps features to repository evidence.
-35. Generate a static local review dashboard for non-programmer walkthroughs.
-36. Generate a local evidence bundle for MacBook validation and public demonstrations.
-37. Run a workflow quality gate that verifies public review evidence.
-38. Run automated tests locally and in GitHub Actions.
+35. Run a competitor coverage report that maps reference tools to implemented evidence.
+36. Generate a static local review dashboard for non-programmer walkthroughs.
+37. Generate a local evidence bundle for MacBook validation and public demonstrations.
+38. Run a workflow quality gate that verifies public review evidence.
+39. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -151,6 +152,22 @@ Required:
 - JSON output
 - optional HTML report
 - non-zero exit status when capability evidence is missing
+
+### `ddpt competitor coverage`
+
+Generate a reference-tool coverage report for public positioning and review.
+
+Required:
+
+- cover RSNA DICOM Anonymizer, PixelMed DicomCleaner, Orthanc, RSNA CTP, DCMTK `dcmodify`, and pydicom anonymization examples
+- group implemented capabilities by reference tool
+- list strengths learned from each tool
+- list project responses and differentiators
+- include explicit safety boundaries and non-claims
+- JSON output
+- optional HTML report
+- local API endpoint that returns the same coverage report when served from a repository checkout
+- non-zero exit status when a reference tool has no implemented evidence
 
 ### `ddpt compare deid`
 

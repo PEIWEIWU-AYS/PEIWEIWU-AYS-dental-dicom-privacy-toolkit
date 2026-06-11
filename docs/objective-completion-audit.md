@@ -20,7 +20,8 @@ Expected result:
 - differentiators such as dental focus, bilingual discovery, date shifting,
   linkable pseudonymization, evidence bundle, share-readiness, and
   de-identification certificate handoff are checked
-- release, safety, and capability gates pass
+- competitor coverage report evidence is present
+- release, safety, capability, and competitor coverage gates pass
 
 ## What It Audits
 
@@ -36,6 +37,7 @@ The audit checks evidence for:
 - research differentiators such as date shifting and linkable pseudonymization
 - portable proof artifacts for MacBook demos and collaborator review
 - de-identification certificate evidence for synthetic sharing handoff
+- competitor coverage evidence for reference-tool mapping and safety boundaries
 
 ## Why This Matters
 

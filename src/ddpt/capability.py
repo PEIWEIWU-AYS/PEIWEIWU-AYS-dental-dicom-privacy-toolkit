@@ -590,6 +590,36 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="competitor-coverage-report",
+        capability="Reference-tool coverage report for competitor-informed positioning",
+        source_tools=(
+            "RSNA DICOM Anonymizer",
+            "PixelMed DicomCleaner",
+            "Orthanc",
+            "RSNA CTP",
+            "DCMTK dcmodify",
+            "pydicom anonymization example",
+        ),
+        evidence_files=(
+            "src/ddpt/competitor.py",
+            "docs/competitor-coverage.md",
+            "src/ddpt/cli.py",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt competitor coverage --root . --json competitor-coverage.json "
+            "--html competitor-coverage.html"
+        ),
+        differentiator=(
+            "Turns competitor learning into a public JSON/HTML evidence artifact "
+            "with strengths, inherited capabilities, differentiators, and safety boundaries."
+        ),
+        note=(
+            "Helps reviewers see exactly how RSNA, DicomCleaner, Orthanc, CTP, "
+            "DCMTK, and pydicom lessons map to implemented repository evidence."
+        ),
+    ),
+    CapabilitySpec(
         id="bilingual-discoverability",
         capability="Bilingual GitHub discoverability and synthetic-data safety positioning",
         source_tools=("RSNA DICOM Anonymizer", "pydicom anonymization example"),

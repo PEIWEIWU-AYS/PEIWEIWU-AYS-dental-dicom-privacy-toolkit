@@ -8,11 +8,11 @@
 
 ## GitHub Description
 
-Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, dcmodify plan export, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
+Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, dcmodify plan export, pixel risk scan, competitor coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `dcmodify` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `dcmodify` `pixel-risk` `competitor-analysis` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## English Keywords
 
@@ -28,6 +28,8 @@ Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Or
 - DICOM dcmodify plan
 - DCMTK dcmodify
 - DICOM pixel risk scan
+- DICOM competitor coverage
+- DICOM reference tool coverage
 - DICOM workflow quality gate
 - de-identification certificate
 - deterministic pseudonymization
@@ -69,6 +71,8 @@ Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Or
 - dcmodify操作计划
 - DCMTK标签操作
 - 像素风险扫描
+- 竞品能力覆盖
+- 精品项目对标
 - 工作流质量门禁
 - 去标识化证明书
 - DICOM伪名化
@@ -108,6 +112,8 @@ Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Or
 - DICOM dcmodify plan
 - DCMTK dcmodify DICOM anonymization
 - DICOM pixel risk scan
+- DICOM competitor coverage report
+- DICOM reference tool coverage
 - DICOM workflow quality gate
 - DICOM deterministic pseudonymization
 - linkable DICOM research pseudonyms

@@ -45,6 +45,7 @@ The matrix reviews whether the repository has evidence for:
 - Orthanc-inspired safe DICOM metadata JSON export
 - local browser workbench for GUI-style synthetic workflow review
 - original objective completion audit with requirement-level evidence
+- competitor coverage report for reference-tool mapping and differentiator evidence
 - encrypted sharing packages
 - package verification receipts
 - de-identification certificate for synthetic sharing handoff evidence

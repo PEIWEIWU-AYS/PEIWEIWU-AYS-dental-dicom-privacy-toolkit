@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from ddpt import __version__
 from ddpt.anonymize import anonymize_dicom
+from ddpt.competitor import build_competitor_coverage
 from ddpt.dicom_json import export_dicom_json
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory
@@ -73,6 +74,7 @@ def create_api_app(root_dir: Path) -> FastAPI:
                 "/inventory",
                 "/inspect",
                 "/dicom-json",
+                "/competitor-coverage",
                 "/anonymize",
                 "/validate",
                 "/preview",
@@ -110,6 +112,16 @@ def create_api_app(root_dir: Path) -> FastAPI:
         return model_to_dict(
             export_dicom_json(dicom_path, include_values=request.include_values)
         )
+
+    @app.get("/competitor-coverage")
+    def competitor_coverage() -> dict:
+        repository_root = _find_repository_root(root)
+        if repository_root is None:
+            raise HTTPException(
+                status_code=400,
+                detail="API root is not inside a DDPT repository checkout.",
+            )
+        return model_to_dict(build_competitor_coverage(repository_root))
 
     @app.post("/anonymize")
     def anonymize(request: AnonymizeRequest) -> dict:
@@ -152,3 +164,12 @@ def _resolve_inside_root(root: Path, value: str) -> Path:
     except ValueError as exc:
         raise HTTPException(status_code=400, detail="Path must stay inside API root") from exc
     return candidate
+
+
+def _find_repository_root(start: Path) -> Path | None:
+    for candidate in [start.resolve(), *start.resolve().parents]:
+        if (candidate / "pyproject.toml").is_file() and (
+            candidate / "src" / "ddpt"
+        ).is_dir():
+            return candidate
+    return None

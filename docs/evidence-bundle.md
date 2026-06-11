@@ -23,6 +23,7 @@ The bundle includes:
 - public repository safety scan JSON
 - release-readiness audit JSON and HTML
 - competitor-informed capability matrix JSON and HTML
+- competitor coverage JSON and HTML
 - policy registry JSON, CSV, and HTML
 - built-in profile lint JSON and HTML
 - safe DICOM JSON export JSON and HTML from the workflow recipe
@@ -55,6 +56,8 @@ evidence-run/
     release-audit.html
     capability-matrix.json
     capability-matrix.html
+    competitor-coverage.json
+    competitor-coverage.html
     policy-registry.json
     policy-registry.csv
     policy-registry.html

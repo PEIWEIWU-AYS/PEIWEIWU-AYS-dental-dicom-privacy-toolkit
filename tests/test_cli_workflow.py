@@ -917,6 +917,21 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     assert response.status_code == 404
 
 
+def test_local_api_competitor_coverage_endpoint() -> None:
+    client = TestClient(create_api_app(Path(".")))
+
+    response = client.get("/competitor-coverage")
+
+    assert response.status_code == 200
+    report = response.json()
+    assert report["passed"] is True
+    assert report["covered_tools"] == report["total_tools"]
+    tool_names = {item["name"] for item in report["tools"]}
+    assert "RSNA DICOM Anonymizer" in tool_names
+    assert "PixelMed DicomCleaner" in tool_names
+    assert "Orthanc" in tool_names
+
+
 def test_doctor_command_reports_environment(tmp_path: Path) -> None:
     doctor_json = tmp_path / "reports" / "doctor.json"
 
@@ -1041,9 +1056,57 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "workflow-quality-gate" in capability_ids
     assert "deid-certificate" in capability_ids
     assert "secure-sharing" in capability_ids
+    assert "competitor-coverage-report" in capability_ids
     html = matrix_html.read_text()
     assert "Dental DICOM Capability Matrix" in html
     assert "repository evidence" in html
+
+
+def test_competitor_coverage_reports_reference_tool_mapping(tmp_path: Path) -> None:
+    coverage_json = tmp_path / "reports" / "competitor-coverage.json"
+    coverage_html = tmp_path / "reports" / "competitor-coverage.html"
+
+    result = runner.invoke(
+        app,
+        [
+            "competitor",
+            "coverage",
+            "--root",
+            ".",
+            "--json",
+            str(coverage_json),
+            "--html",
+            str(coverage_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert coverage_json.exists()
+    assert coverage_html.exists()
+    report = json.loads(coverage_json.read_text())
+    assert report["passed"] is True
+    assert report["covered_tools"] == report["total_tools"]
+    assert report["missing_tools"] == 0
+    tools = {item["name"]: item for item in report["tools"]}
+    assert "RSNA DICOM Anonymizer" in tools
+    assert "PixelMed DicomCleaner" in tools
+    assert "Orthanc" in tools
+    assert "RSNA CTP" in tools
+    assert "DCMTK dcmodify" in tools
+    assert "pydicom anonymization example" in tools
+    assert tools["PixelMed DicomCleaner"]["implemented_capabilities"] > 0
+    capability_ids = {
+        capability["id"]
+        for tool in report["tools"]
+        for capability in tool["capabilities"]
+    }
+    assert "pixel-review-redaction" in capability_ids
+    assert "dicom-json-export" in capability_ids
+    assert "dcmodify-plan-export" in capability_ids
+    assert "competitor-coverage-report" in capability_ids
+    html = coverage_html.read_text()
+    assert "Dental DICOM Competitor Coverage" in html
+    assert "explicit safety boundaries" in html
 
 
 def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) -> None:
@@ -1078,7 +1141,9 @@ def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) ->
     assert "study-pydicom-example" in item_ids
     assert "shareable-proof-package" in item_ids
     assert "deid-certificate-handoff" in item_ids
+    assert "competitor-coverage-evidence" in item_ids
     assert "capability-matrix-gate" in item_ids
+    assert "competitor-coverage-gate" in item_ids
     rsna = next(item for item in report["items"] if item["id"] == "study-rsna-anonymizer")
     assert "capability:configurable-anonymization" in rsna["evidence"]
     html = audit_html.read_text()
@@ -1100,6 +1165,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "review-dashboard.html").exists()
     assert (output_dir / "reports" / "release-audit.html").exists()
     assert (output_dir / "reports" / "capability-matrix.html").exists()
+    assert (output_dir / "reports" / "competitor-coverage.html").exists()
     assert (output_dir / "reports" / "objective-audit.html").exists()
     assert (output_dir / "reports" / "policy-registry.json").exists()
     assert (output_dir / "reports" / "policy-registry.csv").exists()
@@ -1127,6 +1193,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/review-dashboard.html" in artifact_paths
     assert "reports/release-audit.html" in artifact_paths
     assert "reports/capability-matrix.html" in artifact_paths
+    assert "reports/competitor-coverage.html" in artifact_paths
     assert "reports/objective-audit.html" in artifact_paths
     assert "reports/policy-registry.html" in artifact_paths
     assert "reports/profile-lint-dental-basic.html" in artifact_paths
@@ -1149,6 +1216,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Dental DICOM Evidence Bundle" in html
     assert "Review dashboard HTML" in html
     assert "Capability matrix HTML" in html
+    assert "Competitor coverage HTML" in html
     assert "Objective completion audit HTML" in html
     assert "Release audit HTML" in html
     assert "De-identification certificate HTML" in html

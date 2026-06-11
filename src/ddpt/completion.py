@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ddpt.capability import build_capability_matrix
+from ddpt.competitor import build_competitor_coverage
 from ddpt.models import ObjectiveAuditItem, ObjectiveAuditReport
 from ddpt.release import run_release_audit
 from ddpt.safety import scan_repository_safety
@@ -258,6 +259,29 @@ OBJECTIVE_REQUIREMENTS = [
         ),
     ),
     ObjectiveRequirement(
+        id="competitor-coverage-evidence",
+        category="differentiation",
+        requirement=(
+            "Produce a reference-tool coverage report that maps learned strengths "
+            "to implemented evidence and clear safety boundaries."
+        ),
+        evidence_files=(
+            "docs/competitor-coverage.md",
+            "src/ddpt/competitor.py",
+            "tests/test_cli_workflow.py",
+        ),
+        capability_ids=("competitor-coverage-report",),
+        evidence_terms=(
+            ("docs/competitor-coverage.md", "ddpt competitor coverage"),
+            ("docs/competitor-coverage.md", "RSNA DICOM Anonymizer"),
+            ("docs/competitor-coverage.md", "PixelMed DicomCleaner"),
+        ),
+        note=(
+            "Turns competitor learning into a JSON/HTML report for GitHub visitors, "
+            "reviewers, and MacBook demos."
+        ),
+    ),
+    ObjectiveRequirement(
         id="public-release-readiness",
         category="release-readiness",
         requirement=(
@@ -282,6 +306,7 @@ OBJECTIVE_REQUIREMENTS = [
 def run_objective_audit(root_dir: Path) -> ObjectiveAuditReport:
     root = root_dir.resolve()
     capability_report = build_capability_matrix(root)
+    competitor_report = build_competitor_coverage(root)
     release_report = run_release_audit(root)
     safety_report = scan_repository_safety(root)
     implemented_capability_ids = {
@@ -303,6 +328,17 @@ def run_objective_audit(root_dir: Path) -> ObjectiveAuditReport:
                     f"{capability_report.total_items} implemented"
                 ],
                 "Run `ddpt capability matrix --root .`.",
+            ),
+            _gate_item(
+                "competitor-coverage-gate",
+                "verification",
+                "Reference-tool competitor coverage passes for every named source tool.",
+                competitor_report.passed,
+                [
+                    f"{competitor_report.covered_tools}/"
+                    f"{competitor_report.total_tools} tools covered"
+                ],
+                "Run `ddpt competitor coverage --root .`.",
             ),
             _gate_item(
                 "release-audit-gate",

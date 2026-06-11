@@ -525,6 +525,35 @@ class CapabilityMatrixReport(BaseModel):
     )
 
 
+class CompetitorCoverageTool(BaseModel):
+    name: str
+    category: str
+    url: str
+    status: Literal["covered", "partial", "missing"]
+    strengths_learned: list[str]
+    project_responses: list[str]
+    implemented_capabilities: int
+    partial_capabilities: int
+    missing_capabilities: int
+    capabilities: list[CapabilityMatrixItem]
+
+
+class CompetitorCoverageReport(BaseModel):
+    root_dir: str
+    passed: bool
+    covered_tools: int
+    partial_tools: int
+    missing_tools: int
+    total_tools: int
+    implemented_capabilities: int
+    total_capabilities: int
+    boundary_notes: list[str]
+    tools: list[CompetitorCoverageTool]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class ObjectiveAuditItem(BaseModel):
     id: str
     category: str
