@@ -20,6 +20,10 @@ Core goals:
 - Audit reports for de-identification and transfer events
 - Synthetic examples for safe testing
 
+## Project Blueprint
+
+See [docs/project-blueprint.md](docs/project-blueprint.md) for the full workflow, implementation plan, languages, dependencies, tools, and presentation format.
+
 ## Suggested GitHub Topics
 
 `dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
