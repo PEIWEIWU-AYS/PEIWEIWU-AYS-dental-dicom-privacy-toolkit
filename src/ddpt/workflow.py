@@ -15,6 +15,7 @@ from ddpt.models import WorkflowRunReport, WorkflowStepResult
 from ddpt.pixel_review import create_pixel_review
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.preview import render_dicom_preview
+from ddpt.quality_gate import run_workflow_quality_gate
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
@@ -25,6 +26,7 @@ from ddpt.reports import (
     write_package_receipt_html,
     write_pixel_review_html,
     write_share_readiness_html,
+    write_workflow_quality_gate_html,
 )
 from ddpt.share_readiness import run_share_readiness
 from ddpt.sharing import create_package, create_verification_receipt
@@ -309,6 +311,24 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             artifacts.append(html_path)
         if not certificate.passed:
             raise ValueError("De-identification certificate failed")
+        return artifacts
+
+    if action == "quality-gate":
+        report = run_workflow_quality_gate(
+            _path(root_dir, step.get("root", ".")),
+            workflow_report_path=_optional_path(root_dir, step.get("workflow_report")),
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_workflow_quality_gate_html(html_path, report)
+            artifacts.append(html_path)
+        if not report.passed:
+            raise ValueError("Workflow quality gate failed")
         return artifacts
 
     raise ValueError(f"Unsupported workflow action: {action}")

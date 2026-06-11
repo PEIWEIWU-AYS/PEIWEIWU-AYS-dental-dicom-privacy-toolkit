@@ -39,6 +39,7 @@ jobs:
           test -f docs/deid-certificate.md
           test -f docs/evidence-bundle.md
           test -f docs/workflow-recipes.md
+          test -f docs/quality-gate.md
           test -f docs/anonymization-dry-run.md
           test -f docs/macbook-validation.md
           test -f docs/safety-scan.md
@@ -104,6 +105,9 @@ jobs:
 
       - name: Run share readiness gate
         run: python -m ddpt share readiness evidence-run/demo-run --json share-readiness.json --html share-readiness.html
+
+      - name: Run workflow quality gate
+        run: python -m ddpt quality gate evidence-run/demo-run --json quality-gate.json --html quality-gate.html
 
       - name: Build local review dashboard
         run: python -m ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json

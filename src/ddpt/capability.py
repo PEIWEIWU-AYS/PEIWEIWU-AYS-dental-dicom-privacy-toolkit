@@ -374,6 +374,31 @@ CAPABILITY_SPECS = [
         note="Turns individual reports into a final reviewer-friendly sharing checklist.",
     ),
     CapabilitySpec(
+        id="workflow-quality-gate",
+        capability="Workflow quality gate for reproducible public review evidence",
+        source_tools=("RSNA CTP", "Orthanc", "PixelMed DicomCleaner"),
+        evidence_files=(
+            "src/ddpt/quality_gate.py",
+            "docs/quality-gate.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt quality gate workflow-run --workflow-report "
+            "workflow-run/reports/workflow-run.json --json "
+            "workflow-run/reports/quality-gate.json --html "
+            "workflow-run/reports/quality-gate.html"
+        ),
+        differentiator=(
+            "A single JSON/HTML gate verifies workflow, privacy, pixel, package, "
+            "audit, readiness, and certificate evidence for MacBook and CI demos."
+        ),
+        note=(
+            "This extends CTP-style staged processing into a public-review quality "
+            "gate while staying lightweight and local-first."
+        ),
+    ),
+    CapabilitySpec(
         id="deid-certificate",
         capability="De-identification certificate for synthetic sharing handoff",
         source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "PixelMed DicomCleaner"),

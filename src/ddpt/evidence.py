@@ -10,6 +10,7 @@ from ddpt.models import EvidenceArtifact, EvidenceBundleResult
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.policy import policy_registry_report, write_policy_registry_csv
 from ddpt.profiles import lint_profile
+from ddpt.quality_gate import run_workflow_quality_gate
 from ddpt.release import run_release_audit
 from ddpt.reports import (
     model_to_dict,
@@ -21,6 +22,7 @@ from ddpt.reports import (
     write_release_audit_html,
     write_review_dashboard_html,
     write_workflow_html,
+    write_workflow_quality_gate_html,
 )
 from ddpt.safety import scan_repository_safety
 from ddpt.utils import write_json
@@ -82,6 +84,11 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_profile_lint_html(linkable_lint_html, linkable_lint_report)
 
     demo_result = run_demo_pipeline(demo_dir)
+    quality_report = run_workflow_quality_gate(demo_dir)
+    quality_json = demo_dir / "reports" / "quality-gate.json"
+    quality_html = demo_dir / "reports" / "quality-gate.html"
+    write_json(quality_json, model_to_dict(quality_report))
+    write_workflow_quality_gate_html(quality_html, quality_report)
 
     workflow_report = run_workflow(
         repository_root / "recipes" / "dental-demo-workflow.yml",
@@ -232,6 +239,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            quality_html,
+            "Workflow quality gate HTML",
+            "quality",
+            "Final reproducibility gate over demo privacy, pixel, package, and audit evidence.",
+        ),
+        _artifact(
+            output_dir,
             workflow_json,
             "Workflow report JSON",
             "workflow",
@@ -274,6 +288,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             and linkable_lint_report.passed
             and demo_result.validation_passed
             and demo_result.audit_chain_passed
+            and quality_report.passed
             and workflow_report.passed
         ),
         doctor_passed=doctor_report.passed,

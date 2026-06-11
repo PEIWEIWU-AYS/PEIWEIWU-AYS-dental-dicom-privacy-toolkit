@@ -14,6 +14,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Batch De-identification Evidence](batch.md)
 - [Demo Guide](demo-guide.md)
 - [Workflow Recipes](workflow-recipes.md)
+- [Workflow Quality Gate](quality-gate.md)
 - [Anonymization Dry Run](anonymization-dry-run.md)
 - [Research Sharing Profile](research-sharing-profile.md)
 - [Profile Lint](profile-lint.md)

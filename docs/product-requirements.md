@@ -39,7 +39,8 @@ Version 0.1 is successful when a new user can:
 29. Run a competitor-informed capability matrix that maps features to repository evidence.
 30. Generate a static local review dashboard for non-programmer walkthroughs.
 31. Generate a local evidence bundle for MacBook validation and public demonstrations.
-32. Run automated tests locally and in GitHub Actions.
+32. Run a workflow quality gate that verifies public review evidence.
+33. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -188,8 +189,35 @@ Required:
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails
-- support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, and certificate stages
+- support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
 - support before/after de-identification comparison stages
+
+### `ddpt quality gate`
+
+Check whether a synthetic demo or workflow folder has complete reproducibility
+and public-review evidence.
+
+Required:
+
+- demo or workflow output directory input
+- optional workflow run JSON input
+- check source synthetic DICOM exists
+- check anonymized DICOM exists
+- check pixel-redacted DICOM exists
+- check anonymized DICOM validation passed
+- check before/after de-identification comparison passed
+- check residual high-risk and medium-risk policy items are absent
+- check private tags after anonymization are zero
+- check pixel review regions and PNG previews exist
+- check encrypted package receipt passed and has entries
+- check audit chain verification passed
+- check share-readiness report passed
+- check de-identification certificate passed
+- check workflow run report passed when provided
+- JSON report
+- optional HTML report
+- non-zero exit status when required checks fail
+- documentation that this is a synthetic-data project gate, not legal, clinical, regulatory, or security certification
 
 ### `ddpt inventory`
 

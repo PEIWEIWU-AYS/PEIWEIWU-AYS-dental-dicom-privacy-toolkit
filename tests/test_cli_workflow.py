@@ -313,6 +313,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "share-readiness.html").exists()
     assert (workflow_dir / "reports" / "deid-certificate.json").exists()
     assert (workflow_dir / "reports" / "deid-certificate.html").exists()
+    assert (workflow_dir / "reports" / "quality-gate.json").exists()
+    assert (workflow_dir / "reports" / "quality-gate.html").exists()
     report = json.loads(workflow_json.read_text())
     assert report["passed"] is True
     assert [step["id"] for step in report["steps"]] == [
@@ -331,14 +333,19 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "audit-verify",
         "share-readiness",
         "deid-certificate",
+        "workflow-quality-gate",
     ]
     certificate = json.loads((workflow_dir / "reports" / "deid-certificate.json").read_text())
     assert certificate["passed"] is True
     assert certificate["passed_checks"] == certificate["total_checks"]
+    quality_gate = json.loads((workflow_dir / "reports" / "quality-gate.json").read_text())
+    assert quality_gate["passed"] is True
+    assert quality_gate["failed_checks"] == 0
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
     assert "deid-certificate" in html
+    assert "workflow-quality-gate" in html
 
 
 def test_workflow_recipe_accepts_relative_root(
@@ -840,6 +847,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
     assert "share-readiness-gate" in capability_ids
+    assert "workflow-quality-gate" in capability_ids
     assert "deid-certificate" in capability_ids
     assert "secure-sharing" in capability_ids
     html = matrix_html.read_text()
@@ -915,6 +923,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
     assert (output_dir / "demo-run" / "reports" / "share-readiness.html").exists()
     assert (output_dir / "demo-run" / "reports" / "deid-certificate.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "quality-gate.html").exists()
     assert (output_dir / "demo-run" / "share" / "package.ddpt").exists()
     report = json.loads(evidence_json.read_text())
     assert report["passed"] is True
@@ -934,6 +943,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "demo-run/reports/package-receipt.html" in artifact_paths
     assert "demo-run/reports/share-readiness.html" in artifact_paths
     assert "demo-run/reports/deid-certificate.html" in artifact_paths
+    assert "demo-run/reports/quality-gate.html" in artifact_paths
     html = evidence_html.read_text()
     assert "Dental DICOM Evidence Bundle" in html
     assert "Review dashboard HTML" in html
@@ -941,6 +951,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Objective completion audit HTML" in html
     assert "Release audit HTML" in html
     assert "De-identification certificate HTML" in html
+    assert "Workflow quality gate HTML" in html
 
 
 def test_certificate_command_builds_handoff_certificate(tmp_path: Path) -> None:
@@ -1056,6 +1067,56 @@ def test_share_readiness_command_checks_demo_handoff_gate(tmp_path: Path) -> Non
     assert "audit-chain" in check_ids
     html = readiness_html.read_text()
     assert "Dental DICOM Share Readiness" in html
+
+
+def test_quality_gate_command_checks_workflow_evidence(tmp_path: Path) -> None:
+    workflow_dir = tmp_path / "workflow-run"
+    workflow_json = workflow_dir / "reports" / "workflow-run.json"
+    quality_json = tmp_path / "reports" / "quality-gate.json"
+    quality_html = tmp_path / "reports" / "quality-gate.html"
+
+    workflow_result = runner.invoke(
+        app,
+        [
+            "workflow",
+            "run",
+            "recipes/dental-demo-workflow.yml",
+            "--root",
+            str(workflow_dir),
+            "--json",
+            str(workflow_json),
+        ],
+    )
+    assert workflow_result.exit_code == 0, workflow_result.output
+
+    result = runner.invoke(
+        app,
+        [
+            "quality",
+            "gate",
+            str(workflow_dir),
+            "--workflow-report",
+            str(workflow_json),
+            "--json",
+            str(quality_json),
+            "--html",
+            str(quality_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert quality_json.exists()
+    assert quality_html.exists()
+    report = json.loads(quality_json.read_text())
+    assert report["passed"] is True
+    assert report["failed_checks"] == 0
+    assert report["workflow_report_path"] == str(workflow_json.resolve())
+    check_ids = {item["id"] for item in report["checks"]}
+    assert "workflow-run-report" in check_ids
+    assert "deid-certificate" in check_ids
+    assert "share-readiness" in check_ids
+    html = quality_html.read_text()
+    assert "Dental DICOM Workflow Quality Gate" in html
 
 
 def test_safety_scan_flags_private_material(tmp_path: Path) -> None:

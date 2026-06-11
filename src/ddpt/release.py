@@ -33,6 +33,7 @@ REQUIRED_FILES = [
     "docs/profile-lint.md",
     "docs/pixel-review.md",
     "docs/product-requirements.md",
+    "docs/quality-gate.md",
     "docs/project-blueprint.md",
     "docs/release-audit.md",
     "docs/research-sharing-profile.md",
@@ -60,6 +61,7 @@ README_KEYWORDS = [
     "deterministic pseudonymization",
     "local browser workbench",
     "objective completion audit",
+    "workflow quality gate",
     "encrypted DICOM sharing",
     "CBCT",
     "牙科DICOM",
@@ -82,6 +84,7 @@ DOCUMENTED_COMMANDS = [
     "ddpt evidence bundle",
     "ddpt dashboard build",
     "ddpt batch",
+    "ddpt quality gate",
     "ddpt compare deid",
     "ddpt certificate create",
     "ddpt share readiness",
@@ -128,6 +131,7 @@ REQUIRED_SOURCE_MODULES = [
     "src/ddpt/pixel_review.py",
     "src/ddpt/pixels.py",
     "src/ddpt/preview.py",
+    "src/ddpt/quality_gate.py",
     "src/ddpt/release.py",
     "src/ddpt/reports.py",
     "src/ddpt/safety.py",
@@ -166,6 +170,7 @@ CI_TERMS = [
     "python -m ddpt share readiness",
     "python -m ddpt dashboard build",
     "python -m ddpt batch",
+    "python -m ddpt quality gate",
     "ruff check .",
     "pytest",
 ]
@@ -185,6 +190,7 @@ WORKFLOW_ACTIONS = {
     "audit-verify",
     "share-readiness",
     "certificate",
+    "quality-gate",
 }
 
 PROFILE_COVERAGE_FILES = [

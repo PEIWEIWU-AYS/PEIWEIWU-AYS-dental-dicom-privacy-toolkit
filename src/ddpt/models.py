@@ -517,6 +517,28 @@ class WorkflowRunReport(BaseModel):
     )
 
 
+class WorkflowQualityGateCheck(BaseModel):
+    id: str
+    stage: str
+    required: bool
+    passed: bool
+    message: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class WorkflowQualityGateReport(BaseModel):
+    root_dir: str
+    passed: bool
+    workflow_report_path: str | None = None
+    required_checks: int
+    passed_checks: int
+    failed_checks: int
+    checks: list[WorkflowQualityGateCheck]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DemoPipelineResult(BaseModel):
     output_dir: str
     input_dicom: str

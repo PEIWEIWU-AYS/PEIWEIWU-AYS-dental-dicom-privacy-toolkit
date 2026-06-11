@@ -37,6 +37,7 @@ from ddpt.profiles import (
     lint_profile,
     write_profile_template,
 )
+from ddpt.quality_gate import run_workflow_quality_gate
 from ddpt.redaction_plan import (
     load_redaction_plan,
     rectangles_from_plan,
@@ -61,6 +62,7 @@ from ddpt.reports import (
     write_review_dashboard_html,
     write_share_readiness_html,
     write_workflow_html,
+    write_workflow_quality_gate_html,
 )
 from ddpt.safety import scan_repository_safety
 from ddpt.share_readiness import run_share_readiness
@@ -88,6 +90,7 @@ completion_app = typer.Typer(help="Audit original project objective completion."
 dashboard_app = typer.Typer(help="Build static local review dashboards.")
 compare_app = typer.Typer(help="Compare DICOM privacy outputs.")
 share_app = typer.Typer(help="Check sharing readiness gates.")
+quality_app = typer.Typer(help="Run workflow quality gates.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(audit_app, name="audit")
@@ -104,6 +107,7 @@ app.add_typer(completion_app, name="completion")
 app.add_typer(dashboard_app, name="dashboard")
 app.add_typer(compare_app, name="compare")
 app.add_typer(share_app, name="share")
+app.add_typer(quality_app, name="quality")
 console = Console()
 
 
@@ -617,6 +621,48 @@ def share_readiness(
         )
     console.print(table)
     console.print(f"Passed checks: {report.passed_checks}/{len(report.checks)}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@quality_app.command("gate")
+def quality_gate(
+    root_dir: Annotated[Path, typer.Argument(help="Demo or workflow output directory.")],
+    workflow_report: Annotated[
+        Path | None,
+        typer.Option("--workflow-report", help="Optional workflow run JSON report."),
+    ] = None,
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON quality gate report.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML quality gate report.")
+    ] = None,
+) -> None:
+    report = run_workflow_quality_gate(root_dir, workflow_report_path=workflow_report)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_workflow_quality_gate_html(html_output, report)
+
+    table = Table(title="Dental DICOM Workflow Quality Gate")
+    table.add_column("Status")
+    table.add_column("Required")
+    table.add_column("Check")
+    table.add_column("Stage")
+    table.add_column("Message")
+    for check in report.checks:
+        table.add_row(
+            "PASS" if check.passed else "FAIL",
+            "yes" if check.required else "optional",
+            check.id,
+            check.stage,
+            check.message,
+        )
+    console.print(table)
+    console.print(f"Required checks: {report.passed_checks}/{report.required_checks}")
+    console.print(f"Failed required checks: {report.failed_checks}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)

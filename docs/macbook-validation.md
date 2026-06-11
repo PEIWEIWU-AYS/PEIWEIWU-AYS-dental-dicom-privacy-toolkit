@@ -79,13 +79,21 @@ ddpt workflow run recipes/dental-demo-workflow.yml \
   --root workflow-run \
   --json workflow-run/reports/workflow-run.json \
   --html workflow-run/reports/workflow-run.html
+
+ddpt quality gate workflow-run \
+  --workflow-report workflow-run/reports/workflow-run.json \
+  --json workflow-run/reports/quality-gate.json \
+  --html workflow-run/reports/quality-gate.html
 ```
 
 Expected:
 
 - `workflow-run/reports/workflow-run.json` exists
 - `workflow-run/reports/workflow-run.html` exists
+- `workflow-run/reports/quality-gate.json` exists
+- `workflow-run/reports/quality-gate.html` exists
 - overall workflow status is `PASS`
+- workflow quality gate status is `PASS`
 
 ## 7. Generate Multi-File Synthetic Study
 

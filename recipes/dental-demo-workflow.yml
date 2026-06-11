@@ -97,3 +97,9 @@ steps:
     root: .
     json: reports/deid-certificate.json
     html: reports/deid-certificate.html
+
+  - id: workflow-quality-gate
+    action: quality-gate
+    root: .
+    json: reports/quality-gate.json
+    html: reports/quality-gate.html

@@ -72,12 +72,21 @@ OBJECTIVE_REQUIREMENTS = [
             "pipeline thinking."
         ),
         evidence_files=("docs/competitor-analysis.md", "recipes/dental-demo-workflow.yml"),
-        capability_ids=("pipeline-recipes", "share-readiness-gate", "audit-evidence-bundle"),
+        capability_ids=(
+            "pipeline-recipes",
+            "share-readiness-gate",
+            "workflow-quality-gate",
+            "audit-evidence-bundle",
+        ),
         evidence_terms=(
             ("docs/competitor-analysis.md", "RSNA CTP"),
             ("recipes/dental-demo-workflow.yml", "share-readiness"),
+            ("recipes/dental-demo-workflow.yml", "quality-gate"),
         ),
-        note="Covers staged recipes, audit chain, evidence bundle, and sharing gate.",
+        note=(
+            "Covers staged recipes, audit chain, evidence bundle, sharing gate, "
+            "and workflow quality gate."
+        ),
     ),
     ObjectiveRequirement(
         id="study-dcmtk-dcmodify",
@@ -168,21 +177,24 @@ OBJECTIVE_REQUIREMENTS = [
             "docs/review-dashboard.md",
             "docs/share-readiness.md",
             "docs/deid-certificate.md",
+            "docs/quality-gate.md",
         ),
         capability_ids=(
             "audit-evidence-bundle",
             "static-review-dashboard",
             "secure-sharing",
             "deid-certificate",
+            "workflow-quality-gate",
         ),
         evidence_terms=(
             ("docs/evidence-bundle.md", "ddpt evidence bundle"),
             ("docs/share-readiness.md", "ddpt share readiness"),
             ("docs/deid-certificate.md", "ddpt certificate create"),
+            ("docs/quality-gate.md", "ddpt quality gate"),
         ),
         note=(
             "Covers release audit, safety scan, evidence bundle, dashboard, "
-            "package receipt, and handoff certificate."
+            "package receipt, quality gate, and handoff certificate."
         ),
     ),
     ObjectiveRequirement(

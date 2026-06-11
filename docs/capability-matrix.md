@@ -36,6 +36,7 @@ The matrix reviews whether the repository has evidence for:
 - multi-stage YAML workflow recipes
 - batch de-identification evidence for directory workflows
 - workflow-level de-identification certificate generation
+- workflow quality gate for reproducible public review evidence
 - local Orthanc-inspired REST API
 - local browser workbench for GUI-style synthetic workflow review
 - original objective completion audit with requirement-level evidence

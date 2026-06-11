@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -28,6 +28,7 @@ Core goals:
 - Before/after de-identification comparison reports
 - Batch de-identification evidence for directory workflows
 - De-identification certificate for synthetic sharing handoff evidence
+- Workflow quality gate for reproducible public review evidence
 - Workflow-level certificate generation as the final YAML recipe stage
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
@@ -65,6 +66,7 @@ ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.ht
 ddpt demo demo-run
 ddpt synthetic-study synthetic-study-demo --patients 2 --files-per-patient 2 --json synthetic-study-demo/manifest.json
 ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
+ddpt quality gate workflow-run --workflow-report workflow-run/reports/workflow-run.json --json workflow-run/reports/quality-gate.json --html workflow-run/reports/quality-gate.html
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
@@ -114,6 +116,7 @@ See [docs/pixel-review.md](docs/pixel-review.md) for burned-in annotation region
 
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
 See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
+See [docs/quality-gate.md](docs/quality-gate.md) for workflow-level evidence gates.
 See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write anonymization previews.
 See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for deterministic date-shift research sharing.
 See [docs/linkable-research-profile.md](docs/linkable-research-profile.md) for deterministic patient pseudonymization in longitudinal research demos.
@@ -157,7 +160,7 @@ ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out 
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## Repository Structure
 

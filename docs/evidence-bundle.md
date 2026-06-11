@@ -33,6 +33,7 @@ The bundle includes:
 - package verification receipt HTML
 - share-readiness JSON and HTML gate
 - de-identification certificate JSON and HTML
+- workflow quality gate JSON and HTML
 - tamper-evident demo audit chain
 - YAML workflow JSON and HTML report
 - static review dashboard JSON and HTML
@@ -65,6 +66,7 @@ evidence-run/
     reports/deid-comparison.html
     reports/deid-certificate.html
     reports/share-readiness.html
+    reports/quality-gate.html
     reports/pixel-review.html
     reports/pixel-review/pixel-review-overlay.png
     reports/audit-chain.json
