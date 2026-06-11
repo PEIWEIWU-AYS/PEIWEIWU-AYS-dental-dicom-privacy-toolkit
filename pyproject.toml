@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dental-dicom-privacy-toolkit"
+version = "0.1.0"
+description = "Dental DICOM anonymization, reporting, and encrypted sharing toolkit."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+  { name = "PEIWEIWU-AYS", email = "qianpeng066@gmail.com" }
+]
+keywords = [
+  "dicom",
+  "dentistry",
+  "dental-imaging",
+  "anonymization",
+  "de-identification",
+  "privacy",
+  "encryption"
+]
+dependencies = [
+  "cryptography>=42.0.0",
+  "jinja2>=3.1.0",
+  "pydantic>=2.6.0",
+  "pydicom>=2.4.0",
+  "pyyaml>=6.0.0",
+  "rich>=13.7.0",
+  "typer>=0.12.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "ruff>=0.5.0"
+]
+
+[project.scripts]
+ddpt = "ddpt.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ddpt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

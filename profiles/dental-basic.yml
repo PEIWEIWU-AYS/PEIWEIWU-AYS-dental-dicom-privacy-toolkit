@@ -1,0 +1,25 @@
+name: dental-basic
+replace:
+  PatientName: ANONYMIZED^DENTAL
+  PatientID: DDPT-SYNTHETIC-ID
+  AccessionNumber: DDPT-ACCESSION
+  StudyDescription: Synthetic Dental Imaging Study
+  SeriesDescription: Synthetic Dental Imaging Series
+  InstitutionName: Synthetic Dental Clinic
+blank:
+  - PatientBirthDate
+  - PatientAddress
+  - PatientTelephoneNumbers
+  - OtherPatientIDs
+  - OtherPatientNames
+  - ReferringPhysicianName
+  - RequestingPhysician
+  - OperatorsName
+  - InstitutionAddress
+  - DeviceSerialNumber
+  - StationName
+regenerate_uids:
+  - StudyInstanceUID
+  - SeriesInstanceUID
+  - SOPInstanceUID
+remove_private_tags: true

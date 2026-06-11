@@ -24,6 +24,20 @@ Core goals:
 
 See [docs/project-blueprint.md](docs/project-blueprint.md) for the full workflow, implementation plan, languages, dependencies, tools, and presentation format.
 
+## Quick Local Demo
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+
+ddpt synthetic demo-run/sample.dcm
+ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
+ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
+ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
+ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key
+```
+
 ## Suggested GitHub Topics
 
 `dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`

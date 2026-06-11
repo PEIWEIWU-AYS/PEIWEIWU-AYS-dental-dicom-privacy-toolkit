@@ -15,6 +15,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package
+        run: python -m pip install -e ".[dev]"
+
       - name: Confirm repository skeleton
         run: |
           test -f README.md
@@ -24,3 +32,8 @@ jobs:
           test -f docs/data-safety.md
           test -f docs/discoverability.md
           test -f docs/project-blueprint.md
+          test -f docs/competitor-analysis.md
+          test -f docs/product-requirements.md
+
+      - name: Run tests
+        run: pytest

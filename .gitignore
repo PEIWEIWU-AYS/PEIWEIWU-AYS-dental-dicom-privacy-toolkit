@@ -31,6 +31,13 @@ yarn-debug.log*
 # Logs
 *.log
 
+# Generated demo artifacts
+outputs/
+reports/
+share/
+restored/
+demo-run/
+
 # Private clinical material
 private/
 patient-data/
