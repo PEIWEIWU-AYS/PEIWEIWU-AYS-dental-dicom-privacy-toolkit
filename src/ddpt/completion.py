@@ -228,6 +228,29 @@ OBJECTIVE_REQUIREMENTS = [
         ),
     ),
     ObjectiveRequirement(
+        id="dicom-confidentiality-alignment",
+        category="differentiation",
+        requirement=(
+            "Translate dental anonymization profiles into DICOM PS3.15-inspired "
+            "confidentiality action and option evidence."
+        ),
+        evidence_files=(
+            "docs/confidentiality-alignment.md",
+            "src/ddpt/confidentiality.py",
+            "recipes/dental-demo-workflow.yml",
+        ),
+        capability_ids=("dicom-confidentiality-alignment",),
+        evidence_terms=(
+            ("docs/confidentiality-alignment.md", "ddpt confidentiality alignment"),
+            ("docs/confidentiality-alignment.md", "DICOM PS3.15"),
+            ("recipes/dental-demo-workflow.yml", "action: confidentiality-alignment"),
+        ),
+        note=(
+            "Adds standards-language reporting for D/Z/X/C/U/K action codes, "
+            "DICOM-inspired options, and explicit non-certification boundaries."
+        ),
+    ),
+    ObjectiveRequirement(
         id="shareable-proof-package",
         category="differentiation",
         requirement="Add portable proof artifacts for MacBook demos and collaborator review.",

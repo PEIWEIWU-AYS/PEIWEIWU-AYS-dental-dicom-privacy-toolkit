@@ -37,6 +37,12 @@ steps:
     json: reports/remediation-plan.json
     html: reports/remediation-plan.html
 
+  - id: confidentiality-alignment
+    action: confidentiality-alignment
+    profile: dental-basic
+    json: reports/confidentiality-alignment.json
+    html: reports/confidentiality-alignment.html
+
   - id: dcmodify-plan
     action: dcmodify-plan
     input: input/sample.synthetic.dcm

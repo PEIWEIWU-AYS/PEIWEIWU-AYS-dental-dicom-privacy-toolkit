@@ -25,11 +25,13 @@ The bundle includes:
 - competitor-informed capability matrix JSON and HTML
 - competitor coverage JSON and HTML
 - policy registry JSON, CSV, and HTML
+- DICOM confidentiality alignment JSON and HTML
 - built-in profile lint JSON and HTML
 - safe DICOM JSON export JSON and HTML from the workflow recipe
 - filename privacy scan JSON and HTML from the workflow recipe
 - privacy remediation plan JSON and HTML from the workflow recipe
 - dcmodify plan JSON, HTML, and review script from the workflow recipe
+- DICOM confidentiality alignment JSON and HTML from the workflow recipe
 - profile conformance JSON and HTML from the workflow recipe and demo
 - pixel risk scan JSON and HTML from the workflow recipe
 - one-command synthetic demo output
@@ -62,6 +64,8 @@ evidence-run/
     policy-registry.json
     policy-registry.csv
     policy-registry.html
+    confidentiality-alignment.json
+    confidentiality-alignment.html
     profile-lint-dental-basic.html
     profile-lint-dental-research-sharing.html
     workflow-run.json
@@ -73,6 +77,7 @@ evidence-run/
   demo-run/
     reports/demo-summary.html
     reports/deid-comparison.html
+    reports/confidentiality-alignment.html
     reports/profile-conformance.html
     reports/deid-certificate.html
     reports/share-readiness.html
@@ -91,6 +96,7 @@ evidence-run/
       filename-privacy.html
       dicom-json.html
       remediation-plan.html
+      confidentiality-alignment.html
       dcmodify-plan.html
       dcmodify-plan.sh
       profile-conformance.html

@@ -16,6 +16,7 @@ from ddpt.capability import build_capability_matrix
 from ddpt.certificate import build_deidentification_certificate
 from ddpt.competitor import build_competitor_coverage
 from ddpt.completion import run_objective_audit
+from ddpt.confidentiality import build_confidentiality_alignment
 from ddpt.dashboard import build_review_dashboard_report
 from ddpt.dcmodify_plan import build_dcmodify_plan, write_dcmodify_script
 from ddpt.deid_compare import compare_deidentification
@@ -56,6 +57,7 @@ from ddpt.reports import (
     write_audit_html,
     write_capability_matrix_html,
     write_competitor_coverage_html,
+    write_confidentiality_alignment_html,
     write_dcmodify_plan_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
@@ -90,6 +92,7 @@ from ddpt.workflow import run_workflow
 app = typer.Typer(help="Dental DICOM Privacy Toolkit", invoke_without_command=True)
 profile_app = typer.Typer(help="Inspect anonymization profiles.")
 policy_app = typer.Typer(help="Inspect the DICOM privacy policy registry.")
+confidentiality_app = typer.Typer(help="Audit DICOM confidentiality profile alignment.")
 audit_app = typer.Typer(help="Create and verify audit chains.")
 safety_app = typer.Typer(help="Run public repository safety checks.")
 redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.")
@@ -113,6 +116,7 @@ quality_app = typer.Typer(help="Run workflow quality gates.")
 remediation_app = typer.Typer(help="Build privacy remediation plans.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
+app.add_typer(confidentiality_app, name="confidentiality")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
 app.add_typer(redaction_plan_app, name="redaction-plan")
@@ -1220,6 +1224,36 @@ def policy_export_command(
         f"High: {report.high_risk_items}; "
         f"Medium: {report.medium_risk_items}; Low: {report.low_risk_items}"
     )
+
+
+@confidentiality_app.command("alignment")
+def confidentiality_alignment_command(
+    profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON alignment report.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML alignment report.")
+    ] = None,
+) -> None:
+    report = build_confidentiality_alignment(profile)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_confidentiality_alignment_html(html_output, report)
+
+    table = Table(title=f"DICOM Confidentiality Alignment: {report.profile}")
+    table.add_column("Status")
+    table.add_column("Option")
+    table.add_column("Note")
+    for option in report.options:
+        table.add_row(option.status, option.name, option.note)
+    console.print(table)
+    console.print(f"Aligned: {report.aligned_items}/{report.total_policy_items}")
+    console.print(f"High/medium unaligned: {report.high_medium_unaligned}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
 
 
 @dcmodify_app.command("plan")

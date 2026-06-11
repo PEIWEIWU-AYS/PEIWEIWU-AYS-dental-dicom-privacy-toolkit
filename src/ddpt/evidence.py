@@ -5,6 +5,7 @@ from pathlib import Path
 from ddpt.capability import build_capability_matrix
 from ddpt.competitor import build_competitor_coverage
 from ddpt.completion import run_objective_audit
+from ddpt.confidentiality import build_confidentiality_alignment
 from ddpt.dashboard import build_review_dashboard_report
 from ddpt.doctor import run_doctor
 from ddpt.models import EvidenceArtifact, EvidenceBundleResult
@@ -17,6 +18,7 @@ from ddpt.reports import (
     model_to_dict,
     write_capability_matrix_html,
     write_competitor_coverage_html,
+    write_confidentiality_alignment_html,
     write_evidence_bundle_html,
     write_objective_audit_html,
     write_policy_registry_html,
@@ -44,6 +46,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     safety_report = scan_repository_safety(repository_root)
     release_report = run_release_audit(repository_root)
     policy_report = policy_registry_report()
+    confidentiality_report = build_confidentiality_alignment("dental-basic")
     capability_report = build_capability_matrix(repository_root)
     competitor_report = build_competitor_coverage(repository_root)
     objective_report = run_objective_audit(repository_root)
@@ -58,6 +61,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     policy_json = reports_dir / "policy-registry.json"
     policy_csv = reports_dir / "policy-registry.csv"
     policy_html = reports_dir / "policy-registry.html"
+    confidentiality_json = reports_dir / "confidentiality-alignment.json"
+    confidentiality_html = reports_dir / "confidentiality-alignment.html"
     capability_json = reports_dir / "capability-matrix.json"
     capability_html = reports_dir / "capability-matrix.html"
     competitor_json = reports_dir / "competitor-coverage.json"
@@ -77,6 +82,8 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
     write_json(policy_json, model_to_dict(policy_report))
     write_policy_registry_csv(policy_csv, policy_report)
     write_policy_registry_html(policy_html, policy_report)
+    write_json(confidentiality_json, model_to_dict(confidentiality_report))
+    write_confidentiality_alignment_html(confidentiality_html, confidentiality_report)
     write_json(capability_json, model_to_dict(capability_report))
     write_capability_matrix_html(capability_html, capability_report)
     write_json(competitor_json, model_to_dict(competitor_report))
@@ -155,6 +162,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            confidentiality_html,
+            "DICOM confidentiality alignment HTML",
+            "standards",
+            "DICOM PS3.15-inspired profile alignment report.",
+        ),
+        _artifact(
+            output_dir,
             capability_html,
             "Capability matrix HTML",
             "strategy",
@@ -215,6 +229,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "De-identification comparison HTML",
             "comparison",
             "Before/after privacy policy comparison for synthetic DICOM metadata.",
+        ),
+        _artifact(
+            output_dir,
+            Path(demo_result.confidentiality_alignment_html),
+            "Demo DICOM confidentiality alignment HTML",
+            "standards",
+            "DICOM PS3.15-inspired alignment report from the one-command demo.",
         ),
         _artifact(
             output_dir,
@@ -295,6 +316,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "confidentiality-alignment.html",
+            "Workflow DICOM confidentiality alignment HTML",
+            "standards",
+            "DICOM PS3.15-inspired alignment report from the staged workflow.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "profile-conformance.html",
             "Workflow profile conformance HTML",
             "profile",
@@ -344,6 +372,7 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             doctor_report.passed
             and safety_report.passed
             and release_report.passed
+            and confidentiality_report.passed
             and capability_report.passed
             and competitor_report.passed
             and objective_report.passed

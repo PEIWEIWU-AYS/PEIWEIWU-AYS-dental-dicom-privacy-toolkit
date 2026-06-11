@@ -36,6 +36,7 @@ The audit checks evidence for:
 - dental-specific positioning, bilingual search, and synthetic-only safety
 - research differentiators such as date shifting and linkable pseudonymization
 - post-anonymization profile conformance evidence
+- DICOM PS3.15-inspired confidentiality alignment evidence
 - portable proof artifacts for MacBook demos and collaborator review
 - de-identification certificate evidence for synthetic sharing handoff
 - competitor coverage evidence for reference-tool mapping and safety boundaries

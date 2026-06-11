@@ -5,6 +5,7 @@ from pathlib import Path
 from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.certificate import build_deidentification_certificate
+from ddpt.confidentiality import build_confidentiality_alignment
 from ddpt.deid_compare import compare_deidentification
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
@@ -16,6 +17,7 @@ from ddpt.profile_verify import verify_profile_conformance
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
+    write_confidentiality_alignment_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
     write_demo_summary_html,
@@ -56,6 +58,8 @@ def run_demo_pipeline(
     inspection_html = reports_dir / "inspect.html"
     audit_json = reports_dir / "audit.json"
     audit_html = reports_dir / "audit.html"
+    confidentiality_alignment_json = reports_dir / "confidentiality-alignment.json"
+    confidentiality_alignment_html = reports_dir / "confidentiality-alignment.html"
     deid_comparison_json = reports_dir / "deid-comparison.json"
     deid_comparison_html = reports_dir / "deid-comparison.html"
     profile_conformance_json = reports_dir / "profile-conformance.json"
@@ -95,6 +99,16 @@ def run_demo_pipeline(
     render_dicom_preview(anonymized_dicom, anonymized_preview_png)
     write_json(audit_json, model_to_dict(audit))
     write_audit_html(audit_html, audit)
+
+    confidentiality_alignment = build_confidentiality_alignment(profile)
+    write_json(
+        confidentiality_alignment_json,
+        model_to_dict(confidentiality_alignment),
+    )
+    write_confidentiality_alignment_html(
+        confidentiality_alignment_html,
+        confidentiality_alignment,
+    )
 
     deid_comparison = compare_deidentification(input_dicom, anonymized_dicom)
     write_json(deid_comparison_json, model_to_dict(deid_comparison))
@@ -164,6 +178,8 @@ def run_demo_pipeline(
         inspection_html=str(inspection_html),
         audit_json=str(audit_json),
         audit_html=str(audit_html),
+        confidentiality_alignment_json=str(confidentiality_alignment_json),
+        confidentiality_alignment_html=str(confidentiality_alignment_html),
         deid_comparison_json=str(deid_comparison_json),
         deid_comparison_html=str(deid_comparison_html),
         profile_conformance_json=str(profile_conformance_json),

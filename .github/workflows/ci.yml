@@ -33,6 +33,7 @@ jobs:
           test -f docs/discoverability.md
           test -f docs/dcmodify-plan.md
           test -f docs/project-blueprint.md
+          test -f docs/confidentiality-alignment.md
           test -f docs/competitor-analysis.md
           test -f docs/competitor-coverage.md
           test -f docs/product-requirements.md
@@ -91,6 +92,9 @@ jobs:
 
       - name: Run original objective completion audit
         run: python -m ddpt completion audit . --json objective-audit.json --html objective-audit.html
+
+      - name: Run DICOM confidentiality alignment
+        run: python -m ddpt confidentiality alignment --profile dental-basic --json confidentiality-alignment.json --html confidentiality-alignment.html
 
       - name: Lint built-in anonymization profiles
         run: |

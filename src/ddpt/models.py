@@ -772,6 +772,8 @@ class DemoPipelineResult(BaseModel):
     inspection_html: str
     audit_json: str
     audit_html: str
+    confidentiality_alignment_json: str
+    confidentiality_alignment_html: str
     deid_comparison_json: str
     deid_comparison_html: str
     profile_conformance_json: str
@@ -884,6 +886,50 @@ class PolicyRegistryReport(BaseModel):
     medium_risk_items: int
     low_risk_items: int
     items: list[TagPolicy]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
+class ConfidentialityActionCode(BaseModel):
+    code: str
+    meaning: str
+    toolkit_interpretation: str
+
+
+class ConfidentialityOptionItem(BaseModel):
+    id: str
+    name: str
+    status: Literal["supported", "partially-supported", "not-selected", "not-supported"]
+    evidence: list[str] = Field(default_factory=list)
+    note: str
+
+
+class ConfidentialityAlignmentItem(BaseModel):
+    keyword: str
+    risk: RiskLevel
+    category: str
+    dicom_action_code: str
+    recommended_action: str
+    profile_action: str
+    aligned: bool
+    note: str
+
+
+class ConfidentialityAlignmentReport(BaseModel):
+    profile: str
+    source: str
+    passed: bool
+    total_policy_items: int
+    aligned_items: int
+    unaligned_items: int
+    high_medium_unaligned: int
+    remove_private_tags: bool
+    date_shift_offset_days: int
+    action_codes: list[ConfidentialityActionCode]
+    options: list[ConfidentialityOptionItem]
+    items: list[ConfidentialityAlignmentItem]
+    boundary_notes: list[str] = Field(default_factory=list)
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )

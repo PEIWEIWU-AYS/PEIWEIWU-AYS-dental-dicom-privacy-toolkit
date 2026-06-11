@@ -10,6 +10,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Capability Matrix](capability-matrix.md)
 - [Product Requirements](product-requirements.md)
 - [Policy Registry](policy-registry.md)
+- [DICOM Confidentiality Alignment](confidentiality-alignment.md)
 - [Filename Privacy Scan](filename-privacy-scan.md)
 - [Privacy Remediation Plan](remediation-plan.md)
 - [dcmodify Plan Export](dcmodify-plan.md)

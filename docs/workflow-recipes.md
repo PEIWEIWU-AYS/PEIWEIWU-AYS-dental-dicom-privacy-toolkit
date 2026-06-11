@@ -21,6 +21,7 @@ Expected outputs:
 - `workflow-run/reports/inspect.html`
 - `workflow-run/reports/dicom-json.html`
 - `workflow-run/reports/remediation-plan.html`
+- `workflow-run/reports/confidentiality-alignment.html`
 - `workflow-run/reports/dcmodify-plan.html`
 - `workflow-run/reports/dcmodify-plan.sh`
 - `workflow-run/outputs/sample.anonymized.dcm`
@@ -47,6 +48,7 @@ Expected outputs:
 - `inspect`
 - `dicom-json-export`
 - `remediation-plan`
+- `confidentiality-alignment`
 - `dcmodify-plan`
 - `anonymize`
 - `profile-verify`

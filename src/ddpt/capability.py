@@ -253,6 +253,29 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="dicom-confidentiality-alignment",
+        capability="DICOM PS3.15-inspired confidentiality profile alignment reports",
+        source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/confidentiality.py",
+            "src/ddpt/policy.py",
+            "docs/confidentiality-alignment.md",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt confidentiality alignment --profile dental-basic "
+            "--json confidentiality-alignment.json --html confidentiality-alignment.html"
+        ),
+        differentiator=(
+            "Maps dental anonymization profiles to DICOM PS3.15-inspired action "
+            "codes, options, and explicit non-certification boundaries."
+        ),
+        note=(
+            "Adds standards-language evidence beyond ordinary anonymization logs "
+            "without overclaiming DICOM conformance certification."
+        ),
+    ),
+    CapabilitySpec(
         id="linkable-pseudonymization",
         capability="Deterministic pseudonymization for synthetic longitudinal research demos",
         source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "pydicom anonymization example"),

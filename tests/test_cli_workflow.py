@@ -325,6 +325,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "dicom-json.html").exists()
     assert (workflow_dir / "reports" / "remediation-plan.json").exists()
     assert (workflow_dir / "reports" / "remediation-plan.html").exists()
+    assert (workflow_dir / "reports" / "confidentiality-alignment.json").exists()
+    assert (workflow_dir / "reports" / "confidentiality-alignment.html").exists()
     assert (workflow_dir / "reports" / "dcmodify-plan.json").exists()
     assert (workflow_dir / "reports" / "dcmodify-plan.html").exists()
     assert (workflow_dir / "reports" / "dcmodify-plan.sh").exists()
@@ -360,6 +362,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "inspect-input",
         "dicom-json-export",
         "remediation-plan",
+        "confidentiality-alignment",
         "dcmodify-plan",
         "anonymize",
         "profile-conformance",
@@ -384,6 +387,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert quality_gate["passed"] is True
     assert quality_gate["failed_checks"] == 0
     quality_check_ids = {item["id"] for item in quality_gate["checks"]}
+    assert "confidentiality-alignment-report" in quality_check_ids
     assert "profile-conformance-report" in quality_check_ids
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
@@ -391,6 +395,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert "filename-privacy-scan" in html
     assert "dicom-json-export" in html
     assert "remediation-plan" in html
+    assert "confidentiality-alignment" in html
     assert "dcmodify-plan" in html
     assert "profile-conformance" in html
     assert "pixel-risk-scan" in html
@@ -1073,6 +1078,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "objective-completion-audit" in capability_ids
     assert "privacy-remediation-plan" in capability_ids
     assert "profile-conformance-verification" in capability_ids
+    assert "dicom-confidentiality-alignment" in capability_ids
     assert "linkable-pseudonymization" in capability_ids
     assert "before-after-deid-comparison" in capability_ids
     assert "filename-privacy-scan" in capability_ids
@@ -1172,6 +1178,7 @@ def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) ->
     assert "shareable-proof-package" in item_ids
     assert "deid-certificate-handoff" in item_ids
     assert "profile-conformance-proof" in item_ids
+    assert "dicom-confidentiality-alignment" in item_ids
     assert "competitor-coverage-evidence" in item_ids
     assert "capability-matrix-gate" in item_ids
     assert "competitor-coverage-gate" in item_ids
@@ -1201,6 +1208,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "policy-registry.json").exists()
     assert (output_dir / "reports" / "policy-registry.csv").exists()
     assert (output_dir / "reports" / "policy-registry.html").exists()
+    assert (output_dir / "reports" / "confidentiality-alignment.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-basic.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
@@ -1208,11 +1216,13 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "workflow-run" / "reports" / "filename-privacy.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "dicom-json.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "remediation-plan.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "confidentiality-alignment.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "dcmodify-plan.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "profile-conformance.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "pixel-risk.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
     assert (output_dir / "demo-run" / "reports" / "deid-comparison.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "confidentiality-alignment.html").exists()
     assert (output_dir / "demo-run" / "reports" / "profile-conformance.html").exists()
     assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
     assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
@@ -1229,6 +1239,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/competitor-coverage.html" in artifact_paths
     assert "reports/objective-audit.html" in artifact_paths
     assert "reports/policy-registry.html" in artifact_paths
+    assert "reports/confidentiality-alignment.html" in artifact_paths
     assert "reports/profile-lint-dental-basic.html" in artifact_paths
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
     assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
@@ -1236,11 +1247,13 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "workflow-run/reports/filename-privacy.html" in artifact_paths
     assert "workflow-run/reports/dicom-json.html" in artifact_paths
     assert "workflow-run/reports/remediation-plan.html" in artifact_paths
+    assert "workflow-run/reports/confidentiality-alignment.html" in artifact_paths
     assert "workflow-run/reports/dcmodify-plan.html" in artifact_paths
     assert "workflow-run/reports/profile-conformance.html" in artifact_paths
     assert "workflow-run/reports/pixel-risk.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
     assert "demo-run/reports/deid-comparison.html" in artifact_paths
+    assert "demo-run/reports/confidentiality-alignment.html" in artifact_paths
     assert "demo-run/reports/profile-conformance.html" in artifact_paths
     assert "demo-run/reports/pixel-review.html" in artifact_paths
     assert "demo-run/reports/package-receipt.html" in artifact_paths
@@ -1259,6 +1272,9 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Filename privacy scan HTML" in html
     assert "DICOM JSON export HTML" in html
     assert "Privacy remediation plan HTML" in html
+    assert "DICOM confidentiality alignment HTML" in html
+    assert "Demo DICOM confidentiality alignment HTML" in html
+    assert "Workflow DICOM confidentiality alignment HTML" in html
     assert "dcmodify plan HTML" in html
     assert "Profile conformance HTML" in html
     assert "Workflow profile conformance HTML" in html
@@ -1423,6 +1439,7 @@ def test_quality_gate_command_checks_workflow_evidence(tmp_path: Path) -> None:
     assert report["failed_checks"] == 0
     assert report["workflow_report_path"] == str(workflow_json.resolve())
     check_ids = {item["id"] for item in report["checks"]}
+    assert "confidentiality-alignment-report" in check_ids
     assert "workflow-run-report" in check_ids
     assert "deid-certificate" in check_ids
     assert "share-readiness" in check_ids
@@ -2113,6 +2130,62 @@ def test_policy_registry_export_outputs_json_csv_and_html(tmp_path: Path) -> Non
     high_report = json.loads(high_json.read_text())
     assert high_report["medium_risk_items"] == 0
     assert {item["risk"] for item in high_report["items"]} == {"high"}
+
+
+def test_confidentiality_alignment_outputs_profile_standard_mapping(
+    tmp_path: Path,
+) -> None:
+    alignment_json = tmp_path / "reports" / "confidentiality-alignment.json"
+    alignment_html = tmp_path / "reports" / "confidentiality-alignment.html"
+    research_json = tmp_path / "reports" / "research-confidentiality-alignment.json"
+
+    result = runner.invoke(
+        app,
+        [
+            "confidentiality",
+            "alignment",
+            "--profile",
+            "dental-basic",
+            "--json",
+            str(alignment_json),
+            "--html",
+            str(alignment_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    report = json.loads(alignment_json.read_text())
+    assert report["passed"] is True
+    assert report["high_medium_unaligned"] == 0
+    assert report["remove_private_tags"] is True
+    assert {item["code"] for item in report["action_codes"]} >= {"D", "Z", "X", "C", "U", "K"}
+    patient_name = next(item for item in report["items"] if item["keyword"] == "PatientName")
+    assert patient_name["dicom_action_code"] == "D"
+    assert patient_name["profile_action"] == "replace"
+    uid_item = next(item for item in report["items"] if item["keyword"] == "StudyInstanceUID")
+    assert uid_item["profile_action"] == "regenerate_uid"
+    html = alignment_html.read_text()
+    assert "DICOM Confidentiality Alignment" in html
+    assert "not DICOM conformance certification" in html
+
+    result = runner.invoke(
+        app,
+        [
+            "confidentiality",
+            "alignment",
+            "--profile",
+            "dental-research-sharing",
+            "--json",
+            str(research_json),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    research_report = json.loads(research_json.read_text())
+    modified_dates = next(
+        option for option in research_report["options"] if option["id"] == "modified-dates"
+    )
+    assert modified_dates["status"] == "supported"
+    assert "StudyDate" in modified_dates["evidence"]
 
 
 def test_package_rejects_empty_directory(tmp_path: Path) -> None:

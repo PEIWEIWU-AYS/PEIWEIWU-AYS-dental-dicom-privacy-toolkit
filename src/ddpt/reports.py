@@ -10,6 +10,7 @@ from ddpt.models import (
     BatchSummary,
     CapabilityMatrixReport,
     CompetitorCoverageReport,
+    ConfidentialityAlignmentReport,
     DcmodifyPlanReport,
     DeidentificationCertificate,
     DeidentificationComparisonReport,
@@ -396,6 +397,10 @@ DEMO_SUMMARY_TEMPLATE = Template(
       <tr><td>Pixel-redacted DICOM</td><td><code>{{ result.redacted_dicom }}</code></td></tr>
       <tr><td>Inspection HTML</td><td><code>{{ result.inspection_html }}</code></td></tr>
       <tr><td>Anonymization audit HTML</td><td><code>{{ result.audit_html }}</code></td></tr>
+      <tr>
+        <td>DICOM confidentiality alignment HTML</td>
+        <td><code>{{ result.confidentiality_alignment_html }}</code></td>
+      </tr>
       <tr>
         <td>De-identification comparison HTML</td>
         <td><code>{{ result.deid_comparison_html }}</code></td>
@@ -2189,6 +2194,140 @@ POLICY_REGISTRY_TEMPLATE = Template(
 """
 )
 
+CONFIDENTIALITY_ALIGNMENT_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>DICOM Confidentiality Alignment</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .pass { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .supported { color: #1f6f43; font-weight: 700; }
+    .partially-supported { color: #8a5a00; font-weight: 700; }
+    .not-selected, .not-supported { color: #4b5563; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>DICOM Confidentiality Alignment</h1>
+  <p class="warning">
+    This report maps a DDPT anonymization profile to DICOM PS3.15-inspired
+    Attribute Confidentiality action codes and options. It is not clinical,
+    legal, regulatory, security, or DICOM conformance certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Profile: {{ report.profile }}</li>
+    <li>Source: {{ report.source }}</li>
+    <li>
+      Overall:
+      <span class="{{ "pass" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Aligned items: {{ report.aligned_items }} / {{ report.total_policy_items }}</li>
+    <li>High/medium unaligned items: {{ report.high_medium_unaligned }}</li>
+    <li>Remove private tags: {{ report.remove_private_tags }}</li>
+    <li>Date shift offset days: {{ report.date_shift_offset_days }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Boundary Notes</h2>
+  <ul>
+    {% for note in report.boundary_notes %}
+    <li>{{ note }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Action Code Legend</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>DICOM Meaning</th>
+        <th>Toolkit Interpretation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for code in report.action_codes %}
+      <tr>
+        <td><code>{{ code.code }}</code></td>
+        <td>{{ code.meaning }}</td>
+        <td>{{ code.toolkit_interpretation }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>DICOM Option Alignment</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Option</th>
+        <th>Evidence</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for option in report.options %}
+      <tr>
+        <td class="{{ option.status }}">{{ option.status }}</td>
+        <td>{{ option.name }}<br><code>{{ option.id }}</code></td>
+        <td>
+          {% for evidence in option.evidence %}
+          <code>{{ evidence }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ option.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Policy Alignment</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Aligned</th>
+        <th>Risk</th>
+        <th>Keyword</th>
+        <th>Category</th>
+        <th>DICOM Code</th>
+        <th>Recommended</th>
+        <th>Profile Action</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.items %}
+      <tr>
+        <td class="{{ "pass" if item.aligned else "fail" }}">
+          {{ "yes" if item.aligned else "no" }}
+        </td>
+        <td>{{ item.risk }}</td>
+        <td>{{ item.keyword }}</td>
+        <td>{{ item.category }}</td>
+        <td><code>{{ item.dicom_action_code }}</code></td>
+        <td>{{ item.recommended_action }}</td>
+        <td>{{ item.profile_action }}</td>
+        <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 PROFILE_LINT_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -2519,6 +2658,13 @@ def write_profile_lint_html(path: Path, report: ProfileLintReport) -> None:
 
 def write_policy_registry_html(path: Path, report: PolicyRegistryReport) -> None:
     _write_html(path, POLICY_REGISTRY_TEMPLATE.render(report=report))
+
+
+def write_confidentiality_alignment_html(
+    path: Path,
+    report: ConfidentialityAlignmentReport,
+) -> None:
+    _write_html(path, CONFIDENTIALITY_ALIGNMENT_TEMPLATE.render(report=report))
 
 
 def write_pixel_review_html(path: Path, report: PixelReviewReport) -> None:

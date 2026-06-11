@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from ddpt.models import (
     AuditChainVerification,
+    ConfidentialityAlignmentReport,
     DeidentificationCertificate,
     DeidentificationComparisonReport,
     PackageVerificationReceipt,
@@ -43,6 +44,7 @@ def run_workflow_quality_gate(
             "pixel",
         ),
         _validation_check(root_dir),
+        _confidentiality_alignment_check(root_dir),
         _profile_conformance_check(root_dir),
         _deid_comparison_check(root_dir),
         _pixel_review_check(root_dir),
@@ -105,6 +107,35 @@ def _validation_check(root_dir: Path) -> WorkflowQualityGateCheck:
         if report.passed
         else "Anonymized DICOM validation failed.",
         [str(path), f"checks={len(report.checks)}", f"warnings={len(report.warnings)}"],
+    )
+
+
+def _confidentiality_alignment_check(root_dir: Path) -> WorkflowQualityGateCheck:
+    path = root_dir / "reports" / "confidentiality-alignment.json"
+    report = _read_model(path, ConfidentialityAlignmentReport)
+    if report is None:
+        return _check(
+            "confidentiality-alignment-report",
+            "de-identification",
+            True,
+            False,
+            "DICOM confidentiality alignment report is missing or unreadable.",
+            [str(path)],
+        )
+    return _check(
+        "confidentiality-alignment-report",
+        "de-identification",
+        True,
+        report.passed,
+        "Selected profile aligns with DICOM-inspired confidentiality policy."
+        if report.passed
+        else "Selected profile has high/medium confidentiality alignment gaps.",
+        [
+            str(path),
+            f"profile={report.profile}",
+            f"aligned={report.aligned_items}/{report.total_policy_items}",
+            f"high_medium_unaligned={report.high_medium_unaligned}",
+        ],
     )
 
 

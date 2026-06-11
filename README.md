@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOM JSON导出, Orthanc风格接口, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM PS3.15, DICOM confidentiality alignment, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOM保密配置, DICOM PS3.15, DICOM保密配置对齐, DICOM JSON导出, Orthanc风格接口, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -28,6 +28,7 @@ Core goals:
 - Profile lint checks for custom anonymization YAML safety
 - Profile conformance verification after anonymization
 - DICOM privacy policy registry export in JSON, CSV, and HTML
+- DICOM PS3.15-inspired confidentiality alignment reports
 - Competitor-informed capability matrix with repository evidence
 - Competitor coverage report for RSNA, DicomCleaner, Orthanc, CTP, DCMTK, and pydicom lessons
 - Objective completion audit against the original competitor-learning goal
@@ -90,6 +91,7 @@ ddpt pixel-review demo-run/outputs/sample.anonymized.dcm --out-dir demo-run/repo
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
 ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-dump.json
 ddpt policy export --json demo-run/reports/policy-registry.json --csv demo-run/reports/policy-registry.csv --html demo-run/reports/policy-registry.html
+ddpt confidentiality alignment --profile dental-basic --json demo-run/reports/confidentiality-alignment.json --html demo-run/reports/confidentiality-alignment.html
 ddpt profile show dental-basic
 ddpt profile show dental-research-sharing
 ddpt profile show dental-linkable-research
@@ -144,6 +146,7 @@ See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile confi
 See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
 See [docs/profile-conformance.md](docs/profile-conformance.md) for post-anonymization profile verification.
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
+See [docs/confidentiality-alignment.md](docs/confidentiality-alignment.md) for DICOM PS3.15-inspired confidentiality alignment reports.
 See [docs/deid-comparison.md](docs/deid-comparison.md) for before/after de-identification comparison reports.
 See [docs/batch.md](docs/batch.md) for batch de-identification evidence.
 See [docs/deid-certificate.md](docs/deid-certificate.md) for the synthetic de-identification certificate.
@@ -181,7 +184,7 @@ ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out 
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `dcmodify` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-confidentiality` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `profile-conformance` `dcmodify` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## Repository Structure
 

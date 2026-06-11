@@ -31,6 +31,8 @@ demo-run/
   reports/inspect.html
   reports/audit.json
   reports/audit.html
+  reports/confidentiality-alignment.json
+  reports/confidentiality-alignment.html
   reports/profile-conformance.json
   reports/profile-conformance.html
   reports/validation.json
@@ -64,6 +66,7 @@ The demo should show:
 - high-risk metadata detection
 - dry-run anonymization preview
 - dental-basic anonymization
+- DICOM confidentiality alignment for the selected profile
 - direct identifier replacement or blanking
 - UID regeneration
 - profile conformance verification against the selected profile
@@ -91,6 +94,7 @@ ddpt synthetic demo-run/sample.dcm
 ddpt inventory demo-run --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt preview demo-run/sample.dcm --out demo-run/reports/sample-preview.png --json demo-run/reports/sample-preview.json
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
+ddpt confidentiality alignment --profile dental-basic --json demo-run/reports/confidentiality-alignment.json --html demo-run/reports/confidentiality-alignment.html
 ddpt anonymize demo-run/sample.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt profile verify demo-run/sample.dcm demo-run/outputs/sample.anonymized.dcm --profile dental-basic --json demo-run/reports/profile-conformance.json --html demo-run/reports/profile-conformance.html
@@ -129,6 +133,10 @@ ddpt policy export \
   --json demo-run/reports/policy-registry.json \
   --csv demo-run/reports/policy-registry.csv \
   --html demo-run/reports/policy-registry.html
+ddpt confidentiality alignment \
+  --profile dental-research-sharing \
+  --json demo-run/reports/research-confidentiality-alignment.json \
+  --html demo-run/reports/research-confidentiality-alignment.html
 ddpt profile lint dental-research-sharing \
   --json demo-run/reports/research-profile-lint.json \
   --html demo-run/reports/research-profile-lint.html

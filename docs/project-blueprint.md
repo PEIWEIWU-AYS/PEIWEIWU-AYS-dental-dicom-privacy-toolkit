@@ -43,6 +43,7 @@ ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json wo
 ddpt preview examples/synthetic-dicom/sample.dcm --out reports/sample-preview.png --json reports/sample-preview.json
 ddpt tag dump examples/synthetic-dicom/sample.dcm --json reports/tag-dump.json
 ddpt policy export --json reports/policy-registry.json --csv reports/policy-registry.csv --html reports/policy-registry.html
+ddpt confidentiality alignment --profile dental-basic --json reports/confidentiality-alignment.json --html reports/confidentiality-alignment.html
 ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --html reports/inspect.html
 ddpt profile lint dental-research-sharing --json reports/research-profile-lint.json --html reports/research-profile-lint.html
 ddpt profile lint dental-linkable-research --json reports/linkable-profile-lint.json --html reports/linkable-profile-lint.html

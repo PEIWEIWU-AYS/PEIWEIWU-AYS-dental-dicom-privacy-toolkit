@@ -39,6 +39,7 @@ Expected key artifacts:
 - `demo-run/reports/redacted-preview.png`
 - `demo-run/reports/pixel-review.html`
 - `demo-run/reports/deid-comparison.html`
+- `demo-run/reports/confidentiality-alignment.html`
 - `demo-run/reports/profile-conformance.html`
 - `demo-run/reports/pixel-review/pixel-review-overlay.png`
 - `demo-run/reports/audit.html`
@@ -94,6 +95,7 @@ Expected:
 - `workflow-run/reports/filename-privacy.html` exists
 - `workflow-run/reports/dicom-json.html` exists
 - `workflow-run/reports/remediation-plan.html` exists
+- `workflow-run/reports/confidentiality-alignment.html` exists
 - `workflow-run/reports/dcmodify-plan.html` exists
 - `workflow-run/reports/dcmodify-plan.sh` exists
 - `workflow-run/reports/profile-conformance.html` exists
@@ -135,6 +137,10 @@ ddpt policy export \
   --json demo-run/reports/policy-registry.json \
   --csv demo-run/reports/policy-registry.csv \
   --html demo-run/reports/policy-registry.html
+ddpt confidentiality alignment \
+  --profile dental-basic \
+  --json demo-run/reports/confidentiality-alignment.json \
+  --html demo-run/reports/confidentiality-alignment.html
 ddpt profile lint dental-research-sharing \
   --json demo-run/reports/research-profile-lint.json \
   --html demo-run/reports/research-profile-lint.html
@@ -181,6 +187,7 @@ ddpt anonymize demo-run/input/sample.synthetic.dcm \
 Expected:
 
 - policy registry JSON, CSV, and HTML files are created
+- the DICOM confidentiality alignment report passes for the selected profile
 - profile lint reports pass without errors
 - the profile output lists date-shift and pseudonymize keywords
 - the profile comparison report shows date fields changed from `blank` to `date_shift`
@@ -236,13 +243,16 @@ Expected:
 - `evidence-run/reports/capability-matrix.html` exists
 - `evidence-run/reports/competitor-coverage.html` exists
 - `evidence-run/reports/release-audit.html` exists
+- `evidence-run/reports/confidentiality-alignment.html` exists
 - `evidence-run/reports/workflow-run.html` exists
 - `evidence-run/workflow-run/reports/filename-privacy.html` exists
 - `evidence-run/workflow-run/reports/dicom-json.html` exists
 - `evidence-run/workflow-run/reports/dcmodify-plan.html` exists
+- `evidence-run/workflow-run/reports/confidentiality-alignment.html` exists
 - `evidence-run/workflow-run/reports/profile-conformance.html` exists
 - `evidence-run/demo-run/reports/demo-summary.html` exists
 - `evidence-run/demo-run/reports/deid-comparison.html` exists
+- `evidence-run/demo-run/reports/confidentiality-alignment.html` exists
 - `evidence-run/demo-run/reports/profile-conformance.html` exists
 - `evidence-run/demo-run/reports/pixel-review.html` exists
 - `evidence-run/demo-run/reports/package-receipt.html` exists
@@ -277,8 +287,10 @@ demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
 workflow-run/reports/filename-privacy.html
 workflow-run/reports/dicom-json.html
+workflow-run/reports/confidentiality-alignment.html
 workflow-run/reports/dcmodify-plan.html
 demo-run/reports/deid-comparison.html
+demo-run/reports/confidentiality-alignment.html
 demo-run/reports/profile-conformance.html
 demo-run/reports/deid-certificate.html
 demo-run/reports/inspect.html

@@ -33,6 +33,7 @@ The matrix reviews whether the repository has evidence for:
 - configurable anonymization profiles
 - profile coverage, comparison, and lint checks
 - post-anonymization profile conformance verification
+- DICOM PS3.15-inspired confidentiality profile alignment
 - deterministic linkable pseudonymization for synthetic longitudinal research demos
 - conservative pixel risk scan for burned-in identifier triage
 - burned-in pixel review and redaction evidence

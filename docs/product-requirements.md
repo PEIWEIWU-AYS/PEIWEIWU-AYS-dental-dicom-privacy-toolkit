@@ -27,27 +27,28 @@ Version 0.1 is successful when a new user can:
 17. Lint anonymization profiles before running workflows.
 18. Compare anonymization profiles with JSON and HTML reports.
 19. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
-20. Generate before/after de-identification comparison reports.
-21. Verify post-anonymization output against the selected profile.
-22. Confirm direct identifiers were replaced or removed.
-23. Generate an audit event JSON file.
-24. Validate anonymized output with a pass/fail report.
-25. Run a conservative pixel risk scan before manual pixel review.
-26. Generate pixel review reports for known burned-in annotation regions.
-27. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-28. Package anonymized files with checksums.
-29. Encrypt the package.
-30. Verify or decrypt the package.
-31. Generate package verification receipts for receiver-side sharing evidence.
-32. Run a share-readiness gate before synthetic package handoff.
-33. Run local REST API workflow demos for integration testing.
-34. Run a release-readiness audit before public GitHub publishing.
-35. Run a competitor-informed capability matrix that maps features to repository evidence.
-36. Run a competitor coverage report that maps reference tools to implemented evidence.
-37. Generate a static local review dashboard for non-programmer walkthroughs.
-38. Generate a local evidence bundle for MacBook validation and public demonstrations.
-39. Run a workflow quality gate that verifies public review evidence.
-40. Run automated tests locally and in GitHub Actions.
+20. Generate DICOM PS3.15-inspired confidentiality alignment reports.
+21. Generate before/after de-identification comparison reports.
+22. Verify post-anonymization output against the selected profile.
+23. Confirm direct identifiers were replaced or removed.
+24. Generate an audit event JSON file.
+25. Validate anonymized output with a pass/fail report.
+26. Run a conservative pixel risk scan before manual pixel review.
+27. Generate pixel review reports for known burned-in annotation regions.
+28. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+29. Package anonymized files with checksums.
+30. Encrypt the package.
+31. Verify or decrypt the package.
+32. Generate package verification receipts for receiver-side sharing evidence.
+33. Run a share-readiness gate before synthetic package handoff.
+34. Run local REST API workflow demos for integration testing.
+35. Run a release-readiness audit before public GitHub publishing.
+36. Run a competitor-informed capability matrix that maps features to repository evidence.
+37. Run a competitor coverage report that maps reference tools to implemented evidence.
+38. Generate a static local review dashboard for non-programmer walkthroughs.
+39. Generate a local evidence bundle for MacBook validation and public demonstrations.
+40. Run a workflow quality gate that verifies public review evidence.
+41. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -134,6 +135,7 @@ Required:
 - safe DICOM JSON export JSON and HTML from the staged workflow
 - filename privacy scan JSON and HTML from the staged workflow
 - dcmodify plan JSON, HTML, and review script from the staged workflow
+- DICOM confidentiality alignment JSON and HTML
 - evidence index JSON and HTML
 - links to demo summary, audit chain, encrypted package, and workflow report
 - links to package verification receipts
@@ -217,7 +219,7 @@ Required:
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails
-- support synthetic, filename scan, inventory, inspect, DICOM JSON export, dcmodify plan, anonymize, profile-verify, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
+- support synthetic, filename scan, inventory, inspect, DICOM JSON export, remediation-plan, confidentiality-alignment, dcmodify plan, anonymize, profile-verify, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
 - support remediation-plan stages before anonymization
 - support before/after de-identification comparison stages
 
@@ -307,6 +309,7 @@ Required:
 - check anonymized DICOM exists
 - check pixel-redacted DICOM exists
 - check anonymized DICOM validation passed
+- check DICOM confidentiality alignment passed
 - check profile conformance verification passed
 - check before/after de-identification comparison passed
 - check residual high-risk and medium-risk policy items are absent
@@ -465,6 +468,21 @@ Required:
 - JSON output
 - CSV output
 - optional HTML report
+
+### `ddpt confidentiality alignment`
+
+Generate a DICOM PS3.15-inspired profile alignment report.
+
+Required:
+
+- profile name or YAML path
+- action code legend for `D`, `Z`, `X`, `C`, `U`, and `K`
+- selected/partial/not-selected option summary
+- per-keyword mapping from policy action to profile action
+- JSON output
+- optional HTML report
+- non-zero exit status when high-risk or medium-risk policy items are not aligned
+- clear warning that this is not DICOM conformance certification
 
 ## Command Requirements
 

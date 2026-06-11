@@ -8,11 +8,11 @@
 
 ## GitHub Description
 
-Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, anonymization profile conformance verification, dcmodify plan export, pixel risk scan, competitor coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
+Open-source dental DICOM anonymization, de-identification, DICOM confidentiality alignment, DICOM PS3.15-inspired privacy profiles, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, anonymization profile conformance verification, dcmodify plan export, pixel risk scan, competitor coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `profile-conformance` `dcmodify` `pixel-risk` `competitor-analysis` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-confidentiality` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `profile-conformance` `dcmodify` `pixel-risk` `competitor-analysis` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## English Keywords
 
@@ -20,6 +20,8 @@ Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Or
 - dental imaging
 - DICOM anonymization
 - DICOM de-identification
+- DICOM confidentiality alignment
+- DICOM PS3.15 privacy profile
 - DICOM JSON export
 - Orthanc-inspired API
 - DICOM filename privacy scan
@@ -65,6 +67,8 @@ Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Or
 - 牙科影像
 - DICOM脱敏
 - DICOM去标识化
+- DICOM保密配置
+- DICOM保密配置对齐
 - DICOM JSON导出
 - Orthanc风格接口
 - 文件名隐私扫描
@@ -107,6 +111,8 @@ Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Or
 
 - dental DICOM anonymization toolkit
 - open source DICOM de-identification
+- DICOM confidentiality alignment
+- DICOM PS3.15 Attribute Confidentiality Profile
 - DICOM JSON export
 - Orthanc-inspired DICOM API
 - DICOM filename privacy scan
@@ -140,6 +146,8 @@ Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Or
 - YAML DICOM workflow
 - CBCT privacy open source
 - 牙科 DICOM 脱敏 工具
+- 牙科 DICOM 保密配置对齐
+- DICOM PS3.15 脱敏 profile
 - 牙科 DICOM JSON 导出
 - 牙科 Orthanc 风格接口
 - 牙科 DICOM 文件名隐私扫描
@@ -160,4 +168,4 @@ Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Or
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, safe DICOM JSON exports, filename privacy scans, privacy remediation plans, anonymization profile conformance reports, dcmodify plan exports, pixel risk scans, workflow quality gates, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, de-identification certificates, local REST API integration demos, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, DICOM confidentiality alignment reports, safe DICOM JSON exports, filename privacy scans, privacy remediation plans, anonymization profile conformance reports, dcmodify plan exports, pixel risk scans, workflow quality gates, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, de-identification certificates, local REST API integration demos, encrypted sharing packages, and audit reporting.
