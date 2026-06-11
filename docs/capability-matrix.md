@@ -32,6 +32,7 @@ The matrix reviews whether the repository has evidence for:
 - configurable anonymization profiles
 - profile coverage, comparison, and lint checks
 - deterministic linkable pseudonymization for synthetic longitudinal research demos
+- conservative pixel risk scan for burned-in identifier triage
 - burned-in pixel review and redaction evidence
 - exact DICOM tag operations
 - multi-stage YAML workflow recipes

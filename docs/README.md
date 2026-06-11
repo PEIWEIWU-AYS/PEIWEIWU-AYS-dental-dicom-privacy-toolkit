@@ -29,6 +29,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Share Readiness](share-readiness.md)
 - [DICOM Inventory Preflight](inventory.md)
 - [DICOM PNG Preview](preview.md)
+- [Pixel Risk Scan](pixel-risk-scan.md)
 - [Pixel Review](pixel-review.md)
 - [Pixel Redaction Plans](pixel-redaction-plans.md)
 - [DICOM Tag Operations](tag-operations.md)

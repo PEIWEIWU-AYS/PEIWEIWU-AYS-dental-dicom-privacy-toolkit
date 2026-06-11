@@ -23,6 +23,7 @@ from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixel_review import create_pixel_review
+from ddpt.pixel_risk import scan_pixel_risk
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.policy import (
     compare_profiles,
@@ -56,6 +57,7 @@ from ddpt.reports import (
     write_objective_audit_html,
     write_package_receipt_html,
     write_pixel_review_html,
+    write_pixel_risk_scan_html,
     write_policy_registry_html,
     write_privacy_remediation_html,
     write_profile_comparison_html,
@@ -81,6 +83,7 @@ policy_app = typer.Typer(help="Inspect the DICOM privacy policy registry.")
 audit_app = typer.Typer(help="Create and verify audit chains.")
 safety_app = typer.Typer(help="Run public repository safety checks.")
 redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.")
+pixel_risk_app = typer.Typer(help="Scan pixel-layer privacy risk signals.")
 tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
 api_app = typer.Typer(help="Run local REST API demo.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
@@ -99,6 +102,7 @@ app.add_typer(policy_app, name="policy")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
 app.add_typer(redaction_plan_app, name="redaction-plan")
+app.add_typer(pixel_risk_app, name="pixel-risk")
 app.add_typer(tag_app, name="tag")
 app.add_typer(api_app, name="api")
 app.add_typer(workflow_app, name="workflow")
@@ -724,6 +728,42 @@ def remediation_plan(
     console.print(f"Uncovered high-risk items: {report.uncovered_high_risk_items}")
     console.print(f"Uncovered medium-risk items: {report.uncovered_medium_risk_items}")
     console.print(f"Pixel review recommended files: {report.pixel_review_recommended_files}")
+    console.print(f"Overall: {'PASS' if report.passed else 'REVIEW'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@pixel_risk_app.command("scan")
+def pixel_risk_scan(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON pixel risk scan.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML pixel risk scan.")
+    ] = None,
+) -> None:
+    report = scan_pixel_risk(input_path)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_pixel_risk_scan_html(html_output, report)
+
+    table = Table(title="Dental DICOM Pixel Risk Scan")
+    table.add_column("Status")
+    table.add_column("Severity")
+    table.add_column("Signal")
+    table.add_column("Message")
+    for signal in report.signals:
+        table.add_row(
+            "PASS" if signal.passed else "REVIEW",
+            signal.severity,
+            signal.id,
+            signal.message,
+        )
+    console.print(table)
+    console.print(f"BurnedInAnnotation: {report.burned_in_annotation or 'missing'}")
+    console.print(f"Rows/columns: {report.rows or '-'} / {report.columns or '-'}")
     console.print(f"Overall: {'PASS' if report.passed else 'REVIEW'}")
     if not report.passed:
         raise typer.Exit(1)

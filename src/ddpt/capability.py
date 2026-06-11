@@ -249,6 +249,29 @@ CAPABILITY_SPECS = [
         note="Complements audit logs with a reviewer-friendly before/after report.",
     ),
     CapabilitySpec(
+        id="pixel-risk-scan",
+        capability="Conservative pixel-layer risk scan before manual burned-in review",
+        source_tools=("PixelMed DicomCleaner", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/pixel_risk.py",
+            "docs/pixel-risk-scan.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt pixel-risk scan output.dcm --json pixel-risk.json "
+            "--html pixel-risk.html"
+        ),
+        differentiator=(
+            "Pixel-layer review starts with auditable risk signals instead of "
+            "jumping straight to manual redaction."
+        ),
+        note=(
+            "This is conservative triage, not OCR or proof that all burned-in "
+            "identifiers were detected."
+        ),
+    ),
+    CapabilitySpec(
         id="pixel-review-redaction",
         capability="Burned-in pixel annotation review and rectangular redaction",
         source_tools=("PixelMed DicomCleaner",),

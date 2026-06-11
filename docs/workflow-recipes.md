@@ -21,6 +21,7 @@ Expected outputs:
 - `workflow-run/reports/remediation-plan.html`
 - `workflow-run/outputs/sample.anonymized.dcm`
 - `workflow-run/reports/deid-comparison.html`
+- `workflow-run/reports/pixel-risk.html`
 - `workflow-run/reports/pixel-review.html`
 - `workflow-run/outputs/sample.redacted.dcm`
 - `workflow-run/share/package.ddpt`
@@ -43,6 +44,7 @@ Expected outputs:
 - `compare-deid`
 - `validate`
 - `preview`
+- `pixel-risk-scan`
 - `pixel-review`
 - `redact-pixels`
 - `package`

@@ -52,6 +52,7 @@ jobs:
           test -f docs/preview.md
           test -f docs/pixel-review.md
           test -f docs/pixel-redaction-plans.md
+          test -f docs/pixel-risk-scan.md
           test -f docs/tag-operations.md
           test -f docs/local-api.md
           test -f docs/local-workbench.md
@@ -106,6 +107,9 @@ jobs:
 
       - name: Run privacy remediation plan
         run: python -m ddpt remediation plan evidence-run/demo-run/input --json remediation-plan.json --html remediation-plan.html
+
+      - name: Run pixel risk scan
+        run: python -m ddpt pixel-risk scan evidence-run/demo-run/outputs/sample.anonymized.dcm --json pixel-risk.json --html pixel-risk.html
 
       - name: Run share readiness gate
         run: python -m ddpt share readiness evidence-run/demo-run --json share-readiness.json --html share-readiness.html

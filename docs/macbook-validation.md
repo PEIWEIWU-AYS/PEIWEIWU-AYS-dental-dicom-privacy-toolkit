@@ -91,6 +91,7 @@ Expected:
 - `workflow-run/reports/workflow-run.json` exists
 - `workflow-run/reports/workflow-run.html` exists
 - `workflow-run/reports/remediation-plan.html` exists
+- `workflow-run/reports/pixel-risk.html` exists
 - `workflow-run/reports/quality-gate.json` exists
 - `workflow-run/reports/quality-gate.html` exists
 - overall workflow status is `PASS`

@@ -302,6 +302,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "outputs" / "sample.redacted.dcm").exists()
     assert (workflow_dir / "reports" / "deid-comparison.json").exists()
     assert (workflow_dir / "reports" / "deid-comparison.html").exists()
+    assert (workflow_dir / "reports" / "pixel-risk.json").exists()
+    assert (workflow_dir / "reports" / "pixel-risk.html").exists()
     assert (workflow_dir / "reports" / "pixel-review.json").exists()
     assert (workflow_dir / "reports" / "pixel-review.html").exists()
     assert (workflow_dir / "reports" / "pixel-review" / "pixel-review-redacted.png").exists()
@@ -327,6 +329,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "anonymize",
         "compare-deidentification",
         "validate",
+        "pixel-risk-scan",
         "preview-anonymized",
         "pixel-review",
         "redact-known-pixels",
@@ -348,6 +351,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
     assert "remediation-plan" in html
+    assert "pixel-risk-scan" in html
     assert "deid-certificate" in html
     assert "workflow-quality-gate" in html
 
@@ -519,6 +523,42 @@ def test_redaction_plan_commands_and_plan_based_redaction(tmp_path: Path) -> Non
     assert int(redacted_dataset.pixel_array[0, 1]) == 0
     audit = json.loads(audit_json.read_text())
     assert audit["rectangles"][0] == {"x": 0, "y": 0, "width": 2, "height": 1}
+
+
+def test_pixel_risk_scan_command_reports_conservative_signals(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    risk_json = tmp_path / "reports" / "pixel-risk.json"
+    risk_html = tmp_path / "reports" / "pixel-risk.html"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    result = runner.invoke(
+        app,
+        [
+            "pixel-risk",
+            "scan",
+            str(source),
+            "--json",
+            str(risk_json),
+            "--html",
+            str(risk_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert risk_json.exists()
+    assert risk_html.exists()
+    report = json.loads(risk_json.read_text())
+    assert report["passed"] is True
+    assert report["pixel_data_present"] is True
+    assert report["rows"] == 2
+    assert report["columns"] == 2
+    assert report["burned_in_annotation"] == "NO"
+    signal_ids = {item["id"] for item in report["signals"]}
+    assert "burned-in-annotation" in signal_ids
+    assert "edge-high-intensity" in signal_ids
+    html = risk_html.read_text()
+    assert "Dental DICOM Pixel Risk Scan" in html
+    assert "not OCR" in html
 
 
 def test_pixel_review_command_generates_overlay_and_report(tmp_path: Path) -> None:
@@ -848,6 +888,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "privacy-remediation-plan" in capability_ids
     assert "linkable-pseudonymization" in capability_ids
     assert "before-after-deid-comparison" in capability_ids
+    assert "pixel-risk-scan" in capability_ids
     assert "pixel-review-redaction" in capability_ids
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
@@ -923,6 +964,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "remediation-plan.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "pixel-risk.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
     assert (output_dir / "demo-run" / "reports" / "deid-comparison.html").exists()
     assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
@@ -944,6 +986,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
     assert "workflow-run/reports/remediation-plan.html" in artifact_paths
+    assert "workflow-run/reports/pixel-risk.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
     assert "demo-run/reports/deid-comparison.html" in artifact_paths
     assert "demo-run/reports/pixel-review.html" in artifact_paths
@@ -960,6 +1003,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "De-identification certificate HTML" in html
     assert "Workflow quality gate HTML" in html
     assert "Privacy remediation plan HTML" in html
+    assert "Pixel risk scan HTML" in html
 
 
 def test_certificate_command_builds_handoff_certificate(tmp_path: Path) -> None:

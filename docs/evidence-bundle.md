@@ -26,6 +26,7 @@ The bundle includes:
 - policy registry JSON, CSV, and HTML
 - built-in profile lint JSON and HTML
 - privacy remediation plan JSON and HTML from the workflow recipe
+- pixel risk scan JSON and HTML from the workflow recipe
 - one-command synthetic demo output
 - demo summary HTML with synthetic PNG previews
 - before/after de-identification comparison JSON and HTML
@@ -80,6 +81,7 @@ evidence-run/
     outputs/sample.redacted.dcm
     reports/
       remediation-plan.html
+      pixel-risk.html
     share/
 ```
 

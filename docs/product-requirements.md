@@ -28,20 +28,21 @@ Version 0.1 is successful when a new user can:
 18. Confirm direct identifiers were replaced or removed.
 19. Generate an audit event JSON file.
 20. Validate anonymized output with a pass/fail report.
-21. Generate pixel review reports for known burned-in annotation regions.
-22. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-23. Package anonymized files with checksums.
-24. Encrypt the package.
-25. Verify or decrypt the package.
-26. Generate package verification receipts for receiver-side sharing evidence.
-27. Run a share-readiness gate before synthetic package handoff.
-28. Run local REST API workflow demos for integration testing.
-29. Run a release-readiness audit before public GitHub publishing.
-30. Run a competitor-informed capability matrix that maps features to repository evidence.
-31. Generate a static local review dashboard for non-programmer walkthroughs.
-32. Generate a local evidence bundle for MacBook validation and public demonstrations.
-33. Run a workflow quality gate that verifies public review evidence.
-34. Run automated tests locally and in GitHub Actions.
+21. Run a conservative pixel risk scan before manual pixel review.
+22. Generate pixel review reports for known burned-in annotation regions.
+23. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+24. Package anonymized files with checksums.
+25. Encrypt the package.
+26. Verify or decrypt the package.
+27. Generate package verification receipts for receiver-side sharing evidence.
+28. Run a share-readiness gate before synthetic package handoff.
+29. Run local REST API workflow demos for integration testing.
+30. Run a release-readiness audit before public GitHub publishing.
+31. Run a competitor-informed capability matrix that maps features to repository evidence.
+32. Generate a static local review dashboard for non-programmer walkthroughs.
+33. Generate a local evidence bundle for MacBook validation and public demonstrations.
+34. Run a workflow quality gate that verifies public review evidence.
+35. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -190,7 +191,7 @@ Required:
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails
-- support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
+- support synthetic, inventory, inspect, anonymize, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
 - support remediation-plan stages before anonymization
 - support before/after de-identification comparison stages
 
@@ -457,6 +458,24 @@ Required outputs:
 - support manual rectangles
 - support reusable YAML redaction plans
 - warnings that pixel review does not automatically detect every burned-in identifier
+
+### `ddpt pixel-risk scan`
+
+Run a conservative pixel-layer privacy risk screen before manual pixel review.
+
+Required outputs:
+
+- PixelData presence and readability status
+- `BurnedInAnnotation` status
+- rows and columns
+- pixel min/max values
+- edge high-intensity fraction
+- edge contrast ratio
+- recommended actions
+- JSON report
+- optional HTML report
+- non-zero exit status when high or medium severity pixel risk signals require review
+- warning that this is not OCR and does not prove all burned-in identifiers were detected
 
 ### `ddpt anonymize`
 

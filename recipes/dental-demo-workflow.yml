@@ -45,6 +45,12 @@ steps:
     input: outputs/sample.anonymized.dcm
     json: reports/validation.json
 
+  - id: pixel-risk-scan
+    action: pixel-risk-scan
+    input: outputs/sample.anonymized.dcm
+    json: reports/pixel-risk.json
+    html: reports/pixel-risk.html
+
   - id: preview-anonymized
     action: preview
     input: outputs/sample.anonymized.dcm

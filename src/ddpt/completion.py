@@ -42,22 +42,25 @@ OBJECTIVE_REQUIREMENTS = [
         requirement="Study DicomCleaner and inherit header cleaning plus burned-in pixel review.",
         evidence_files=(
             "docs/competitor-analysis.md",
+            "docs/pixel-risk-scan.md",
             "docs/pixel-review.md",
             "docs/remediation-plan.md",
         ),
         capability_ids=(
             "metadata-inspection",
             "privacy-remediation-plan",
+            "pixel-risk-scan",
             "pixel-review-redaction",
         ),
         evidence_terms=(
             ("docs/competitor-analysis.md", "DicomCleaner"),
             ("docs/competitor-analysis.md", "burned-in"),
+            ("docs/pixel-risk-scan.md", "ddpt pixel-risk scan"),
             ("docs/remediation-plan.md", "ddpt remediation plan"),
         ),
         note=(
-            "Covers metadata risk review, remediation planning, pixel preview, "
-            "overlay, and redaction evidence."
+            "Covers metadata risk review, remediation planning, pixel risk "
+            "triage, preview, overlay, and redaction evidence."
         ),
     ),
     ObjectiveRequirement(

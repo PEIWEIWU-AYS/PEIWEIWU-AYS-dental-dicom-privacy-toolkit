@@ -18,6 +18,7 @@ from ddpt.models import (
     ObjectiveAuditReport,
     PackageVerificationReceipt,
     PixelReviewReport,
+    PixelRiskScanReport,
     PolicyRegistryReport,
     PrivacyRemediationPlanReport,
     ProfileComparisonReport,
@@ -589,6 +590,97 @@ WORKFLOW_QUALITY_GATE_TEMPLATE = Template(
       {% endfor %}
     </tbody>
   </table>
+</body>
+</html>
+"""
+)
+
+PIXEL_RISK_SCAN_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Pixel Risk Scan</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .high { color: #b00020; font-weight: 700; }
+    .medium { color: #8a5a00; font-weight: 700; }
+    .low { color: #1f6f43; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Pixel Risk Scan</h1>
+  <p class="warning">
+    Conservative pixel-layer workflow screen only. This is not OCR, clinical
+    interpretation, legal certification, or proof that all burned-in identifiers
+    were detected.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "REVIEW" }}
+      </span>
+    </li>
+    <li>Pixel data present: {{ report.pixel_data_present }}</li>
+    <li>Rows: {{ report.rows or "" }}</li>
+    <li>Columns: {{ report.columns or "" }}</li>
+    <li>BurnedInAnnotation: {{ report.burned_in_annotation or "missing" }}</li>
+    <li>Pixel min/max: {{ report.min_pixel_value }} / {{ report.max_pixel_value }}</li>
+    <li>Edge high-intensity fraction: {{ report.edge_high_intensity_fraction }}</li>
+    <li>Edge contrast ratio: {{ report.edge_contrast_ratio }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Recommended Actions</h2>
+  <ul>
+    {% for action in report.recommended_actions %}
+    <li>{{ action }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Signals</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Severity</th>
+        <th>Signal</th>
+        <th>Message</th>
+        <th>Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for signal in report.signals %}
+      <tr>
+        <td class="{{ "ok" if signal.passed else "fail" }}">
+          {{ "PASS" if signal.passed else "REVIEW" }}
+        </td>
+        <td class="{{ signal.severity }}">{{ signal.severity }}</td>
+        <td>{{ signal.id }}</td>
+        <td>{{ signal.message }}</td>
+        <td>
+          {% for item in signal.evidence %}
+          <code>{{ item }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p>{{ report.note }}</p>
 </body>
 </html>
 """
@@ -1856,6 +1948,10 @@ def write_workflow_quality_gate_html(
     report: WorkflowQualityGateReport,
 ) -> None:
     _write_html(path, WORKFLOW_QUALITY_GATE_TEMPLATE.render(report=report))
+
+
+def write_pixel_risk_scan_html(path: Path, report: PixelRiskScanReport) -> None:
+    _write_html(path, PIXEL_RISK_SCAN_TEMPLATE.render(report=report))
 
 
 def write_privacy_remediation_html(

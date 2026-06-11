@@ -8,11 +8,11 @@
 
 ## GitHub Description
 
-Open-source dental DICOM anonymization, de-identification, privacy remediation plan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
+Open-source dental DICOM anonymization, de-identification, privacy remediation plan, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy-remediation` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy-remediation` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## English Keywords
 
@@ -21,6 +21,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - DICOM anonymization
 - DICOM de-identification
 - DICOM privacy remediation plan
+- DICOM pixel risk scan
 - DICOM workflow quality gate
 - de-identification certificate
 - deterministic pseudonymization
@@ -31,6 +32,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - multi-file synthetic DICOM study
 - DICOM anonymization dry run
 - DICOM remediation report
+- burned-in identifier triage
 - medical imaging privacy
 - encrypted DICOM sharing
 - DICOM metadata
@@ -53,6 +55,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - DICOM脱敏
 - DICOM去标识化
 - 隐私整改计划
+- 像素风险扫描
 - 工作流质量门禁
 - 去标识化证明书
 - DICOM伪名化
@@ -63,6 +66,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - 多文件合成DICOM数据集
 - 脱敏预演
 - 脱敏前整改计划
+- burned-in 标识风险扫描
 - 医学影像隐私
 - DICOM接口
 - DICOM标签编辑
@@ -83,6 +87,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - open source DICOM de-identification
 - DICOM de-identification certificate
 - DICOM privacy remediation plan
+- DICOM pixel risk scan
 - DICOM workflow quality gate
 - DICOM deterministic pseudonymization
 - linkable DICOM research pseudonyms
@@ -92,6 +97,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - synthetic dental DICOM study generator
 - DICOM anonymization dry run
 - DICOM privacy remediation report
+- DICOM burned-in pixel risk scan
 - dental imaging privacy toolkit
 - encrypted DICOM sharing
 - DICOM REST API privacy workflow
@@ -104,6 +110,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - 牙科 DICOM 伪名化
 - 牙科 DICOM 去标识化证明书
 - 牙科 DICOM 隐私整改计划
+- 牙科 DICOM 像素风险扫描
 - 牙科 DICOM 工作流质量门禁
 - 牙科 DICOM 本地工作台
 - 医学影像开源项目完成度审计
@@ -113,4 +120,4 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, privacy remediation plans, workflow quality gates, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, de-identification certificates, local REST API integration demos, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, privacy remediation plans, pixel risk scans, workflow quality gates, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, de-identification certificates, local REST API integration demos, encrypted sharing packages, and audit reporting.

@@ -13,6 +13,7 @@ from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import WorkflowRunReport, WorkflowStepResult
 from ddpt.pixel_review import create_pixel_review
+from ddpt.pixel_risk import scan_pixel_risk
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.preview import render_dicom_preview
 from ddpt.quality_gate import run_workflow_quality_gate
@@ -26,6 +27,7 @@ from ddpt.reports import (
     write_inventory_html,
     write_package_receipt_html,
     write_pixel_review_html,
+    write_pixel_risk_scan_html,
     write_privacy_remediation_html,
     write_share_readiness_html,
     write_workflow_quality_gate_html,
@@ -208,6 +210,21 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             json_path = _path(root_dir, step["json"])
             write_json(json_path, model_to_dict(report))
             artifacts.append(json_path)
+        return artifacts
+
+    if action == "pixel-risk-scan":
+        report = scan_pixel_risk(_path(root_dir, step["input"]))
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_pixel_risk_scan_html(html_path, report)
+            artifacts.append(html_path)
+        if not report.passed:
+            raise ValueError("Pixel risk scan requires review")
         return artifacts
 
     if action == "redact-pixels":

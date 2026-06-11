@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, privacy remediation plan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, 隐私整改计划, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, privacy remediation plan, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, 隐私整改计划, 像素风险扫描, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -33,6 +33,7 @@ Core goals:
 - Workflow-level certificate generation as the final YAML recipe stage
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
+- Pixel risk scan for conservative burned-in identifier triage
 - Pixel review reports with original, overlay, and redacted PNG previews
 - YAML workflow recipes for reproducible staged pipelines
 - Local REST API for integration demos
@@ -74,6 +75,7 @@ ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/re
 ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
 ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
+ddpt pixel-risk scan demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/pixel-risk.json --html demo-run/reports/pixel-risk.html
 ddpt pixel-review demo-run/outputs/sample.anonymized.dcm --out-dir demo-run/reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json demo-run/reports/pixel-review.json --html demo-run/reports/pixel-review.html
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
 ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-dump.json
@@ -115,6 +117,7 @@ See [docs/inventory.md](docs/inventory.md) for the inventory safety boundary and
 See [docs/remediation-plan.md](docs/remediation-plan.md) for pre-anonymization privacy action plans.
 See [docs/synthetic-study.md](docs/synthetic-study.md) for multi-file synthetic dental study generation.
 See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limits.
+See [docs/pixel-risk-scan.md](docs/pixel-risk-scan.md) for conservative burned-in identifier triage.
 See [docs/pixel-review.md](docs/pixel-review.md) for burned-in annotation region review reports.
 
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
@@ -163,7 +166,7 @@ ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out 
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy-remediation` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy-remediation` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## Repository Structure
 

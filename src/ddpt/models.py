@@ -260,6 +260,33 @@ class PixelReviewReport(BaseModel):
     )
 
 
+class PixelRiskSignal(BaseModel):
+    id: str
+    severity: Literal["high", "medium", "low"]
+    passed: bool
+    message: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class PixelRiskScanReport(BaseModel):
+    input_path: str
+    passed: bool
+    pixel_data_present: bool
+    rows: int | None = None
+    columns: int | None = None
+    burned_in_annotation: str | None = None
+    min_pixel_value: float | None = None
+    max_pixel_value: float | None = None
+    edge_high_intensity_fraction: float | None = None
+    edge_contrast_ratio: float | None = None
+    signals: list[PixelRiskSignal]
+    recommended_actions: list[str] = Field(default_factory=list)
+    note: str
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DoctorCheck(BaseModel):
     name: str
     passed: bool
