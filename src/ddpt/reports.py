@@ -303,6 +303,7 @@ BATCH_SUMMARY_TEMPLATE = Template(
     <li>Processed files: {{ summary.processed_files }}</li>
     <li>Failed files: {{ summary.failed_files }}</li>
     <li>Validation failures: {{ summary.validation_failures }}</li>
+    <li>De-identification comparison failures: {{ summary.comparison_failures }}</li>
     <li>Generated at: {{ summary.generated_at }}</li>
   </ul>
   <table>
@@ -311,6 +312,8 @@ BATCH_SUMMARY_TEMPLATE = Template(
         <th>Input</th>
         <th>Output</th>
         <th>Validation</th>
+        <th>De-id Comparison</th>
+        <th>Evidence</th>
         <th>Error</th>
       </tr>
     </thead>
@@ -321,6 +324,15 @@ BATCH_SUMMARY_TEMPLATE = Template(
         <td><code>{{ item.output_path or "" }}</code></td>
         <td class="{{ "ok" if item.validation_passed else "fail" }}">
           {{ "passed" if item.validation_passed else "failed" }}
+        </td>
+        <td class="{{ "ok" if item.deid_comparison_passed else "fail" }}">
+          {{ "passed" if item.deid_comparison_passed else "failed" }}
+        </td>
+        <td>
+          {% if item.inspection_json %}<code>{{ item.inspection_json }}</code><br>{% endif %}
+          {% if item.audit_json %}<code>{{ item.audit_json }}</code><br>{% endif %}
+          {% if item.validation_json %}<code>{{ item.validation_json }}</code><br>{% endif %}
+          {% if item.deid_comparison_json %}<code>{{ item.deid_comparison_json }}</code>{% endif %}
         </td>
         <td>{{ item.error or "" }}</td>
       </tr>

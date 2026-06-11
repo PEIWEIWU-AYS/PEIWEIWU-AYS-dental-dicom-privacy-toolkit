@@ -26,6 +26,7 @@ Core goals:
 - Competitor-informed capability matrix with repository evidence
 - Objective completion audit against the original competitor-learning goal
 - Before/after de-identification comparison reports
+- Batch de-identification evidence for directory workflows
 - De-identification certificate for synthetic sharing handoff evidence
 - Workflow-level certificate generation as the final YAML recipe stage
 - Anonymization dry-run previews before writing DICOM files
@@ -120,6 +121,7 @@ See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile confi
 See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
 See [docs/deid-comparison.md](docs/deid-comparison.md) for before/after de-identification comparison reports.
+See [docs/batch.md](docs/batch.md) for batch de-identification evidence.
 See [docs/deid-certificate.md](docs/deid-certificate.md) for the synthetic de-identification certificate.
 See [docs/capability-matrix.md](docs/capability-matrix.md) for competitor-informed capability evidence.
 See [docs/objective-completion-audit.md](docs/objective-completion-audit.md) for requirement-level evidence against the original goal.

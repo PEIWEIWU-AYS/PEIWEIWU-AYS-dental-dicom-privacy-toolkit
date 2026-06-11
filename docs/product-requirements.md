@@ -217,10 +217,12 @@ Required:
 - per-file inspection JSON
 - per-file anonymization audit JSON
 - per-file validation JSON
+- per-file before/after de-identification comparison JSON
 - anonymized DICOM output directory
 - batch summary JSON
 - batch summary HTML
-- non-zero exit status when failures occur
+- comparison failure count
+- non-zero exit status when file, validation, or comparison failures occur
 
 ### `ddpt audit chain/verify`
 

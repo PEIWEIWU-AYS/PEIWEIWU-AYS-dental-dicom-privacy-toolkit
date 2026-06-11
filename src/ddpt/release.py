@@ -16,6 +16,7 @@ REQUIRED_FILES = [
     "pyproject.toml",
     ".gitignore",
     ".github/workflows/ci.yml",
+    "docs/batch.md",
     "docs/capability-matrix.md",
     "docs/competitor-analysis.md",
     "docs/data-safety.md",
@@ -80,6 +81,7 @@ DOCUMENTED_COMMANDS = [
     "ddpt completion audit",
     "ddpt evidence bundle",
     "ddpt dashboard build",
+    "ddpt batch",
     "ddpt compare deid",
     "ddpt certificate create",
     "ddpt share readiness",
@@ -163,6 +165,7 @@ CI_TERMS = [
     "python -m ddpt certificate create",
     "python -m ddpt share readiness",
     "python -m ddpt dashboard build",
+    "python -m ddpt batch",
     "ruff check .",
     "pytest",
 ]

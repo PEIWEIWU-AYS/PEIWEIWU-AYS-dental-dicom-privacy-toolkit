@@ -109,6 +109,7 @@ Expected:
 - `synthetic-study-demo/manifest.json` lists 4 synthetic DICOM files
 - inventory reports 4 readable files
 - batch summary reports 4 processed files and 0 validation failures
+- batch summary reports 0 de-identification comparison failures
 - repeated files for the same synthetic patient share the same `DDPT-LINK-` pseudonym
 
 ## 8. Check Research Sharing Profile

@@ -45,7 +45,8 @@ ddpt batch synthetic-study-demo \
 
 With `dental-linkable-research`, files from the same synthetic patient keep the
 same research pseudonym while different synthetic patients get different
-pseudonyms.
+pseudonyms. The batch summary also reports validation failures and
+de-identification comparison failures across the folder.
 
 ## Why This Matters
 

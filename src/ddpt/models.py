@@ -564,7 +564,9 @@ class BatchFileResult(BaseModel):
     inspection_json: str | None = None
     audit_json: str | None = None
     validation_json: str | None = None
+    deid_comparison_json: str | None = None
     validation_passed: bool = False
+    deid_comparison_passed: bool = False
     error: str | None = None
 
 
@@ -576,6 +578,7 @@ class BatchSummary(BaseModel):
     processed_files: int
     failed_files: int
     validation_failures: int
+    comparison_failures: int = 0
     files: list[BatchFileResult]
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()

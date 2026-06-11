@@ -42,6 +42,7 @@ jobs:
           test -f docs/anonymization-dry-run.md
           test -f docs/macbook-validation.md
           test -f docs/safety-scan.md
+          test -f docs/batch.md
           test -f docs/release-audit.md
           test -f docs/research-sharing-profile.md
           test -f docs/linkable-research-profile.md
@@ -97,6 +98,9 @@ jobs:
 
       - name: Build de-identification certificate
         run: python -m ddpt certificate create evidence-run/demo-run --json deid-certificate.json --html deid-certificate.html
+
+      - name: Run batch de-identification evidence
+        run: python -m ddpt batch evidence-run/demo-run/input --out batch-run
 
       - name: Run share readiness gate
         run: python -m ddpt share readiness evidence-run/demo-run --json share-readiness.json --html share-readiness.html

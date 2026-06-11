@@ -1130,6 +1130,8 @@ def test_batch_workflow_command(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.output
     assert (output_dir / "dicom" / "first.anonymized.dcm").exists()
     assert (output_dir / "dicom" / "nested" / "second.anonymized.dcm").exists()
+    assert (output_dir / "reports" / "first.deid-comparison.json").exists()
+    assert (output_dir / "reports" / "nested__second.deid-comparison.json").exists()
     assert (output_dir / "batch-summary.json").exists()
     assert (output_dir / "batch-summary.html").exists()
     summary = json.loads((output_dir / "batch-summary.json").read_text())
@@ -1137,6 +1139,9 @@ def test_batch_workflow_command(tmp_path: Path) -> None:
     assert summary["processed_files"] == 2
     assert summary["failed_files"] == 0
     assert summary["validation_failures"] == 0
+    assert summary["comparison_failures"] == 0
+    assert all(item["deid_comparison_passed"] for item in summary["files"])
+    assert "De-id Comparison" in (output_dir / "batch-summary.html").read_text()
 
 
 def test_synthetic_study_command_feeds_inventory_batch_and_linkable_profile(
@@ -1194,6 +1199,8 @@ def test_synthetic_study_command_feeds_inventory_batch_and_linkable_profile(
     assert summary["total_files"] == 4
     assert summary["processed_files"] == 4
     assert summary["validation_failures"] == 0
+    assert summary["comparison_failures"] == 0
+    assert all(item["deid_comparison_json"] for item in summary["files"])
 
     patient_one_outputs = sorted((batch_dir / "dicom" / "patient-001").rglob("*.dcm"))
     patient_two_outputs = sorted((batch_dir / "dicom" / "patient-002").rglob("*.dcm"))

@@ -272,6 +272,25 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="batch-deid-evidence",
+        capability="Batch de-identification evidence for directory workflows",
+        source_tools=("RSNA CTP", "pydicom anonymization example", "DCMTK dcmodify"),
+        evidence_files=(
+            "src/ddpt/batch.py",
+            "docs/batch.md",
+            "tests/test_cli_workflow.py",
+        ),
+        command="ddpt batch synthetic-study-demo --out synthetic-study-demo-batch",
+        differentiator=(
+            "Directory-level processing writes per-file inspection, audit, "
+            "validation, and before/after de-identification comparison evidence."
+        ),
+        note=(
+            "Extends the CTP-style pipeline idea from single demos to repeated "
+            "synthetic folders and batch validation."
+        ),
+    ),
+    CapabilitySpec(
         id="local-rest-api",
         capability="Local REST API for integration demos",
         source_tools=("Orthanc",),

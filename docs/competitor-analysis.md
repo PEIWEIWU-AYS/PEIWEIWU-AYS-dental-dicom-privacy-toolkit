@@ -54,6 +54,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - dental/CBCT/oral imaging positioning
 - synthetic demo data as a first-class workflow
 - multi-file synthetic DICOM study folders for batch and repeated-subject demos
+- batch de-identification evidence for directory workflows
 - bilingual English/Chinese discoverability
 - CLI that works cleanly in CI
 - static HTML reports for non-programmers
@@ -144,6 +145,7 @@ The project should add:
 - manual pixel redaction audit for known burned-in annotation regions
 - one-command synthetic demo path
 - multi-file synthetic study generator for safe batch workflow testing
+- batch de-identification evidence with per-file before/after comparison JSON
 - GitHub topics and bilingual keyword strategy
 - report screenshots in later milestones
 

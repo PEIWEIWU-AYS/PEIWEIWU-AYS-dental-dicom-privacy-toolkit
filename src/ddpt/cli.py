@@ -205,8 +205,9 @@ def batch(
     console.print(f"Batch processed: {summary.processed_files}/{summary.total_files}")
     console.print(f"Failed files: {summary.failed_files}")
     console.print(f"Validation failures: {summary.validation_failures}")
+    console.print(f"De-identification comparison failures: {summary.comparison_failures}")
     console.print(f"Summary HTML: {output_dir / 'batch-summary.html'}")
-    if summary.failed_files or summary.validation_failures:
+    if summary.failed_files or summary.validation_failures or summary.comparison_failures:
         raise typer.Exit(1)
 
 

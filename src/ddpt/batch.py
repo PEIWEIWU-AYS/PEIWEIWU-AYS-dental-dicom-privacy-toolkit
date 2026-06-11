@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ddpt.anonymize import anonymize_dicom
+from ddpt.deid_compare import compare_deidentification
 from ddpt.inspection import inspect_dicom
 from ddpt.models import BatchFileResult, BatchSummary
 from ddpt.reports import model_to_dict, write_batch_summary_html
@@ -37,6 +38,7 @@ def run_batch_workflow(
         inspection_json = reports_dir / f"{stem}.inspect.json"
         audit_json = reports_dir / f"{stem}.audit.json"
         validation_json = reports_dir / f"{stem}.validation.json"
+        comparison_json = reports_dir / f"{stem}.deid-comparison.json"
 
         try:
             inspection = inspect_dicom(input_path)
@@ -48,6 +50,9 @@ def run_batch_workflow(
             validation = validate_anonymized_dicom(output_path)
             write_json(validation_json, model_to_dict(validation))
 
+            comparison = compare_deidentification(input_path, output_path)
+            write_json(comparison_json, model_to_dict(comparison))
+
             results.append(
                 BatchFileResult(
                     input_path=str(input_path),
@@ -55,7 +60,9 @@ def run_batch_workflow(
                     inspection_json=str(inspection_json),
                     audit_json=str(audit_json),
                     validation_json=str(validation_json),
+                    deid_comparison_json=str(comparison_json),
                     validation_passed=validation.passed,
+                    deid_comparison_passed=comparison.passed,
                 )
             )
         except Exception as exc:  # pragma: no cover - defensive batch path
@@ -70,6 +77,9 @@ def run_batch_workflow(
         failed_files=sum(1 for item in results if item.error is not None),
         validation_failures=sum(
             1 for item in results if item.error is None and not item.validation_passed
+        ),
+        comparison_failures=sum(
+            1 for item in results if item.error is None and not item.deid_comparison_passed
         ),
         files=results,
     )

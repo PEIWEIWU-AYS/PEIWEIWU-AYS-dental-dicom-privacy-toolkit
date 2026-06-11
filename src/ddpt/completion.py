@@ -126,15 +126,21 @@ OBJECTIVE_REQUIREMENTS = [
         id="multi-file-synthetic-workflow",
         category="differentiation",
         requirement="Provide multi-file synthetic dental datasets for safe batch workflow demos.",
-        evidence_files=("docs/synthetic-study.md", "src/ddpt/synthetic.py"),
-        capability_ids=("synthetic-study-generator", "pipeline-recipes"),
+        evidence_files=("docs/synthetic-study.md", "src/ddpt/synthetic.py", "docs/batch.md"),
+        capability_ids=(
+            "synthetic-study-generator",
+            "pipeline-recipes",
+            "batch-deid-evidence",
+        ),
         evidence_terms=(
             ("docs/synthetic-study.md", "ddpt synthetic-study"),
             ("docs/synthetic-study.md", "dental-linkable-research"),
+            ("docs/batch.md", "de-identification comparison"),
+            ("src/ddpt/batch.py", "compare_deidentification"),
         ),
         note=(
             "Single files are useful for tests; multi-file synthetic studies better "
-            "demonstrate batch and research workflows."
+            "demonstrate batch, comparison evidence, and research workflows."
         ),
     ),
     ObjectiveRequirement(
