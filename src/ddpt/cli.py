@@ -9,6 +9,7 @@ from rich.table import Table
 
 from ddpt import __version__
 from ddpt.anonymize import anonymize_dicom
+from ddpt.batch import run_batch_workflow
 from ddpt.inspection import inspect_dicom
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
@@ -70,6 +71,24 @@ def demo(
     console.print(f"Summary HTML: {result.summary_html}")
     console.print(f"Package entries: {result.package_entries}")
     if not result.validation_passed:
+        raise typer.Exit(1)
+
+
+@app.command()
+def batch(
+    input_dir: Annotated[Path, typer.Argument(help="Directory containing DICOM files.")],
+    output_dir: Annotated[Path, typer.Option("--out", help="Output batch directory.")],
+    profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
+    recursive: Annotated[
+        bool, typer.Option("--recursive/--no-recursive", help="Recurse through input directory.")
+    ] = True,
+) -> None:
+    summary = run_batch_workflow(input_dir, output_dir, profile=profile, recursive=recursive)
+    console.print(f"Batch processed: {summary.processed_files}/{summary.total_files}")
+    console.print(f"Failed files: {summary.failed_files}")
+    console.print(f"Validation failures: {summary.validation_failures}")
+    console.print(f"Summary HTML: {output_dir / 'batch-summary.html'}")
+    if summary.failed_files or summary.validation_failures:
         raise typer.Exit(1)
 
 

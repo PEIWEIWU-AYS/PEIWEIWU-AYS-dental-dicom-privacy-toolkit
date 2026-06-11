@@ -160,6 +160,31 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "share" / "package.key").exists()
 
 
+def test_batch_workflow_command(tmp_path: Path) -> None:
+    input_dir = tmp_path / "batch-input"
+    nested_dir = input_dir / "nested"
+    output_dir = tmp_path / "batch-output"
+    first = input_dir / "first.dcm"
+    second = nested_dir / "second.dicom"
+    nested_dir.mkdir(parents=True)
+
+    assert runner.invoke(app, ["synthetic", str(first)]).exit_code == 0
+    assert runner.invoke(app, ["synthetic", str(second)]).exit_code == 0
+
+    result = runner.invoke(app, ["batch", str(input_dir), "--out", str(output_dir)])
+
+    assert result.exit_code == 0, result.output
+    assert (output_dir / "dicom" / "first.anonymized.dcm").exists()
+    assert (output_dir / "dicom" / "nested" / "second.anonymized.dcm").exists()
+    assert (output_dir / "batch-summary.json").exists()
+    assert (output_dir / "batch-summary.html").exists()
+    summary = json.loads((output_dir / "batch-summary.json").read_text())
+    assert summary["total_files"] == 2
+    assert summary["processed_files"] == 2
+    assert summary["failed_files"] == 0
+    assert summary["validation_failures"] == 0
+
+
 def test_profile_commands(tmp_path: Path) -> None:
     profile_json = tmp_path / "profile.json"
     coverage_json = tmp_path / "coverage.json"

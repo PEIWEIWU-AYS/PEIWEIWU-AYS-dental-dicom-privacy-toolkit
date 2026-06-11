@@ -5,7 +5,7 @@ from typing import Any
 
 from jinja2 import Template
 
-from ddpt.models import AnonymizationAudit, DemoPipelineResult, InspectionReport
+from ddpt.models import AnonymizationAudit, BatchSummary, DemoPipelineResult, InspectionReport
 from ddpt.utils import ensure_parent
 
 INSPECTION_TEMPLATE = Template(
@@ -189,6 +189,69 @@ DEMO_SUMMARY_TEMPLATE = Template(
 """
 )
 
+BATCH_SUMMARY_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Batch Summary</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Batch Summary</h1>
+  <p class="warning">
+    Synthetic-data-oriented workflow. Review all outputs before external sharing.
+  </p>
+  <ul>
+    <li>Input directory: <code>{{ summary.input_dir }}</code></li>
+    <li>Output directory: <code>{{ summary.output_dir }}</code></li>
+    <li>Profile: {{ summary.profile }}</li>
+    <li>Total files: {{ summary.total_files }}</li>
+    <li>Processed files: {{ summary.processed_files }}</li>
+    <li>Failed files: {{ summary.failed_files }}</li>
+    <li>Validation failures: {{ summary.validation_failures }}</li>
+    <li>Generated at: {{ summary.generated_at }}</li>
+  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>Input</th>
+        <th>Output</th>
+        <th>Validation</th>
+        <th>Error</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in summary.files %}
+      <tr>
+        <td><code>{{ item.input_path }}</code></td>
+        <td><code>{{ item.output_path or "" }}</code></td>
+        <td class="{{ "ok" if item.validation_passed else "fail" }}">
+          {{ "passed" if item.validation_passed else "failed" }}
+        </td>
+        <td>{{ item.error or "" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -200,6 +263,10 @@ def write_audit_html(path: Path, audit: AnonymizationAudit) -> None:
 
 def write_demo_summary_html(path: Path, result: DemoPipelineResult) -> None:
     _write_html(path, DEMO_SUMMARY_TEMPLATE.render(result=result))
+
+
+def write_batch_summary_html(path: Path, summary: BatchSummary) -> None:
+    _write_html(path, BATCH_SUMMARY_TEMPLATE.render(summary=summary))
 
 
 def _write_html(path: Path, html: str) -> None:

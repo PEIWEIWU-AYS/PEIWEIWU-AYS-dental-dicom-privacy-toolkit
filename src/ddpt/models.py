@@ -131,6 +131,30 @@ class DemoPipelineResult(BaseModel):
     )
 
 
+class BatchFileResult(BaseModel):
+    input_path: str
+    output_path: str | None = None
+    inspection_json: str | None = None
+    audit_json: str | None = None
+    validation_json: str | None = None
+    validation_passed: bool = False
+    error: str | None = None
+
+
+class BatchSummary(BaseModel):
+    input_dir: str
+    output_dir: str
+    profile: str
+    total_files: int
+    processed_files: int
+    failed_files: int
+    validation_failures: int
+    files: list[BatchFileResult]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class TagPolicy(BaseModel):
     keyword: str
     risk: RiskLevel

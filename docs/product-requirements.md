@@ -38,6 +38,21 @@ Required:
 - HTML reports
 - summary HTML page
 
+### `ddpt batch`
+
+Run directory-level inspection, anonymization, validation, and summary reporting.
+
+Required:
+
+- recursive DICOM discovery
+- per-file inspection JSON
+- per-file anonymization audit JSON
+- per-file validation JSON
+- anonymized DICOM output directory
+- batch summary JSON
+- batch summary HTML
+- non-zero exit status when failures occur
+
 ### `ddpt profile list/show`
 
 Expose anonymization profile behavior so users can see what the toolkit will change.

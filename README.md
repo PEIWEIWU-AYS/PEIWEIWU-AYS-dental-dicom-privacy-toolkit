@@ -35,6 +35,7 @@ ddpt demo demo-run
 ddpt profile show dental-basic
 ddpt profile coverage dental-basic
 ddpt profile init profiles/my-dental-profile.yml
+ddpt batch demo-run/input --out demo-run/batch-output
 ```
 
 The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, JSON reports, HTML reports, an encrypted package, and a summary page to `demo-run/`.
