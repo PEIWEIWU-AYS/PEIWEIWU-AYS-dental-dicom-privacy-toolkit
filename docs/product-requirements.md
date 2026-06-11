@@ -51,6 +51,19 @@ Required:
 - show private tag policy
 - optional JSON export
 
+### `ddpt profile coverage`
+
+Compare an anonymization profile against the toolkit's high-risk and medium-risk policy registry.
+
+Required:
+
+- structured policy registry
+- high-risk coverage count
+- medium-risk coverage count
+- uncovered high-risk keyword list
+- uncovered medium-risk keyword list
+- optional JSON export
+
 ## Command Requirements
 
 The CLI command is `ddpt`.

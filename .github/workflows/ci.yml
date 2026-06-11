@@ -34,6 +34,7 @@ jobs:
           test -f docs/project-blueprint.md
           test -f docs/competitor-analysis.md
           test -f docs/product-requirements.md
+          test -f docs/policy-registry.md
 
       - name: Run tests
         run: pytest

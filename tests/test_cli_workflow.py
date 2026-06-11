@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import zipfile
 from pathlib import Path
 
@@ -46,6 +47,13 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.output
     assert inspect_json.exists()
     assert inspect_html.exists()
+    inspection = json.loads(inspect_json.read_text())
+    patient_name_finding = next(
+        item for item in inspection["findings"] if item["keyword"] == "PatientName"
+    )
+    assert patient_name_finding["risk"] == "high"
+    assert patient_name_finding["recommended_action"] == "replace"
+    assert patient_name_finding["dicom_action_code"] == "D"
     source_dataset = pydicom.dcmread(source)
 
     result = runner.invoke(
@@ -154,6 +162,7 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
 
 def test_profile_commands(tmp_path: Path) -> None:
     profile_json = tmp_path / "profile.json"
+    coverage_json = tmp_path / "coverage.json"
 
     result = runner.invoke(app, ["profile", "list"])
     assert result.exit_code == 0, result.output
@@ -163,6 +172,16 @@ def test_profile_commands(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.output
     assert profile_json.exists()
     assert "PatientName" in profile_json.read_text()
+
+    result = runner.invoke(
+        app,
+        ["profile", "coverage", "dental-basic", "--json", str(coverage_json)],
+    )
+    assert result.exit_code == 0, result.output
+    coverage = json.loads(coverage_json.read_text())
+    assert coverage["high_risk_uncovered"] == []
+    assert coverage["medium_risk_uncovered"] == []
+    assert coverage["covered_items"] == coverage["total_items"]
 
 
 def test_package_rejects_empty_directory(tmp_path: Path) -> None:

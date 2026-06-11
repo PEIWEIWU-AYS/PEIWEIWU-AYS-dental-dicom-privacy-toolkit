@@ -6,7 +6,7 @@ import pydicom
 from pydicom.dataelem import DataElement
 
 from ddpt.models import InspectionReport, TagFinding
-from ddpt.risk import classify_element
+from ddpt.policy import classify_element
 from ddpt.utils import value_to_text
 
 
@@ -30,7 +30,7 @@ def inspect_dicom(path: Path) -> InspectionReport:
 
 
 def _finding_from_element(element: DataElement) -> TagFinding:
-    risk, reason = classify_element(element)
+    risk, reason, category, recommended_action, dicom_action_code = classify_element(element)
     keyword = element.keyword or ""
     return TagFinding(
         tag=str(element.tag),
@@ -39,5 +39,8 @@ def _finding_from_element(element: DataElement) -> TagFinding:
         vr=element.VR,
         value=value_to_text(element.value),
         risk=risk,
+        category=category,
+        recommended_action=recommended_action,
+        dicom_action_code=dicom_action_code,
         reason=reason,
     )

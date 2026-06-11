@@ -48,7 +48,17 @@ INSPECTION_TEMPLATE = Template(
   <h2>Findings</h2>
   <table>
     <thead>
-      <tr><th>Risk</th><th>Tag</th><th>Keyword</th><th>Name</th><th>Value</th><th>Reason</th></tr>
+      <tr>
+        <th>Risk</th>
+        <th>Tag</th>
+        <th>Keyword</th>
+        <th>Category</th>
+        <th>Recommended</th>
+        <th>DICOM Code</th>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Reason</th>
+      </tr>
     </thead>
     <tbody>
       {% for item in report.findings %}
@@ -56,6 +66,9 @@ INSPECTION_TEMPLATE = Template(
         <td class="{{ item.risk }}">{{ item.risk }}</td>
         <td>{{ item.tag }}</td>
         <td>{{ item.keyword }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.recommended_action }}</td>
+        <td>{{ item.dicom_action_code }}</td>
         <td>{{ item.name }}</td>
         <td>{{ item.value }}</td>
         <td>{{ item.reason }}</td>

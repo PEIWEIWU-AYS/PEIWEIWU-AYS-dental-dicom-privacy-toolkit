@@ -12,6 +12,7 @@ from ddpt.anonymize import anonymize_dicom
 from ddpt.inspection import inspect_dicom
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
+from ddpt.policy import profile_coverage
 from ddpt.profiles import built_in_profiles, describe_profile
 from ddpt.reports import model_to_dict, write_audit_html, write_inspection_html
 from ddpt.sharing import create_package, decrypt_package, verify_package
@@ -97,6 +98,37 @@ def profile_show(
     table.add_row("regenerate_uid", ", ".join(summary["regenerate_uid_keywords"]) or "-")
     table.add_row("remove_private_tags", str(summary["remove_private_tags"]))
     console.print(table)
+
+
+@profile_app.command("coverage")
+def profile_coverage_command(
+    profile: Annotated[str, typer.Argument(help="Profile name or YAML path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON coverage report.")
+    ] = None,
+) -> None:
+    report = profile_coverage(profile)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+
+    table = Table(title=f"Profile Coverage: {report.profile}")
+    table.add_column("Risk")
+    table.add_column("Keyword")
+    table.add_column("Recommended")
+    table.add_column("Profile")
+    table.add_column("Covered")
+    for item in report.items:
+        table.add_row(
+            item.risk,
+            item.keyword,
+            item.recommended_action,
+            item.profile_action,
+            "yes" if item.covered else "no",
+        )
+    console.print(table)
+    console.print(f"Covered: {report.covered_items}/{report.total_items}")
+    console.print(f"High-risk uncovered: {len(report.high_risk_uncovered)}")
+    console.print(f"Medium-risk uncovered: {len(report.medium_risk_uncovered)}")
 
 
 @app.command()

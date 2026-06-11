@@ -15,6 +15,9 @@ class TagFinding(BaseModel):
     vr: str
     value: str
     risk: RiskLevel
+    category: str = "unknown"
+    recommended_action: str = "review"
+    dicom_action_code: str = "?"
     reason: str
 
 
@@ -123,6 +126,38 @@ class DemoPipelineResult(BaseModel):
     summary_html: str
     validation_passed: bool
     package_entries: int
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
+class TagPolicy(BaseModel):
+    keyword: str
+    risk: RiskLevel
+    category: str
+    recommended_action: str
+    dicom_action_code: str
+    reason: str
+    source: str
+
+
+class ProfileCoverageItem(BaseModel):
+    keyword: str
+    risk: RiskLevel
+    category: str
+    recommended_action: str
+    profile_action: str
+    covered: bool
+    reason: str
+
+
+class ProfileCoverageReport(BaseModel):
+    profile: str
+    total_items: int
+    covered_items: int
+    high_risk_uncovered: list[str]
+    medium_risk_uncovered: list[str]
+    items: list[ProfileCoverageItem]
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
