@@ -32,6 +32,7 @@ source .venv/bin/activate
 python -m pip install -e ".[dev]"
 
 ddpt demo demo-run
+ddpt profile show dental-basic
 ```
 
 The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, JSON reports, HTML reports, an encrypted package, and a summary page to `demo-run/`.

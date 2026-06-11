@@ -47,3 +47,19 @@ def load_profile(name_or_path: str) -> dict[str, Any]:
         return DEFAULT_PROFILE
 
     raise ValueError(f"Unknown anonymization profile: {name_or_path}")
+
+
+def built_in_profiles() -> list[str]:
+    return ["dental-basic"]
+
+
+def describe_profile(name_or_path: str) -> dict[str, Any]:
+    profile = load_profile(name_or_path)
+    return {
+        "name": profile.get("name", name_or_path),
+        "replace_keywords": sorted(profile.get("replace", {}).keys()),
+        "blank_keywords": sorted(profile.get("blank", [])),
+        "regenerate_uid_keywords": sorted(profile.get("regenerate_uids", [])),
+        "remove_private_tags": bool(profile.get("remove_private_tags", True)),
+        "raw": profile,
+    }

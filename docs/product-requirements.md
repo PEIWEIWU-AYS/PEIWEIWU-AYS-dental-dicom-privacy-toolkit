@@ -38,6 +38,19 @@ Required:
 - HTML reports
 - summary HTML page
 
+### `ddpt profile list/show`
+
+Expose anonymization profile behavior so users can see what the toolkit will change.
+
+Required:
+
+- list built-in profiles
+- show replacement keywords
+- show blanking keywords
+- show UID regeneration keywords
+- show private tag policy
+- optional JSON export
+
 ## Command Requirements
 
 The CLI command is `ddpt`.

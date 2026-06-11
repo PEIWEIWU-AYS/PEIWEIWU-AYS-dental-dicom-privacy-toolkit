@@ -12,6 +12,7 @@ from ddpt.anonymize import anonymize_dicom
 from ddpt.inspection import inspect_dicom
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixels import parse_rectangle, redact_pixels
+from ddpt.profiles import built_in_profiles, describe_profile
 from ddpt.reports import model_to_dict, write_audit_html, write_inspection_html
 from ddpt.sharing import create_package, decrypt_package, verify_package
 from ddpt.synthetic import create_synthetic_dicom
@@ -19,6 +20,8 @@ from ddpt.utils import write_json
 from ddpt.validation import validate_anonymized_dicom
 
 app = typer.Typer(help="Dental DICOM Privacy Toolkit", invoke_without_command=True)
+profile_app = typer.Typer(help="Inspect anonymization profiles.")
+app.add_typer(profile_app, name="profile")
 console = Console()
 
 
@@ -67,6 +70,33 @@ def demo(
     console.print(f"Package entries: {result.package_entries}")
     if not result.validation_passed:
         raise typer.Exit(1)
+
+
+@profile_app.command("list")
+def profile_list() -> None:
+    for profile in built_in_profiles():
+        console.print(profile)
+
+
+@profile_app.command("show")
+def profile_show(
+    profile: Annotated[str, typer.Argument(help="Profile name or YAML path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON profile summary.")
+    ] = None,
+) -> None:
+    summary = describe_profile(profile)
+    if json_output:
+        write_json(json_output, summary)
+
+    table = Table(title=f"Profile: {summary['name']}")
+    table.add_column("Action")
+    table.add_column("Keywords")
+    table.add_row("replace", ", ".join(summary["replace_keywords"]) or "-")
+    table.add_row("blank", ", ".join(summary["blank_keywords"]) or "-")
+    table.add_row("regenerate_uid", ", ".join(summary["regenerate_uid_keywords"]) or "-")
+    table.add_row("remove_private_tags", str(summary["remove_private_tags"]))
+    console.print(table)
 
 
 @app.command()

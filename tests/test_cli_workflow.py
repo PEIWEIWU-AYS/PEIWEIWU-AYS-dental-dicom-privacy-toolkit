@@ -152,6 +152,19 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "share" / "package.key").exists()
 
 
+def test_profile_commands(tmp_path: Path) -> None:
+    profile_json = tmp_path / "profile.json"
+
+    result = runner.invoke(app, ["profile", "list"])
+    assert result.exit_code == 0, result.output
+    assert "dental-basic" in result.output
+
+    result = runner.invoke(app, ["profile", "show", "dental-basic", "--json", str(profile_json)])
+    assert result.exit_code == 0, result.output
+    assert profile_json.exists()
+    assert "PatientName" in profile_json.read_text()
+
+
 def test_package_rejects_empty_directory(tmp_path: Path) -> None:
     empty = tmp_path / "empty"
     empty.mkdir()
