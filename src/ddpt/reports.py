@@ -11,6 +11,7 @@ from ddpt.models import (
     DemoPipelineResult,
     InspectionReport,
     InventoryReport,
+    ReleaseAuditReport,
     WorkflowRunReport,
 )
 from ddpt.utils import ensure_parent
@@ -465,6 +466,81 @@ WORKFLOW_TEMPLATE = Template(
 """
 )
 
+RELEASE_AUDIT_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Release Audit</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Release Audit</h1>
+  <p class="warning">
+    Public-release readiness check for a synthetic-data-only open-source repository.
+    This is not clinical, legal, regulatory, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Root directory: <code>{{ report.root_dir }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Passed checks: {{ report.passed_checks }}</li>
+    <li>Failed checks: {{ report.failed_checks }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Checks</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Check</th>
+        <th>Category</th>
+        <th>Message</th>
+        <th>Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for check in report.checks %}
+      <tr>
+        <td class="{{ "ok" if check.passed else "fail" }}">
+          {{ "PASS" if check.passed else "FAIL" }}
+        </td>
+        <td>{{ check.id }}</td>
+        <td>{{ check.category }}</td>
+        <td>{{ check.message }}</td>
+        <td>
+          {% for item in check.evidence %}
+          <code>{{ item }}</code>{% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -496,6 +572,10 @@ def write_inventory_html(path: Path, report: InventoryReport) -> None:
 
 def write_workflow_html(path: Path, report: WorkflowRunReport) -> None:
     _write_html(path, WORKFLOW_TEMPLATE.render(report=report))
+
+
+def write_release_audit_html(path: Path, report: ReleaseAuditReport) -> None:
+    _write_html(path, RELEASE_AUDIT_TEMPLATE.render(report=report))
 
 
 def _write_html(path: Path, html: str) -> None:

@@ -65,6 +65,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - DCMTK-style exact tag operations with audit JSON
 - Orthanc-inspired local REST API without heavy PACS infrastructure
 - JSON audit events and manifests
+- release-readiness audit for docs, discoverability, workflow coverage, CI, safety, and profile coverage
 - encrypted sharing package demo
 - GitHub-friendly screenshots, docs, and one-command demo
 - clear safety language about de-identification limits
@@ -111,6 +112,7 @@ The project should add:
 - exact tag dump/set/blank/delete commands with write-operation audits
 - local REST API endpoints for inventory, inspection, anonymization, validation, and preview
 - static HTML reports
+- release-readiness audit with JSON and HTML output before public GitHub milestones
 - encrypted sharing package with manifest and checksums
 - manual pixel redaction audit for known burned-in annotation regions
 - one-command synthetic demo path

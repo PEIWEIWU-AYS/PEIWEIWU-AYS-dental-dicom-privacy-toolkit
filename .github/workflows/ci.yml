@@ -40,6 +40,7 @@ jobs:
           test -f docs/anonymization-dry-run.md
           test -f docs/macbook-validation.md
           test -f docs/safety-scan.md
+          test -f docs/release-audit.md
           test -f docs/inventory.md
           test -f docs/preview.md
           test -f docs/pixel-redaction-plans.md
@@ -52,6 +53,9 @@ jobs:
 
       - name: Run environment doctor
         run: python -m ddpt doctor --json doctor.json
+
+      - name: Run release readiness audit
+        run: python -m ddpt release audit . --json release-audit.json --html release-audit.html
 
       - name: Run public repository safety scan
         run: python -m ddpt safety scan . --json safety-scan.json

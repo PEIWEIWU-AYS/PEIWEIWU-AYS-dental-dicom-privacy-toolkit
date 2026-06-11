@@ -25,11 +25,13 @@ from ddpt.redaction_plan import (
     rectangles_from_plan,
     write_redaction_plan_template,
 )
+from ddpt.release import run_release_audit
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
     write_inspection_html,
     write_inventory_html,
+    write_release_audit_html,
     write_workflow_html,
 )
 from ddpt.safety import scan_repository_safety
@@ -48,6 +50,7 @@ redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.
 tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
 api_app = typer.Typer(help="Run local REST API demo.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
+release_app = typer.Typer(help="Audit local release readiness.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
@@ -55,6 +58,7 @@ app.add_typer(redaction_plan_app, name="redaction-plan")
 app.add_typer(tag_app, name="tag")
 app.add_typer(api_app, name="api")
 app.add_typer(workflow_app, name="workflow")
+app.add_typer(release_app, name="release")
 console = Console()
 
 
@@ -250,6 +254,41 @@ def safety_scan(
     console.print(table)
     console.print(f"Scanned files: {report.scanned_files}")
     console.print(f"Findings: {len(report.findings)}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@release_app.command("audit")
+def release_audit(
+    root_dir: Annotated[Path, typer.Argument(help="Repository root to audit.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write release audit JSON.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write release audit HTML.")
+    ] = None,
+) -> None:
+    report = run_release_audit(root_dir)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_release_audit_html(html_output, report)
+
+    table = Table(title="Public Release Readiness Audit")
+    table.add_column("Status")
+    table.add_column("Check")
+    table.add_column("Category")
+    table.add_column("Message")
+    for check in report.checks:
+        table.add_row(
+            "PASS" if check.passed else "FAIL",
+            check.id,
+            check.category,
+            check.message,
+        )
+    console.print(table)
+    console.print(f"Passed checks: {report.passed_checks}/{len(report.checks)}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)

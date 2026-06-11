@@ -27,7 +27,8 @@ Version 0.1 is successful when a new user can:
 17. Encrypt the package.
 18. Verify or decrypt the package.
 19. Run local REST API workflow demos for integration testing.
-20. Run automated tests locally and in GitHub Actions.
+20. Run a release-readiness audit before public GitHub publishing.
+21. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -74,6 +75,26 @@ Required:
 - ignore generated local demo directories and Python/Node caches
 - optional JSON export
 - non-zero exit status when findings are present
+
+### `ddpt release audit`
+
+Audit whether the local repository is ready for a public GitHub milestone.
+
+Required:
+
+- required repository files check
+- bilingual README and keyword discoverability check
+- core CLI command documentation check
+- competitor-learning documentation check
+- source module presence check
+- Python package metadata and dependency check
+- GitHub Actions gate check
+- YAML workflow recipe coverage check
+- `dental-basic` privacy profile coverage check
+- public repository safety scan check
+- JSON output
+- optional HTML report
+- non-zero exit status when any release-readiness check fails
 
 ### `ddpt workflow run`
 
@@ -402,5 +423,6 @@ To call Version 0.1 complete, we need:
 - tests covering synthetic, inspect, anonymize, package, verify, decrypt
 - a generated HTML report from synthetic data
 - a one-command demo pipeline that generates all core artifacts
+- a release-readiness audit command with JSON and HTML outputs
 - README demo commands updated
 - CI passing locally or documented if remote CI is not available

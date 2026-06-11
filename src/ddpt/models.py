@@ -174,6 +174,31 @@ class SafetyScanReport(BaseModel):
     )
 
 
+class ReleaseAuditCheck(BaseModel):
+    id: str
+    category: str
+    passed: bool
+    message: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class ReleaseAuditReport(BaseModel):
+    root_dir: str
+    passed: bool
+    checks: list[ReleaseAuditCheck]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+    @property
+    def passed_checks(self) -> int:
+        return sum(1 for check in self.checks if check.passed)
+
+    @property
+    def failed_checks(self) -> int:
+        return sum(1 for check in self.checks if not check.passed)
+
+
 class DicomTagRecord(BaseModel):
     tag: str
     keyword: str

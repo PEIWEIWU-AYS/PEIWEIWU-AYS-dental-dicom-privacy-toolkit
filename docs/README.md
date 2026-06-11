@@ -13,6 +13,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Anonymization Dry Run](anonymization-dry-run.md)
 - [MacBook Validation](macbook-validation.md)
 - [Public Repository Safety Scan](safety-scan.md)
+- [Release Audit](release-audit.md)
 - [DICOM Inventory Preflight](inventory.md)
 - [DICOM PNG Preview](preview.md)
 - [Pixel Redaction Plans](pixel-redaction-plans.md)

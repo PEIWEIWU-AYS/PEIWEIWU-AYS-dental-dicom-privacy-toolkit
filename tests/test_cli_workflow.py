@@ -613,6 +613,55 @@ def test_safety_scan_passes_current_repository(tmp_path: Path) -> None:
     assert report["scanned_files"] > 0
 
 
+def test_release_audit_reports_repository_readiness(tmp_path: Path) -> None:
+    audit_json = tmp_path / "reports" / "release-audit.json"
+    audit_html = tmp_path / "reports" / "release-audit.html"
+
+    result = runner.invoke(
+        app,
+        [
+            "release",
+            "audit",
+            ".",
+            "--json",
+            str(audit_json),
+            "--html",
+            str(audit_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert audit_json.exists()
+    assert audit_html.exists()
+    report = json.loads(audit_json.read_text())
+    assert report["passed"] is True
+    check_ids = {item["id"] for item in report["checks"]}
+    assert "readme-discoverability" in check_ids
+    assert "competitor-learning" in check_ids
+    assert "workflow-recipe" in check_ids
+    assert "repository-safety" in check_ids
+    html = audit_html.read_text()
+    assert "Dental DICOM Release Audit" in html
+    assert "readme-discoverability" in html
+
+
+def test_release_audit_fails_incomplete_repository(tmp_path: Path) -> None:
+    (tmp_path / "README.md").write_text("# Tiny repo\n", encoding="utf-8")
+    audit_json = tmp_path / "release-audit.json"
+
+    result = runner.invoke(
+        app,
+        ["release", "audit", str(tmp_path), "--json", str(audit_json)],
+    )
+
+    assert result.exit_code == 1
+    report = json.loads(audit_json.read_text())
+    assert report["passed"] is False
+    failed = {item["id"] for item in report["checks"] if not item["passed"]}
+    assert "required-files" in failed
+    assert "readme-discoverability" in failed
+
+
 def test_safety_scan_flags_private_material(tmp_path: Path) -> None:
     (tmp_path / "README.md").write_text("# Safe public docs\n", encoding="utf-8")
     (tmp_path / "examples" / "synthetic-dicom").mkdir(parents=True)

@@ -81,11 +81,26 @@ Expected:
 - `workflow-run/reports/workflow-run.html` exists
 - overall workflow status is `PASS`
 
-## 7. Open Human-Readable Outputs
+## 7. Run Release Audit
+
+```bash
+ddpt release audit . \
+  --json release-audit.json \
+  --html release-audit.html
+```
+
+Expected:
+
+- overall release audit status is `PASS`
+- JSON and HTML release-readiness reports are created
+- README, docs, workflow recipe, CI, safety scan, and profile coverage checks pass
+
+## 8. Open Human-Readable Outputs
 
 Open these files locally:
 
 ```text
+release-audit.html
 demo-run/reports/demo-summary.html
 demo-run/reports/inventory.html
 demo-run/reports/inspect.html
@@ -94,7 +109,7 @@ demo-run/reports/audit.html
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
 
-## 8. Optional Local API Check
+## 9. Optional Local API Check
 
 Run this as a separate long-running command:
 
