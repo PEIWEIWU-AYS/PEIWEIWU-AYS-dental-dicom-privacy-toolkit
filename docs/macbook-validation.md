@@ -52,7 +52,20 @@ Expected:
 
 - `Audit chain passed: True`
 
-## 5. Open Human-Readable Outputs
+## 5. Run Recipe Workflow
+
+```bash
+ddpt workflow run recipes/dental-demo-workflow.yml \
+  --root workflow-run \
+  --json workflow-run/reports/workflow-run.json
+```
+
+Expected:
+
+- `workflow-run/reports/workflow-run.json` exists
+- overall workflow status is `PASS`
+
+## 6. Open Human-Readable Outputs
 
 Open these files locally:
 
@@ -65,7 +78,7 @@ demo-run/reports/audit.html
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
 
-## 6. Optional Local API Check
+## 7. Optional Local API Check
 
 Run this as a separate long-running command:
 

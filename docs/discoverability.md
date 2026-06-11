@@ -25,6 +25,8 @@ Open-source dental DICOM anonymization, de-identification, REST API, encryption,
 - DICOM metadata
 - DICOM REST API
 - DICOM tag editing
+- DICOM workflow
+- DICOM pipeline
 - audit report
 - CBCT
 - oral radiology
@@ -40,6 +42,8 @@ Open-source dental DICOM anonymization, de-identification, REST API, encryption,
 - 医学影像隐私
 - DICOM接口
 - DICOM标签编辑
+- DICOM工作流
+- 医学影像处理管线
 - 口腔影像
 - CBCT隐私
 - 加密共享
@@ -56,6 +60,8 @@ Open-source dental DICOM anonymization, de-identification, REST API, encryption,
 - encrypted DICOM sharing
 - DICOM REST API privacy workflow
 - DICOM tag editing audit
+- DICOM privacy pipeline recipe
+- YAML DICOM workflow
 - CBCT privacy open source
 - 牙科 DICOM 脱敏 工具
 - 医学影像隐私 开源
@@ -63,4 +69,4 @@ Open-source dental DICOM anonymization, de-identification, REST API, encryption,
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, local REST API integration demos, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, local REST API integration demos, encrypted sharing packages, and audit reporting.

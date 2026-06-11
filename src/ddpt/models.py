@@ -210,6 +210,25 @@ class TagEditAudit(BaseModel):
     )
 
 
+class WorkflowStepResult(BaseModel):
+    id: str
+    action: str
+    passed: bool
+    message: str
+    artifacts: list[str] = Field(default_factory=list)
+
+
+class WorkflowRunReport(BaseModel):
+    recipe_path: str
+    root_dir: str
+    name: str
+    passed: bool
+    steps: list[WorkflowStepResult]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DemoPipelineResult(BaseModel):
     output_dir: str
     input_dicom: str

@@ -35,6 +35,8 @@ Generated and local-only directories are ignored:
 - `restored`
 - `demo-run`
 - `demo-*`
+- `workflow-run`
+- `workflow-*`
 - Python and Node cache/build directories
 
 ## Safety Boundary

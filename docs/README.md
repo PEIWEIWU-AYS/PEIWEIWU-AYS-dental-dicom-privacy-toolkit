@@ -9,6 +9,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Product Requirements](product-requirements.md)
 - [Policy Registry](policy-registry.md)
 - [Demo Guide](demo-guide.md)
+- [Workflow Recipes](workflow-recipes.md)
 - [MacBook Validation](macbook-validation.md)
 - [Public Repository Safety Scan](safety-scan.md)
 - [DICOM Inventory Preflight](inventory.md)

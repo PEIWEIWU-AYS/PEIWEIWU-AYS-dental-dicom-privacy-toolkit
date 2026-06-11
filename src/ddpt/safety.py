@@ -20,6 +20,7 @@ EXCLUDED_DIR_NAMES = {
     "restored",
     "share",
     "venv",
+    "workflow-run",
 }
 
 FORBIDDEN_PATH_PARTS = {
@@ -100,6 +101,8 @@ def _is_excluded(path: Path, root_dir: Path) -> bool:
         if part in EXCLUDED_DIR_NAMES:
             return True
         if part.startswith("demo-"):
+            return True
+        if part.startswith("workflow-"):
             return True
     return False
 

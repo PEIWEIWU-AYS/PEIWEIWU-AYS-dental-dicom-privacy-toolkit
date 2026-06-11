@@ -12,20 +12,21 @@ Version 0.1 is successful when a new user can:
 2. Run `ddpt doctor` to confirm the local environment is ready.
 3. Run `ddpt safety scan` to confirm the public repository has no obvious private clinical material.
 4. Generate a synthetic DICOM file.
-5. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
-6. Generate PNG previews for visual workflow review.
-7. Run exact tag dump/set/blank/delete operations for expert workflows.
-8. Inspect metadata and receive JSON plus HTML reports.
-9. Apply the `dental-basic` anonymization profile.
-10. Confirm direct identifiers were replaced or removed.
-11. Generate an audit event JSON file.
-12. Validate anonymized output with a pass/fail report.
-13. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-14. Package anonymized files with checksums.
-15. Encrypt the package.
-16. Verify or decrypt the package.
-17. Run local REST API workflow demos for integration testing.
-18. Run automated tests locally and in GitHub Actions.
+5. Run a YAML recipe as a reproducible multi-stage workflow.
+6. Run a read-only directory inventory and receive JSON, CSV, and HTML reports.
+7. Generate PNG previews for visual workflow review.
+8. Run exact tag dump/set/blank/delete operations for expert workflows.
+9. Inspect metadata and receive JSON plus HTML reports.
+10. Apply the `dental-basic` anonymization profile.
+11. Confirm direct identifiers were replaced or removed.
+12. Generate an audit event JSON file.
+13. Validate anonymized output with a pass/fail report.
+14. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+15. Package anonymized files with checksums.
+16. Encrypt the package.
+17. Verify or decrypt the package.
+18. Run local REST API workflow demos for integration testing.
+19. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -72,6 +73,20 @@ Required:
 - ignore generated local demo directories and Python/Node caches
 - optional JSON export
 - non-zero exit status when findings are present
+
+### `ddpt workflow run`
+
+Run a YAML recipe as a reproducible multi-stage privacy workflow.
+
+Required:
+
+- workflow recipe YAML
+- root output directory
+- structured workflow report
+- step-level pass/fail status
+- artifacts list per step
+- non-zero exit status when any step fails
+- support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, and audit chain verification stages
 
 ### `ddpt inventory`
 

@@ -174,6 +174,77 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "share" / "package.key").exists()
 
 
+def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> None:
+    workflow_dir = tmp_path / "workflow-run"
+    workflow_json = workflow_dir / "reports" / "workflow-run.json"
+
+    result = runner.invoke(
+        app,
+        [
+            "workflow",
+            "run",
+            "recipes/dental-demo-workflow.yml",
+            "--root",
+            str(workflow_dir),
+            "--json",
+            str(workflow_json),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert workflow_json.exists()
+    assert (workflow_dir / "input" / "sample.synthetic.dcm").exists()
+    assert (workflow_dir / "reports" / "inventory.json").exists()
+    assert (workflow_dir / "reports" / "inspect.html").exists()
+    assert (workflow_dir / "outputs" / "sample.anonymized.dcm").exists()
+    assert (workflow_dir / "outputs" / "sample.redacted.dcm").exists()
+    assert (workflow_dir / "share" / "package.ddpt").exists()
+    assert (workflow_dir / "share" / "package.key").exists()
+    assert (workflow_dir / "reports" / "audit-chain.json").exists()
+    assert (workflow_dir / "reports" / "audit-chain-verify.json").exists()
+    report = json.loads(workflow_json.read_text())
+    assert report["passed"] is True
+    assert [step["id"] for step in report["steps"]] == [
+        "create-synthetic",
+        "inventory-input",
+        "inspect-input",
+        "anonymize",
+        "validate",
+        "preview-anonymized",
+        "redact-known-pixels",
+        "package",
+        "verify-package",
+        "audit-chain",
+        "audit-verify",
+    ]
+
+
+def test_workflow_recipe_accepts_relative_root(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    recipe_path = Path("recipes/dental-demo-workflow.yml").resolve()
+    monkeypatch.chdir(tmp_path)
+
+    result = runner.invoke(
+        app,
+        [
+            "workflow",
+            "run",
+            str(recipe_path),
+            "--root",
+            "relative-workflow",
+            "--json",
+            "relative-workflow/reports/workflow-run.json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    report = json.loads(Path("relative-workflow/reports/workflow-run.json").read_text())
+    assert report["passed"] is True
+    assert Path("relative-workflow/reports/audit-chain-verify.json").exists()
+
+
 def test_inventory_command_exports_safe_directory_report(tmp_path: Path) -> None:
     input_dir = tmp_path / "inventory-input"
     nested_dir = input_dir / "nested"

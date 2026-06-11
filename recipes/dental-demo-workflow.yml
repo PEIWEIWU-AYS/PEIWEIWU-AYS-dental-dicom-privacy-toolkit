@@ -1,0 +1,69 @@
+name: dental-demo-workflow
+description: Reproducible synthetic dental DICOM privacy workflow.
+steps:
+  - id: create-synthetic
+    action: synthetic
+    output: input/sample.synthetic.dcm
+
+  - id: inventory-input
+    action: inventory
+    input_dir: input
+    json: reports/inventory.json
+    csv: reports/inventory.csv
+    html: reports/inventory.html
+
+  - id: inspect-input
+    action: inspect
+    input: input/sample.synthetic.dcm
+    json: reports/inspect.json
+    html: reports/inspect.html
+
+  - id: anonymize
+    action: anonymize
+    input: input/sample.synthetic.dcm
+    output: outputs/sample.anonymized.dcm
+    profile: dental-basic
+    audit: reports/audit.json
+    html: reports/audit.html
+
+  - id: validate
+    action: validate
+    input: outputs/sample.anonymized.dcm
+    json: reports/validation.json
+
+  - id: preview-anonymized
+    action: preview
+    input: outputs/sample.anonymized.dcm
+    output: reports/anonymized-preview.png
+    json: reports/anonymized-preview.json
+
+  - id: redact-known-pixels
+    action: redact-pixels
+    input: outputs/sample.anonymized.dcm
+    output: outputs/sample.redacted.dcm
+    rects:
+      - 1,0,1,1
+    audit: reports/redaction.json
+
+  - id: package
+    action: package
+    input_dir: outputs
+    output: share/package.ddpt
+    manifest: share/manifest.json
+    encrypt: true
+    key_out: share/package.key
+
+  - id: verify-package
+    action: verify-package
+    package: share/package.ddpt
+    key: share/package.key
+
+  - id: audit-chain
+    action: audit-chain
+    root: .
+    output: reports/audit-chain.json
+
+  - id: audit-verify
+    action: audit-verify
+    manifest: reports/audit-chain.json
+    json: reports/audit-chain-verify.json

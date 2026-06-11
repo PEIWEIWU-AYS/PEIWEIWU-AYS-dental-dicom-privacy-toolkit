@@ -38,6 +38,8 @@ share/
 restored/
 demo-run/
 demo-*/
+workflow-run/
+workflow-*/
 
 # Private clinical material
 private/

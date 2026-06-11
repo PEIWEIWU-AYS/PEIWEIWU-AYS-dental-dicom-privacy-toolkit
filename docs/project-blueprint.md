@@ -38,6 +38,7 @@ The planned CLI name is `ddpt`, short for Dental DICOM Privacy Toolkit.
 
 ```bash
 ddpt inventory examples/synthetic-dicom --json reports/inventory.json --csv reports/inventory.csv --html reports/inventory.html
+ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json
 ddpt preview examples/synthetic-dicom/sample.dcm --out reports/sample-preview.png --json reports/sample-preview.json
 ddpt tag dump examples/synthetic-dicom/sample.dcm --json reports/tag-dump.json
 ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --html reports/inspect.html
@@ -199,6 +200,7 @@ dental-dicom-privacy-toolkit/
     inspect.py
     anonymize.py
     preview.py
+    workflow.py
     profiles.py
     report.py
     package.py
@@ -261,6 +263,7 @@ dental-dicom-privacy-toolkit/
 ### Phase 6: Public Demo
 
 - One-command demo using synthetic data
+- YAML workflow recipe using synthetic data
 - README screenshots
 - HTML report sample
 - GitHub release notes

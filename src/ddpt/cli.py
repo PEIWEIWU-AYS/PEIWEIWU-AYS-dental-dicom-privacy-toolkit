@@ -37,6 +37,7 @@ from ddpt.synthetic import create_synthetic_dicom
 from ddpt.tag_ops import blank_tag_value, delete_tag, dump_tags, set_tag_value
 from ddpt.utils import write_json
 from ddpt.validation import validate_anonymized_dicom
+from ddpt.workflow import run_workflow
 
 app = typer.Typer(help="Dental DICOM Privacy Toolkit", invoke_without_command=True)
 profile_app = typer.Typer(help="Inspect anonymization profiles.")
@@ -45,12 +46,14 @@ safety_app = typer.Typer(help="Run public repository safety checks.")
 redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.")
 tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
 api_app = typer.Typer(help="Run local REST API demo.")
+workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
 app.add_typer(redaction_plan_app, name="redaction-plan")
 app.add_typer(tag_app, name="tag")
 app.add_typer(api_app, name="api")
+app.add_typer(workflow_app, name="workflow")
 console = Console()
 
 
@@ -193,6 +196,31 @@ def api_serve(
     console.print(f"Serving local DDPT API at http://{host}:{port}")
     console.print("Synthetic or explicitly approved test DICOM files only.")
     uvicorn.run(application, host=host, port=port)
+
+
+@workflow_app.command("run")
+def workflow_run(
+    recipe_path: Annotated[Path, typer.Argument(help="YAML workflow recipe path.")],
+    root_dir: Annotated[Path, typer.Option("--root", help="Workflow output root.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write workflow report JSON.")
+    ] = None,
+) -> None:
+    report = run_workflow(recipe_path, root_dir)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+
+    table = Table(title=f"Workflow: {report.name}")
+    table.add_column("Step")
+    table.add_column("Action")
+    table.add_column("Status")
+    table.add_column("Message")
+    for step in report.steps:
+        table.add_row(step.id, step.action, "PASS" if step.passed else "FAIL", step.message)
+    console.print(table)
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
 
 
 @safety_app.command("scan")

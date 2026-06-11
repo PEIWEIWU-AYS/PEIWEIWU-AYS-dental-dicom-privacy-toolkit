@@ -18,6 +18,7 @@ Core goals:
 - Directory inventory and privacy risk preflight
 - DICOM anonymization profiles for dental imaging
 - PNG pixel previews for workflow review
+- YAML workflow recipes for reproducible staged pipelines
 - Local REST API for integration demos
 - Encrypted sharing package prototypes
 - Audit reports for de-identification and transfer events
@@ -37,6 +38,7 @@ python -m pip install -e ".[dev]"
 ddpt doctor
 ddpt safety scan .
 ddpt demo demo-run
+ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json
 ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
 ddpt redaction-plan show profiles/dental-pixel-redaction.yml
@@ -62,6 +64,7 @@ See [docs/inventory.md](docs/inventory.md) for the inventory safety boundary and
 See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limits.
 
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
+See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/local-api.md](docs/local-api.md) for the local REST API demo.

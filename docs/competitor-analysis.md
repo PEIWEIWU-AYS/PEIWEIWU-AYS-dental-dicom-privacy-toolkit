@@ -58,6 +58,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - static HTML reports for non-programmers
 - PNG previews for GitHub-friendly visual review
 - read-only directory inventory before anonymization
+- RSNA CTP-inspired YAML workflow recipes
 - reusable YAML pixel redaction plans for known burned-in regions
 - DCMTK-style exact tag operations with audit JSON
 - Orthanc-inspired local REST API without heavy PACS infrastructure
@@ -100,6 +101,7 @@ The project should add:
 - dental-specific profile names and documentation
 - audit event JSON output
 - directory inventory with JSON, CSV, and HTML exports
+- multi-stage YAML workflow runner with step-level artifacts
 - PNG preview generation for before/after workflow review
 - percent-based pixel redaction plans for repeated dental export layouts
 - exact tag dump/set/blank/delete commands with write-operation audits
