@@ -30,6 +30,8 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     audit_html = tmp_path / "reports" / "audit.html"
     compare_json = tmp_path / "reports" / "deid-comparison.json"
     compare_html = tmp_path / "reports" / "deid-comparison.html"
+    conformance_json = tmp_path / "reports" / "profile-conformance.json"
+    conformance_html = tmp_path / "reports" / "profile-conformance.html"
     validation_json = tmp_path / "reports" / "validation.json"
     redacted = tmp_path / "outputs" / "sample.redacted.dcm"
     redaction_audit = tmp_path / "reports" / "redaction.json"
@@ -114,6 +116,27 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     assert comparison["private_tags_after"] == 0
     assert comparison["pixel_data_changed"] is False
     assert "Dental DICOM De-identification Comparison" in compare_html.read_text()
+
+    result = runner.invoke(
+        app,
+        [
+            "profile",
+            "verify",
+            str(source),
+            str(anonymized),
+            "--profile",
+            "dental-basic",
+            "--json",
+            str(conformance_json),
+            "--html",
+            str(conformance_html),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    conformance = json.loads(conformance_json.read_text())
+    assert conformance["passed"] is True
+    assert conformance["failed_checks"] == 0
+    assert "Dental DICOM Profile Conformance" in conformance_html.read_text()
 
     result = runner.invoke(app, ["validate", str(anonymized), "--json", str(validation_json)])
     assert result.exit_code == 0, result.output
@@ -307,6 +330,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "dcmodify-plan.sh").exists()
     assert (workflow_dir / "outputs" / "sample.anonymized.dcm").exists()
     assert (workflow_dir / "outputs" / "sample.redacted.dcm").exists()
+    assert (workflow_dir / "reports" / "profile-conformance.json").exists()
+    assert (workflow_dir / "reports" / "profile-conformance.html").exists()
     assert (workflow_dir / "reports" / "deid-comparison.json").exists()
     assert (workflow_dir / "reports" / "deid-comparison.html").exists()
     assert (workflow_dir / "reports" / "pixel-risk.json").exists()
@@ -337,6 +362,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "remediation-plan",
         "dcmodify-plan",
         "anonymize",
+        "profile-conformance",
         "compare-deidentification",
         "validate",
         "pixel-risk-scan",
@@ -357,6 +383,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     quality_gate = json.loads((workflow_dir / "reports" / "quality-gate.json").read_text())
     assert quality_gate["passed"] is True
     assert quality_gate["failed_checks"] == 0
+    quality_check_ids = {item["id"] for item in quality_gate["checks"]}
+    assert "profile-conformance-report" in quality_check_ids
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
@@ -364,6 +392,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert "dicom-json-export" in html
     assert "remediation-plan" in html
     assert "dcmodify-plan" in html
+    assert "profile-conformance" in html
     assert "pixel-risk-scan" in html
     assert "deid-certificate" in html
     assert "workflow-quality-gate" in html
@@ -1043,6 +1072,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     capability_ids = {item["id"] for item in report["items"]}
     assert "objective-completion-audit" in capability_ids
     assert "privacy-remediation-plan" in capability_ids
+    assert "profile-conformance-verification" in capability_ids
     assert "linkable-pseudonymization" in capability_ids
     assert "before-after-deid-comparison" in capability_ids
     assert "filename-privacy-scan" in capability_ids
@@ -1141,6 +1171,7 @@ def test_completion_audit_maps_original_objective_to_evidence(tmp_path: Path) ->
     assert "study-pydicom-example" in item_ids
     assert "shareable-proof-package" in item_ids
     assert "deid-certificate-handoff" in item_ids
+    assert "profile-conformance-proof" in item_ids
     assert "competitor-coverage-evidence" in item_ids
     assert "capability-matrix-gate" in item_ids
     assert "competitor-coverage-gate" in item_ids
@@ -1178,9 +1209,11 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "workflow-run" / "reports" / "dicom-json.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "remediation-plan.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "dcmodify-plan.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "profile-conformance.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "pixel-risk.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
     assert (output_dir / "demo-run" / "reports" / "deid-comparison.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "profile-conformance.html").exists()
     assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
     assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
     assert (output_dir / "demo-run" / "reports" / "share-readiness.html").exists()
@@ -1204,9 +1237,11 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "workflow-run/reports/dicom-json.html" in artifact_paths
     assert "workflow-run/reports/remediation-plan.html" in artifact_paths
     assert "workflow-run/reports/dcmodify-plan.html" in artifact_paths
+    assert "workflow-run/reports/profile-conformance.html" in artifact_paths
     assert "workflow-run/reports/pixel-risk.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
     assert "demo-run/reports/deid-comparison.html" in artifact_paths
+    assert "demo-run/reports/profile-conformance.html" in artifact_paths
     assert "demo-run/reports/pixel-review.html" in artifact_paths
     assert "demo-run/reports/package-receipt.html" in artifact_paths
     assert "demo-run/reports/share-readiness.html" in artifact_paths
@@ -1225,6 +1260,8 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "DICOM JSON export HTML" in html
     assert "Privacy remediation plan HTML" in html
     assert "dcmodify plan HTML" in html
+    assert "Profile conformance HTML" in html
+    assert "Workflow profile conformance HTML" in html
     assert "Pixel risk scan HTML" in html
 
 
@@ -1851,6 +1888,8 @@ def test_linkable_research_profile_pseudonymizes_consistently(tmp_path: Path) ->
     audit_json = tmp_path / "reports" / "linkable-audit.json"
     coverage_json = tmp_path / "reports" / "linkable-coverage.json"
     compare_json = tmp_path / "reports" / "linkable-profile-comparison.json"
+    conformance_json = tmp_path / "reports" / "linkable-conformance.json"
+    conformance_html = tmp_path / "reports" / "linkable-conformance.html"
     validation_json = tmp_path / "reports" / "linkable-validation.json"
 
     assert runner.invoke(
@@ -1955,6 +1994,33 @@ def test_linkable_research_profile_pseudonymizes_consistently(tmp_path: Path) ->
     )
     assert patient_name["candidate_action"] == "pseudonymize"
     assert "deterministic pseudonym" in patient_name["note"]
+
+    result = runner.invoke(
+        app,
+        [
+            "profile",
+            "verify",
+            str(first),
+            str(first_output),
+            "--profile",
+            "dental-linkable-research",
+            "--json",
+            str(conformance_json),
+            "--html",
+            str(conformance_html),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    conformance = json.loads(conformance_json.read_text())
+    assert conformance["passed"] is True
+    assert conformance["failed_checks"] == 0
+    patient_id_check = next(
+        item
+        for item in conformance["checks"]
+        if item["keyword"] == "PatientID" and item["action"] == "pseudonymize"
+    )
+    assert patient_id_check["actual"].startswith("DDPT-LINK-")
+    assert "Dental DICOM Profile Conformance" in conformance_html.read_text()
 
     result = runner.invoke(
         app,

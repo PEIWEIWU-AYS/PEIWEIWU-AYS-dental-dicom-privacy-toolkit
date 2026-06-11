@@ -36,6 +36,7 @@ from ddpt.policy import (
     write_policy_registry_csv,
 )
 from ddpt.preview import render_dicom_preview
+from ddpt.profile_verify import verify_profile_conformance
 from ddpt.profiles import (
     built_in_profiles,
     describe_profile,
@@ -69,6 +70,7 @@ from ddpt.reports import (
     write_policy_registry_html,
     write_privacy_remediation_html,
     write_profile_comparison_html,
+    write_profile_conformance_html,
     write_profile_lint_html,
     write_release_audit_html,
     write_review_dashboard_html,
@@ -1130,6 +1132,47 @@ def profile_compare_command(
         f"{report.baseline_covered_items}/{report.total_items}; "
         f"{report.candidate_profile} {report.candidate_covered_items}/{report.total_items}"
     )
+
+
+@profile_app.command("verify")
+def profile_verify_command(
+    source_path: Annotated[Path, typer.Argument(help="Original source DICOM path.")],
+    anonymized_path: Annotated[Path, typer.Argument(help="Anonymized DICOM path.")],
+    profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON conformance report.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML conformance report.")
+    ] = None,
+) -> None:
+    report = verify_profile_conformance(source_path, anonymized_path, profile)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_profile_conformance_html(html_output, report)
+
+    table = Table(title=f"Profile Conformance: {report.profile}")
+    table.add_column("Status")
+    table.add_column("Action")
+    table.add_column("Keyword")
+    table.add_column("Expected")
+    table.add_column("Actual")
+    for item in report.checks:
+        table.add_row(
+            item.status,
+            item.action,
+            item.keyword,
+            item.expected,
+            item.actual,
+        )
+    console.print(table)
+    console.print(f"Passed: {report.passed_checks}/{report.total_checks}")
+    console.print(f"Failed: {report.failed_checks}")
+    console.print(f"Skipped: {report.skipped_checks}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
 
 
 @policy_app.command("export")

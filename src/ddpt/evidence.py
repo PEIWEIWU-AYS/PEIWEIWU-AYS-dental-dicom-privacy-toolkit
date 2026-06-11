@@ -218,6 +218,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            Path(demo_result.profile_conformance_html),
+            "Profile conformance HTML",
+            "profile",
+            "Post-anonymization verification against the selected profile.",
+        ),
+        _artifact(
+            output_dir,
             Path(demo_result.pixel_review_html),
             "Pixel review HTML",
             "pixel-review",
@@ -285,6 +292,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
             "dcmodify plan HTML",
             "expert-review",
             "DCMTK dcmodify-style low-level operation plan from the workflow.",
+        ),
+        _artifact(
+            output_dir,
+            workflow_dir / "reports" / "profile-conformance.html",
+            "Workflow profile conformance HTML",
+            "profile",
+            "Profile verification report from the staged workflow.",
         ),
         _artifact(
             output_dir,

@@ -30,6 +30,7 @@ The gate checks:
 - anonymized DICOM exists
 - pixel-redacted DICOM exists
 - anonymized DICOM validation passed
+- profile conformance verification passed
 - before/after de-identification comparison passed
 - no residual high-risk or medium-risk policy items remain
 - private tags after anonymization are zero

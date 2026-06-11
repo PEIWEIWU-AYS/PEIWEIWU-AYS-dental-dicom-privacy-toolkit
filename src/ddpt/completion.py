@@ -207,6 +207,27 @@ OBJECTIVE_REQUIREMENTS = [
         note="Covers deterministic date shifting and linkable pseudonymization for demos.",
     ),
     ObjectiveRequirement(
+        id="profile-conformance-proof",
+        category="differentiation",
+        requirement=(
+            "Verify anonymized outputs against the selected profile after writing DICOM files."
+        ),
+        evidence_files=(
+            "docs/profile-conformance.md",
+            "src/ddpt/profile_verify.py",
+            "recipes/dental-demo-workflow.yml",
+        ),
+        capability_ids=("profile-conformance-verification",),
+        evidence_terms=(
+            ("docs/profile-conformance.md", "ddpt profile verify"),
+            ("recipes/dental-demo-workflow.yml", "action: profile-verify"),
+        ),
+        note=(
+            "Adds post-write profile conformance evidence for replace, blank, "
+            "date-shift, pseudonym, UID, and private-tag actions."
+        ),
+    ),
+    ObjectiveRequirement(
         id="shareable-proof-package",
         category="differentiation",
         requirement="Add portable proof artifacts for MacBook demos and collaborator review.",

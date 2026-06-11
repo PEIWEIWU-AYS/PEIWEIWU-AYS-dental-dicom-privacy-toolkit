@@ -30,6 +30,7 @@ The bundle includes:
 - filename privacy scan JSON and HTML from the workflow recipe
 - privacy remediation plan JSON and HTML from the workflow recipe
 - dcmodify plan JSON, HTML, and review script from the workflow recipe
+- profile conformance JSON and HTML from the workflow recipe and demo
 - pixel risk scan JSON and HTML from the workflow recipe
 - one-command synthetic demo output
 - demo summary HTML with synthetic PNG previews
@@ -72,6 +73,7 @@ evidence-run/
   demo-run/
     reports/demo-summary.html
     reports/deid-comparison.html
+    reports/profile-conformance.html
     reports/deid-certificate.html
     reports/share-readiness.html
     reports/quality-gate.html
@@ -91,6 +93,7 @@ evidence-run/
       remediation-plan.html
       dcmodify-plan.html
       dcmodify-plan.sh
+      profile-conformance.html
       pixel-risk.html
     share/
 ```

@@ -12,6 +12,7 @@ from ddpt.models import DemoPipelineResult
 from ddpt.pixel_review import create_pixel_review
 from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.preview import render_dicom_preview
+from ddpt.profile_verify import verify_profile_conformance
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
@@ -22,6 +23,7 @@ from ddpt.reports import (
     write_inventory_html,
     write_package_receipt_html,
     write_pixel_review_html,
+    write_profile_conformance_html,
     write_share_readiness_html,
 )
 from ddpt.share_readiness import run_share_readiness
@@ -56,6 +58,8 @@ def run_demo_pipeline(
     audit_html = reports_dir / "audit.html"
     deid_comparison_json = reports_dir / "deid-comparison.json"
     deid_comparison_html = reports_dir / "deid-comparison.html"
+    profile_conformance_json = reports_dir / "profile-conformance.json"
+    profile_conformance_html = reports_dir / "profile-conformance.html"
     validation_json = reports_dir / "validation.json"
     pixel_review_json = reports_dir / "pixel-review.json"
     pixel_review_html = reports_dir / "pixel-review.html"
@@ -95,6 +99,14 @@ def run_demo_pipeline(
     deid_comparison = compare_deidentification(input_dicom, anonymized_dicom)
     write_json(deid_comparison_json, model_to_dict(deid_comparison))
     write_deid_comparison_html(deid_comparison_html, deid_comparison)
+
+    profile_conformance = verify_profile_conformance(
+        input_dicom,
+        anonymized_dicom,
+        profile_name=profile,
+    )
+    write_json(profile_conformance_json, model_to_dict(profile_conformance))
+    write_profile_conformance_html(profile_conformance_html, profile_conformance)
 
     validation = validate_anonymized_dicom(anonymized_dicom)
     write_json(validation_json, model_to_dict(validation))
@@ -154,6 +166,8 @@ def run_demo_pipeline(
         audit_html=str(audit_html),
         deid_comparison_json=str(deid_comparison_json),
         deid_comparison_html=str(deid_comparison_html),
+        profile_conformance_json=str(profile_conformance_json),
+        profile_conformance_html=str(profile_conformance_html),
         validation_json=str(validation_json),
         share_readiness_json=str(share_readiness_json),
         share_readiness_html=str(share_readiness_html),

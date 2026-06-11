@@ -4,7 +4,7 @@ An open-source toolkit for dental DICOM anonymization, de-identification, encryp
 
 一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, dcmodify plan, DCMTK dcmodify, pixel risk scan, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOM JSON导出, Orthanc风格接口, 文件名隐私扫描, 路径隐私, 隐私整改计划, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOM JSON导出, Orthanc风格接口, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
 
 This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
 
@@ -26,6 +26,7 @@ Core goals:
 - Linkable research profile with deterministic patient pseudonymization
 - Profile comparison reports for transparent anonymization configuration review
 - Profile lint checks for custom anonymization YAML safety
+- Profile conformance verification after anonymization
 - DICOM privacy policy registry export in JSON, CSV, and HTML
 - Competitor-informed capability matrix with repository evidence
 - Competitor coverage report for RSNA, DicomCleaner, Orthanc, CTP, DCMTK, and pydicom lessons
@@ -80,6 +81,7 @@ ddpt remediation plan demo-run/input --profile dental-basic --json demo-run/repo
 ddpt dcmodify plan demo-run/input/sample.synthetic.dcm --profile dental-basic --json demo-run/reports/dcmodify-plan.json --html demo-run/reports/dcmodify-plan.html --script demo-run/reports/dcmodify-plan.sh
 ddpt dicom-json export demo-run/input/sample.synthetic.dcm --json demo-run/reports/dicom-json.json --html demo-run/reports/dicom-json.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
+ddpt profile verify demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --profile dental-basic --json demo-run/reports/profile-conformance.json --html demo-run/reports/profile-conformance.html
 ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
 ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
 ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
@@ -140,6 +142,7 @@ See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for det
 See [docs/linkable-research-profile.md](docs/linkable-research-profile.md) for deterministic patient pseudonymization in longitudinal research demos.
 See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile configuration checks.
 See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
+See [docs/profile-conformance.md](docs/profile-conformance.md) for post-anonymization profile verification.
 See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
 See [docs/deid-comparison.md](docs/deid-comparison.md) for before/after de-identification comparison reports.
 See [docs/batch.md](docs/batch.md) for batch de-identification evidence.

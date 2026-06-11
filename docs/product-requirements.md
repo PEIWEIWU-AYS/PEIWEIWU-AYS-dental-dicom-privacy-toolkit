@@ -28,25 +28,26 @@ Version 0.1 is successful when a new user can:
 18. Compare anonymization profiles with JSON and HTML reports.
 19. Export the DICOM privacy policy registry as JSON, CSV, and HTML.
 20. Generate before/after de-identification comparison reports.
-21. Confirm direct identifiers were replaced or removed.
-22. Generate an audit event JSON file.
-23. Validate anonymized output with a pass/fail report.
-24. Run a conservative pixel risk scan before manual pixel review.
-25. Generate pixel review reports for known burned-in annotation regions.
-26. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
-27. Package anonymized files with checksums.
-28. Encrypt the package.
-29. Verify or decrypt the package.
-30. Generate package verification receipts for receiver-side sharing evidence.
-31. Run a share-readiness gate before synthetic package handoff.
-32. Run local REST API workflow demos for integration testing.
-33. Run a release-readiness audit before public GitHub publishing.
-34. Run a competitor-informed capability matrix that maps features to repository evidence.
-35. Run a competitor coverage report that maps reference tools to implemented evidence.
-36. Generate a static local review dashboard for non-programmer walkthroughs.
-37. Generate a local evidence bundle for MacBook validation and public demonstrations.
-38. Run a workflow quality gate that verifies public review evidence.
-39. Run automated tests locally and in GitHub Actions.
+21. Verify post-anonymization output against the selected profile.
+22. Confirm direct identifiers were replaced or removed.
+23. Generate an audit event JSON file.
+24. Validate anonymized output with a pass/fail report.
+25. Run a conservative pixel risk scan before manual pixel review.
+26. Generate pixel review reports for known burned-in annotation regions.
+27. Apply manual or plan-based pixel redaction for known burned-in annotation regions.
+28. Package anonymized files with checksums.
+29. Encrypt the package.
+30. Verify or decrypt the package.
+31. Generate package verification receipts for receiver-side sharing evidence.
+32. Run a share-readiness gate before synthetic package handoff.
+33. Run local REST API workflow demos for integration testing.
+34. Run a release-readiness audit before public GitHub publishing.
+35. Run a competitor-informed capability matrix that maps features to repository evidence.
+36. Run a competitor coverage report that maps reference tools to implemented evidence.
+37. Generate a static local review dashboard for non-programmer walkthroughs.
+38. Generate a local evidence bundle for MacBook validation and public demonstrations.
+39. Run a workflow quality gate that verifies public review evidence.
+40. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -60,6 +61,7 @@ Required:
 - metadata inspection
 - anonymization
 - before/after de-identification comparison
+- post-anonymization profile conformance verification
 - validation
 - pixel review report
 - manual pixel redaction
@@ -135,6 +137,7 @@ Required:
 - evidence index JSON and HTML
 - links to demo summary, audit chain, encrypted package, and workflow report
 - links to package verification receipts
+- links to profile conformance verification reports
 - static review dashboard JSON and HTML output
 - non-zero exit status when any major evidence gate fails
 - documentation that generated evidence output must not be committed by default
@@ -214,7 +217,7 @@ Required:
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails
-- support synthetic, filename scan, inventory, inspect, DICOM JSON export, dcmodify plan, anonymize, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
+- support synthetic, filename scan, inventory, inspect, DICOM JSON export, dcmodify plan, anonymize, profile-verify, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, and quality-gate stages
 - support remediation-plan stages before anonymization
 - support before/after de-identification comparison stages
 
@@ -304,6 +307,7 @@ Required:
 - check anonymized DICOM exists
 - check pixel-redacted DICOM exists
 - check anonymized DICOM validation passed
+- check profile conformance verification passed
 - check before/after de-identification comparison passed
 - check residual high-risk and medium-risk policy items are absent
 - check private tags after anonymization are zero
@@ -433,6 +437,21 @@ Required:
 - notes for important differences such as deterministic date shifting
 - JSON output
 - optional HTML report
+
+### `ddpt profile verify`
+
+Verify that an anonymized DICOM file conforms to the selected anonymization
+profile after writing.
+
+Required:
+
+- source DICOM path
+- anonymized DICOM path
+- profile name or YAML path
+- checks for replacement values, blanks, date shifts, deterministic pseudonyms, regenerated UIDs, and private tag removal
+- JSON output
+- optional HTML report
+- non-zero exit status when profile rules are not reflected in the anonymized output
 
 ### `ddpt policy export`
 

@@ -63,6 +63,7 @@ jobs:
           test -f docs/audit-chain.md
           test -f docs/package-verification-receipts.md
           test -f docs/profile-comparison.md
+          test -f docs/profile-conformance.md
           test -f docs/profile-lint.md
           test -f docs/capability-matrix.md
           test -f docs/review-dashboard.md
@@ -105,6 +106,9 @@ jobs:
 
       - name: Run de-identification comparison
         run: python -m ddpt compare deid evidence-run/demo-run/input/sample.synthetic.dcm evidence-run/demo-run/outputs/sample.anonymized.dcm --json deid-comparison.json --html deid-comparison.html
+
+      - name: Run profile conformance verification
+        run: python -m ddpt profile verify evidence-run/demo-run/input/sample.synthetic.dcm evidence-run/demo-run/outputs/sample.anonymized.dcm --profile dental-basic --json profile-conformance.json --html profile-conformance.html
 
       - name: Build de-identification certificate
         run: python -m ddpt certificate create evidence-run/demo-run --json deid-certificate.json --html deid-certificate.html

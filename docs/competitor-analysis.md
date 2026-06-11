@@ -134,6 +134,7 @@ The project should add:
 - research-sharing profile with deterministic date shifting and audited date-shift actions
 - profile lint JSON and HTML reports for custom configuration review
 - profile comparison JSON and HTML reports for explaining configuration differences
+- post-anonymization profile conformance reports that prove profile rules were applied
 - policy registry export for transparent DICOM keyword risk/action rationale
 - PNG preview generation for before/after workflow review
 - pixel risk scan for conservative burned-in identifier triage

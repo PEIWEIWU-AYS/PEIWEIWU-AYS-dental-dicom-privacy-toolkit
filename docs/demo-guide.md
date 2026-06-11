@@ -31,6 +31,8 @@ demo-run/
   reports/inspect.html
   reports/audit.json
   reports/audit.html
+  reports/profile-conformance.json
+  reports/profile-conformance.html
   reports/validation.json
   reports/redaction.json
   reports/audit-chain.json
@@ -64,6 +66,7 @@ The demo should show:
 - dental-basic anonymization
 - direct identifier replacement or blanking
 - UID regeneration
+- profile conformance verification against the selected profile
 - validation pass result
 - pixel review overlay for known burned-in annotation regions
 - manual pixel redaction audit
@@ -90,6 +93,7 @@ ddpt preview demo-run/sample.dcm --out demo-run/reports/sample-preview.png --jso
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
 ddpt anonymize demo-run/sample.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
+ddpt profile verify demo-run/sample.dcm demo-run/outputs/sample.anonymized.dcm --profile dental-basic --json demo-run/reports/profile-conformance.json --html demo-run/reports/profile-conformance.html
 ddpt compare deid demo-run/sample.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
 ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
 ddpt pixel-review demo-run/outputs/sample.anonymized.dcm --out-dir demo-run/reports/pixel-review --rect 1,0,1,1 --json demo-run/reports/pixel-review.json --html demo-run/reports/pixel-review.html

@@ -190,6 +190,32 @@ class ValidationReport(BaseModel):
     )
 
 
+class ProfileConformanceCheck(BaseModel):
+    keyword: str
+    action: str
+    status: Literal["pass", "fail", "skip"]
+    passed: bool
+    original: str
+    expected: str
+    actual: str
+    message: str
+
+
+class ProfileConformanceReport(BaseModel):
+    source_path: str
+    anonymized_path: str
+    profile: str
+    passed: bool
+    total_checks: int
+    passed_checks: int
+    failed_checks: int
+    skipped_checks: int
+    checks: list[ProfileConformanceCheck]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class PixelRectangle(BaseModel):
     x: int
     y: int
@@ -748,6 +774,8 @@ class DemoPipelineResult(BaseModel):
     audit_html: str
     deid_comparison_json: str
     deid_comparison_html: str
+    profile_conformance_json: str
+    profile_conformance_html: str
     validation_json: str
     share_readiness_json: str
     share_readiness_html: str

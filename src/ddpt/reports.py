@@ -26,6 +26,7 @@ from ddpt.models import (
     PolicyRegistryReport,
     PrivacyRemediationPlanReport,
     ProfileComparisonReport,
+    ProfileConformanceReport,
     ProfileLintReport,
     ReleaseAuditReport,
     ReviewDashboardReport,
@@ -2043,6 +2044,83 @@ PROFILE_COMPARISON_TEMPLATE = Template(
 """
 )
 
+PROFILE_CONFORMANCE_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Profile Conformance</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .pass { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .skip { color: #4b5563; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Profile Conformance</h1>
+  <p class="warning">
+    This report checks whether an anonymized DICOM follows the selected profile.
+    It is not clinical, legal, regulatory, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Profile: {{ report.profile }}</li>
+    <li>Source: <code>{{ report.source_path }}</code></li>
+    <li>Anonymized: <code>{{ report.anonymized_path }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "pass" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Passed checks: {{ report.passed_checks }} / {{ report.total_checks }}</li>
+    <li>Failed checks: {{ report.failed_checks }}</li>
+    <li>Skipped checks: {{ report.skipped_checks }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Checks</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Action</th>
+        <th>Keyword</th>
+        <th>Original</th>
+        <th>Expected</th>
+        <th>Actual</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.checks %}
+      <tr>
+        <td class="{{ item.status }}">{{ item.status }}</td>
+        <td>{{ item.action }}</td>
+        <td>{{ item.keyword }}</td>
+        <td>{{ item.original }}</td>
+        <td>{{ item.expected }}</td>
+        <td>{{ item.actual }}</td>
+        <td>{{ item.message }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 POLICY_REGISTRY_TEMPLATE = Template(
     """<!doctype html>
 <html lang="en">
@@ -2429,6 +2507,10 @@ def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) 
 
 def write_profile_comparison_html(path: Path, report: ProfileComparisonReport) -> None:
     _write_html(path, PROFILE_COMPARISON_TEMPLATE.render(report=report))
+
+
+def write_profile_conformance_html(path: Path, report: ProfileConformanceReport) -> None:
+    _write_html(path, PROFILE_CONFORMANCE_TEMPLATE.render(report=report))
 
 
 def write_profile_lint_html(path: Path, report: ProfileLintReport) -> None:

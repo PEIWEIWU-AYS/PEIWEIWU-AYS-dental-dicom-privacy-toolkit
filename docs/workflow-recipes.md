@@ -24,6 +24,7 @@ Expected outputs:
 - `workflow-run/reports/dcmodify-plan.html`
 - `workflow-run/reports/dcmodify-plan.sh`
 - `workflow-run/outputs/sample.anonymized.dcm`
+- `workflow-run/reports/profile-conformance.html`
 - `workflow-run/reports/deid-comparison.html`
 - `workflow-run/reports/pixel-risk.html`
 - `workflow-run/reports/pixel-review.html`
@@ -48,6 +49,7 @@ Expected outputs:
 - `remediation-plan`
 - `dcmodify-plan`
 - `anonymize`
+- `profile-verify`
 - `compare-deid`
 - `validate`
 - `preview`

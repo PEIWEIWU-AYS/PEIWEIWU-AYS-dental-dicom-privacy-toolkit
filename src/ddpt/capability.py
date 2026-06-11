@@ -230,6 +230,29 @@ CAPABILITY_SPECS = [
         note="Catches unknown DICOM keywords, conflicting actions, and policy coverage gaps.",
     ),
     CapabilitySpec(
+        id="profile-conformance-verification",
+        capability="Post-anonymization profile conformance verification",
+        source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/profile_verify.py",
+            "docs/profile-conformance.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt profile verify input.dcm output.dcm --profile dental-basic "
+            "--json profile-conformance.json --html profile-conformance.html"
+        ),
+        differentiator=(
+            "Checks the anonymized output against the selected YAML profile, "
+            "including replacements, blanks, date shifts, pseudonyms, UIDs, and private tags."
+        ),
+        note=(
+            "Turns profile configuration into post-write proof rather than relying "
+            "only on generic validation."
+        ),
+    ),
+    CapabilitySpec(
         id="linkable-pseudonymization",
         capability="Deterministic pseudonymization for synthetic longitudinal research demos",
         source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "pydicom anonymization example"),

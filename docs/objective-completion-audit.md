@@ -35,6 +35,7 @@ The audit checks evidence for:
 - pydicom anonymization example: readable Python DICOM editing implementation
 - dental-specific positioning, bilingual search, and synthetic-only safety
 - research differentiators such as date shifting and linkable pseudonymization
+- post-anonymization profile conformance evidence
 - portable proof artifacts for MacBook demos and collaborator review
 - de-identification certificate evidence for synthetic sharing handoff
 - competitor coverage evidence for reference-tool mapping and safety boundaries

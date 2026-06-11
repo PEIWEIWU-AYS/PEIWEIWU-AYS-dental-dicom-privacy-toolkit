@@ -11,6 +11,7 @@ from ddpt.models import (
     DeidentificationComparisonReport,
     PackageVerificationReceipt,
     PixelReviewReport,
+    ProfileConformanceReport,
     ShareReadinessReport,
     ValidationReport,
     WorkflowQualityGateCheck,
@@ -42,6 +43,7 @@ def run_workflow_quality_gate(
             "pixel",
         ),
         _validation_check(root_dir),
+        _profile_conformance_check(root_dir),
         _deid_comparison_check(root_dir),
         _pixel_review_check(root_dir),
         _package_receipt_check(root_dir),
@@ -103,6 +105,36 @@ def _validation_check(root_dir: Path) -> WorkflowQualityGateCheck:
         if report.passed
         else "Anonymized DICOM validation failed.",
         [str(path), f"checks={len(report.checks)}", f"warnings={len(report.warnings)}"],
+    )
+
+
+def _profile_conformance_check(root_dir: Path) -> WorkflowQualityGateCheck:
+    path = root_dir / "reports" / "profile-conformance.json"
+    report = _read_model(path, ProfileConformanceReport)
+    if report is None:
+        return _check(
+            "profile-conformance-report",
+            "de-identification",
+            True,
+            False,
+            "Profile conformance report is missing or unreadable.",
+            [str(path)],
+        )
+    return _check(
+        "profile-conformance-report",
+        "de-identification",
+        True,
+        report.passed,
+        "Anonymized DICOM conforms to the selected profile."
+        if report.passed
+        else "Anonymized DICOM does not conform to the selected profile.",
+        [
+            str(path),
+            f"profile={report.profile}",
+            f"passed={report.passed_checks}/{report.total_checks}",
+            f"failed={report.failed_checks}",
+            f"skipped={report.skipped_checks}",
+        ],
     )
 
 

@@ -24,6 +24,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Research Sharing Profile](research-sharing-profile.md)
 - [Profile Lint](profile-lint.md)
 - [Profile Comparison](profile-comparison.md)
+- [Profile Conformance](profile-conformance.md)
 - [MacBook Validation](macbook-validation.md)
 - [Public Repository Safety Scan](safety-scan.md)
 - [Release Audit](release-audit.md)

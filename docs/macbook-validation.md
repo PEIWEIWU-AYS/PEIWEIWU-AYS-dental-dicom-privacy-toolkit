@@ -39,6 +39,7 @@ Expected key artifacts:
 - `demo-run/reports/redacted-preview.png`
 - `demo-run/reports/pixel-review.html`
 - `demo-run/reports/deid-comparison.html`
+- `demo-run/reports/profile-conformance.html`
 - `demo-run/reports/pixel-review/pixel-review-overlay.png`
 - `demo-run/reports/audit.html`
 - `demo-run/reports/audit-chain.json`
@@ -95,6 +96,7 @@ Expected:
 - `workflow-run/reports/remediation-plan.html` exists
 - `workflow-run/reports/dcmodify-plan.html` exists
 - `workflow-run/reports/dcmodify-plan.sh` exists
+- `workflow-run/reports/profile-conformance.html` exists
 - `workflow-run/reports/pixel-risk.html` exists
 - `workflow-run/reports/quality-gate.json` exists
 - `workflow-run/reports/quality-gate.html` exists
@@ -152,6 +154,12 @@ ddpt compare deid \
   demo-run/outputs/sample.anonymized.dcm \
   --json demo-run/reports/deid-comparison.json \
   --html demo-run/reports/deid-comparison.html
+ddpt profile verify \
+  demo-run/input/sample.synthetic.dcm \
+  demo-run/outputs/sample.anonymized.dcm \
+  --profile dental-basic \
+  --json demo-run/reports/profile-conformance.json \
+  --html demo-run/reports/profile-conformance.html
 ddpt share readiness demo-run \
   --json demo-run/reports/share-readiness.json \
   --html demo-run/reports/share-readiness.html
@@ -178,6 +186,7 @@ Expected:
 - the profile comparison report shows date fields changed from `blank` to `date_shift`
 - the linkable profile comparison report shows direct identifiers changed to `pseudonymize`
 - the de-identification comparison report passes and shows direct identifiers changed
+- the profile conformance report passes against the selected profile
 - the share-readiness report passes all sharing gates
 - the de-identification certificate passes and summarizes handoff evidence
 - dry-run audit includes `date_shift` actions for study-level date fields
@@ -231,8 +240,10 @@ Expected:
 - `evidence-run/workflow-run/reports/filename-privacy.html` exists
 - `evidence-run/workflow-run/reports/dicom-json.html` exists
 - `evidence-run/workflow-run/reports/dcmodify-plan.html` exists
+- `evidence-run/workflow-run/reports/profile-conformance.html` exists
 - `evidence-run/demo-run/reports/demo-summary.html` exists
 - `evidence-run/demo-run/reports/deid-comparison.html` exists
+- `evidence-run/demo-run/reports/profile-conformance.html` exists
 - `evidence-run/demo-run/reports/pixel-review.html` exists
 - `evidence-run/demo-run/reports/package-receipt.html` exists
 - `evidence-run/demo-run/reports/share-readiness.html` exists
@@ -268,6 +279,7 @@ workflow-run/reports/filename-privacy.html
 workflow-run/reports/dicom-json.html
 workflow-run/reports/dcmodify-plan.html
 demo-run/reports/deid-comparison.html
+demo-run/reports/profile-conformance.html
 demo-run/reports/deid-certificate.html
 demo-run/reports/inspect.html
 demo-run/reports/audit.html

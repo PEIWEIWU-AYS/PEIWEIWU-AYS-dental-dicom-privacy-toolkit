@@ -32,6 +32,7 @@ The matrix reviews whether the repository has evidence for:
 - multi-file synthetic dental study generation
 - configurable anonymization profiles
 - profile coverage, comparison, and lint checks
+- post-anonymization profile conformance verification
 - deterministic linkable pseudonymization for synthetic longitudinal research demos
 - conservative pixel risk scan for burned-in identifier triage
 - burned-in pixel review and redaction evidence
