@@ -316,6 +316,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "orthanc-plan.html",
+            "Orthanc anonymization plan HTML",
+            "integration",
+            "Review-only Orthanc REST anonymization payload from the workflow.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "confidentiality-alignment.html",
             "Workflow DICOM confidentiality alignment HTML",
             "standards",

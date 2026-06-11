@@ -102,6 +102,7 @@ Expected:
 - `workflow-run/reports/confidentiality-alignment.html` exists
 - `workflow-run/reports/dcmodify-plan.html` exists
 - `workflow-run/reports/dcmodify-plan.sh` exists
+- `workflow-run/reports/orthanc-plan.html` exists
 - `workflow-run/reports/profile-conformance.html` exists
 - `workflow-run/reports/pixel-risk.html` exists
 - `workflow-run/reports/quality-gate.json` exists
@@ -255,6 +256,7 @@ Expected:
 - `evidence-run/workflow-run/reports/filename-privacy.html` exists
 - `evidence-run/workflow-run/reports/dicom-json.html` exists
 - `evidence-run/workflow-run/reports/dcmodify-plan.html` exists
+- `evidence-run/workflow-run/reports/orthanc-plan.html` exists
 - `evidence-run/workflow-run/reports/confidentiality-alignment.html` exists
 - `evidence-run/workflow-run/reports/profile-conformance.html` exists
 - `evidence-run/workflow-run/reports/residual-risk.html` exists
@@ -297,6 +299,7 @@ workflow-run/reports/filename-privacy.html
 workflow-run/reports/dicom-json.html
 workflow-run/reports/confidentiality-alignment.html
 workflow-run/reports/dcmodify-plan.html
+workflow-run/reports/orthanc-plan.html
 workflow-run/reports/residual-risk.html
 demo-run/reports/deid-comparison.html
 demo-run/reports/confidentiality-alignment.html

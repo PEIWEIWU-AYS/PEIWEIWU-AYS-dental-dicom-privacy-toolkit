@@ -61,6 +61,7 @@ jobs:
           test -f docs/tag-operations.md
           test -f docs/local-api.md
           test -f docs/local-workbench.md
+          test -f docs/orthanc-plan.md
           test -f docs/objective-completion-audit.md
           test -f docs/audit-chain.md
           test -f docs/package-verification-receipts.md
@@ -132,6 +133,9 @@ jobs:
 
       - name: Run safe DICOM JSON export
         run: python -m ddpt dicom-json export evidence-run/demo-run/input/sample.synthetic.dcm --json dicom-json.json --html dicom-json.html
+
+      - name: Run Orthanc anonymization plan
+        run: python -m ddpt orthanc plan evidence-run/demo-run/input/sample.synthetic.dcm --resource-id sample-synthetic-instance --json orthanc-plan.json --html orthanc-plan.html
 
       - name: Run pixel risk scan
         run: python -m ddpt pixel-risk scan evidence-run/demo-run/outputs/sample.anonymized.dcm --json pixel-risk.json --html pixel-risk.html

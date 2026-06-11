@@ -83,6 +83,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - DCMTK-style profile-to-command plan export before expert tag editing
 - Orthanc-inspired local REST API without heavy PACS infrastructure
 - Orthanc-inspired safe metadata JSON export without running a PACS
+- Orthanc REST anonymization payload and curl plan export without contacting a PACS
 - local browser workbench that runs against the REST API without cloud upload
 - JSON audit events and manifests
 - release-readiness audit for docs, discoverability, workflow coverage, CI, safety, and profile coverage
@@ -147,6 +148,7 @@ The project should add:
 - dcmodify-style command plan export from anonymization profiles
 - local REST API endpoints for inventory, inspection, anonymization, validation, and preview
 - safe DICOM JSON export for local integration demos
+- Orthanc anonymization plan export for review-only server integration
 - local browser workbench for synthetic demo, inventory, inspect, anonymize, validate, and preview
 - static HTML reports
 - release-readiness audit with JSON and HTML output before public GitHub milestones

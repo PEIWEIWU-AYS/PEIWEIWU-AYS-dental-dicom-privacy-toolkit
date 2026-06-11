@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +22,7 @@ from ddpt.models import (
     InspectionReport,
     InventoryReport,
     ObjectiveAuditReport,
+    OrthancAnonymizePlanReport,
     PackageVerificationReceipt,
     PixelReviewReport,
     PixelRiskScanReport,
@@ -308,6 +310,94 @@ DICOM_JSON_TEMPLATE = Template(
         <td>{{ item.recommended_action }}</td>
         <td>{{ item.redacted }}</td>
         <td><code>{{ item.value|join(", ") }}</code></td>
+        <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
+ORTHANC_PLAN_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Orthanc Anonymize Plan</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .Replace { color: #1f6f43; font-weight: 700; }
+    .Remove, .KeepPrivateTags { color: #8a5a00; font-weight: 700; }
+    .StandardAnonymizer, .ReviewOnly { color: #4b5563; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+    pre { background: #f3f6f8; padding: 12px; overflow: auto; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Orthanc Anonymize Plan</h1>
+  <p class="warning">
+    Review-only Orthanc REST anonymization plan. The toolkit does not contact
+    Orthanc or upload DICOM files. Verify behavior on your target Orthanc server
+    before using any payload with non-synthetic data.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>Profile: <code>{{ report.profile }}</code></li>
+    <li>Endpoint: <code>{{ report.endpoint_url }}</code></li>
+    <li>Resource ID: <code>{{ report.resource_id }}</code></li>
+    <li>DICOM version: <code>{{ report.dicom_version }}</code></li>
+    <li>Force: {{ report.force }}</li>
+    <li>Keep private tags: {{ report.keep_private_tags }}</li>
+    <li>Total operations: {{ report.total_operations }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Boundary Notes</h2>
+  <ul>
+    {% for note in report.boundary_notes %}
+    <li>{{ note }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Payload Preview</h2>
+  <pre>{{ payload_json }}</pre>
+  <h2>curl Preview</h2>
+  <pre>{% for command in report.curl_commands %}{{ command }}
+{% endfor %}</pre>
+  <h2>Mapping Items</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Keyword</th>
+        <th>Tag</th>
+        <th>Profile Action</th>
+        <th>Orthanc Section</th>
+        <th>Orthanc Key</th>
+        <th>Orthanc Value</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.items %}
+      <tr>
+        <td>{{ item.order }}</td>
+        <td><code>{{ item.keyword }}</code></td>
+        <td><code>{{ item.tag }}</code></td>
+        <td>{{ item.profile_action }}</td>
+        <td class="{{ item.orthanc_section }}">{{ item.orthanc_section }}</td>
+        <td><code>{{ item.orthanc_key }}</code></td>
+        <td><code>{{ item.orthanc_value }}</code></td>
         <td>{{ item.note }}</td>
       </tr>
       {% endfor %}
@@ -2604,6 +2694,16 @@ def write_dicom_json_html(path: Path, report: DicomJsonExportReport) -> None:
     _write_html(path, DICOM_JSON_TEMPLATE.render(report=report))
 
 
+def write_orthanc_plan_html(path: Path, report: OrthancAnonymizePlanReport) -> None:
+    _write_html(
+        path,
+        ORTHANC_PLAN_TEMPLATE.render(
+            report=report,
+            payload_json=json.dumps(report.payload, indent=2, sort_keys=True),
+        ),
+    )
+
+
 def write_demo_summary_html(path: Path, result: DemoPipelineResult) -> None:
     preview_images = [
         {"label": "Input", "src": Path(result.input_preview_png).name},
@@ -2709,6 +2809,7 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
         "Objective completion audit HTML",
         "Release audit HTML",
         "Residual privacy risk HTML",
+        "Orthanc anonymization plan HTML",
         "Pixel review HTML",
         "Package verification receipt",
     }

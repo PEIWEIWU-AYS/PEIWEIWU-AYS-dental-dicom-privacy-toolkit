@@ -95,6 +95,7 @@ ddpt inventory demo-run --json demo-run/reports/inventory.json --csv demo-run/re
 ddpt preview demo-run/sample.dcm --out demo-run/reports/sample-preview.png --json demo-run/reports/sample-preview.json
 ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
 ddpt confidentiality alignment --profile dental-basic --json demo-run/reports/confidentiality-alignment.json --html demo-run/reports/confidentiality-alignment.html
+ddpt orthanc plan demo-run/sample.dcm --profile dental-basic --resource-id sample-synthetic-instance --json demo-run/reports/orthanc-plan.json --html demo-run/reports/orthanc-plan.html
 ddpt anonymize demo-run/sample.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
 ddpt profile verify demo-run/sample.dcm demo-run/outputs/sample.anonymized.dcm --profile dental-basic --json demo-run/reports/profile-conformance.json --html demo-run/reports/profile-conformance.html

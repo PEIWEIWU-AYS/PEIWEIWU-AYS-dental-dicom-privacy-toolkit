@@ -39,6 +39,7 @@ The matrix reviews whether the repository has evidence for:
 - burned-in pixel review and redaction evidence
 - exact DICOM tag operations
 - DCMTK dcmodify-style profile operation plan export
+- Orthanc REST anonymization payload and curl plan export
 - multi-stage YAML workflow recipes
 - batch de-identification evidence for directory workflows
 - workflow-level de-identification certificate generation

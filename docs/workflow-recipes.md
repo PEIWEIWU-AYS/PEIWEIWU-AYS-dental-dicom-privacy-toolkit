@@ -24,6 +24,7 @@ Expected outputs:
 - `workflow-run/reports/confidentiality-alignment.html`
 - `workflow-run/reports/dcmodify-plan.html`
 - `workflow-run/reports/dcmodify-plan.sh`
+- `workflow-run/reports/orthanc-plan.html`
 - `workflow-run/outputs/sample.anonymized.dcm`
 - `workflow-run/reports/profile-conformance.html`
 - `workflow-run/reports/deid-comparison.html`
@@ -52,6 +53,7 @@ Expected outputs:
 - `remediation-plan`
 - `confidentiality-alignment`
 - `dcmodify-plan`
+- `orthanc-plan`
 - `anonymize`
 - `profile-verify`
 - `compare-deid`

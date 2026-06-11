@@ -77,16 +77,24 @@ OBJECTIVE_REQUIREMENTS = [
             "docs/dicom-json-export.md",
             "docs/local-api.md",
             "docs/local-workbench.md",
+            "docs/orthanc-plan.md",
         ),
-        capability_ids=("local-rest-api", "dicom-json-export", "local-browser-workbench"),
+        capability_ids=(
+            "local-rest-api",
+            "dicom-json-export",
+            "orthanc-anonymize-plan",
+            "local-browser-workbench",
+        ),
         evidence_terms=(
             ("docs/competitor-analysis.md", "Orthanc"),
             ("docs/dicom-json-export.md", "ddpt dicom-json export"),
+            ("docs/orthanc-plan.md", "ddpt orthanc plan"),
             ("docs/local-api.md", "/workbench"),
         ),
         note=(
             "Keeps Orthanc-inspired integration lightweight and local-first, "
-            "including safe metadata JSON export for API demos."
+            "including safe metadata JSON export and review-only Orthanc REST "
+            "anonymization plan export for API demos."
         ),
     ),
     ObjectiveRequirement(

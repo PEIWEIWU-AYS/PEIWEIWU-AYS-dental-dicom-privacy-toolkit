@@ -19,6 +19,7 @@ keywords = [
   "anonymization",
   "de-identification",
   "de-identification-certificate",
+  "orthanc-anonymization",
   "privacy",
   "encryption"
 ]

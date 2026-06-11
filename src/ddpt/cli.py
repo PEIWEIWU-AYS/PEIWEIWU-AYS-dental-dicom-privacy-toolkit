@@ -26,6 +26,7 @@ from ddpt.evidence import run_evidence_bundle
 from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
+from ddpt.orthanc_plan import build_orthanc_anonymize_plan
 from ddpt.pipeline import run_demo_pipeline
 from ddpt.pixel_review import create_pixel_review
 from ddpt.pixel_risk import scan_pixel_risk
@@ -66,6 +67,7 @@ from ddpt.reports import (
     write_inspection_html,
     write_inventory_html,
     write_objective_audit_html,
+    write_orthanc_plan_html,
     write_package_receipt_html,
     write_pixel_review_html,
     write_pixel_risk_scan_html,
@@ -103,6 +105,7 @@ filename_app = typer.Typer(help="Scan DICOM filename and path privacy risk.")
 tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
 dcmodify_app = typer.Typer(help="Export DCMTK dcmodify-style review plans.")
 dicom_json_app = typer.Typer(help="Export safe DICOM metadata JSON.")
+orthanc_app = typer.Typer(help="Export review-only Orthanc anonymization plans.")
 api_app = typer.Typer(help="Run local REST API demo.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
@@ -128,6 +131,7 @@ app.add_typer(filename_app, name="filename")
 app.add_typer(tag_app, name="tag")
 app.add_typer(dcmodify_app, name="dcmodify")
 app.add_typer(dicom_json_app, name="dicom-json")
+app.add_typer(orthanc_app, name="orthanc")
 app.add_typer(api_app, name="api")
 app.add_typer(workflow_app, name="workflow")
 app.add_typer(release_app, name="release")
@@ -664,6 +668,71 @@ def compare_deid(
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)
+
+
+@orthanc_app.command("plan")
+def orthanc_plan(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
+    resource_id: Annotated[
+        str,
+        typer.Option(
+            "--resource-id",
+            help="Orthanc instance, series, study, or patient resource ID placeholder.",
+        ),
+    ] = "<orthanc-resource-id>",
+    base_url: Annotated[
+        str,
+        typer.Option("--base-url", help="Orthanc base URL for curl preview."),
+    ] = "http://localhost:8042",
+    dicom_version: Annotated[
+        str,
+        typer.Option("--dicom-version", help="Orthanc DicomVersion payload value."),
+    ] = "2023b",
+    force: Annotated[
+        bool,
+        typer.Option("--force/--no-force", help="Set Orthanc Force in the payload."),
+    ] = True,
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write Orthanc plan JSON.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write Orthanc plan HTML.")
+    ] = None,
+) -> None:
+    report = build_orthanc_anonymize_plan(
+        input_path,
+        profile=profile,
+        resource_id=resource_id,
+        orthanc_base_url=base_url,
+        dicom_version=dicom_version,
+        force=force,
+    )
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_orthanc_plan_html(html_output, report)
+
+    table = Table(title="Dental DICOM Orthanc Anonymize Plan")
+    table.add_column("#")
+    table.add_column("Keyword")
+    table.add_column("Action")
+    table.add_column("Orthanc")
+    table.add_column("Value")
+    for item in report.items:
+        table.add_row(
+            str(item.order),
+            item.keyword,
+            item.profile_action,
+            item.orthanc_section,
+            item.orthanc_value,
+        )
+    console.print(table)
+    console.print(f"Endpoint: {report.endpoint_url}")
+    console.print(f"Replace operations: {report.replace_operations}")
+    console.print(f"Remove operations: {report.remove_operations}")
+    console.print(f"Standard anonymizer operations: {report.standard_anonymizer_operations}")
+    console.print("Review-only: no Orthanc request was sent.")
 
 
 @share_app.command("readiness")

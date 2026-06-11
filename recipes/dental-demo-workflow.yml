@@ -51,6 +51,14 @@ steps:
     html: reports/dcmodify-plan.html
     script: reports/dcmodify-plan.sh
 
+  - id: orthanc-plan
+    action: orthanc-plan
+    input: input/sample.synthetic.dcm
+    profile: dental-basic
+    resource_id: sample-synthetic-instance
+    json: reports/orthanc-plan.json
+    html: reports/orthanc-plan.html
+
   - id: anonymize
     action: anonymize
     input: input/sample.synthetic.dcm

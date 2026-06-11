@@ -48,8 +48,9 @@ Version 0.1 is successful when a new user can:
 38. Generate a static local review dashboard for non-programmer walkthroughs.
 39. Generate a local evidence bundle for MacBook validation and public demonstrations.
 40. Run a workflow quality gate that verifies public review evidence.
-41. Run a residual privacy risk score across generated workflow evidence.
-42. Run automated tests locally and in GitHub Actions.
+41. Export a review-only Orthanc REST anonymization plan from a dental profile.
+42. Run a residual privacy risk score across generated workflow evidence.
+43. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -220,7 +221,7 @@ Required:
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails
-- support synthetic, filename scan, inventory, inspect, DICOM JSON export, remediation-plan, confidentiality-alignment, dcmodify plan, anonymize, profile-verify, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, quality-gate, and risk-score stages
+- support synthetic, filename scan, inventory, inspect, DICOM JSON export, remediation-plan, confidentiality-alignment, dcmodify plan, Orthanc plan, anonymize, profile-verify, validate, preview, pixel risk scan, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, certificate, quality-gate, and risk-score stages
 - support remediation-plan stages before anonymization
 - support before/after de-identification comparison stages
 

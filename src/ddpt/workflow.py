@@ -16,6 +16,7 @@ from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import WorkflowRunReport, WorkflowStepResult
+from ddpt.orthanc_plan import build_orthanc_anonymize_plan
 from ddpt.pixel_review import create_pixel_review
 from ddpt.pixel_risk import scan_pixel_risk
 from ddpt.pixels import parse_rectangle, redact_pixels
@@ -34,6 +35,7 @@ from ddpt.reports import (
     write_filename_privacy_html,
     write_inspection_html,
     write_inventory_html,
+    write_orthanc_plan_html,
     write_package_receipt_html,
     write_pixel_review_html,
     write_pixel_risk_scan_html,
@@ -230,6 +232,26 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             script_path = _path(root_dir, step["script"])
             write_dcmodify_script(script_path, report)
             artifacts.append(script_path)
+        return artifacts
+
+    if action == "orthanc-plan":
+        report = build_orthanc_anonymize_plan(
+            _path(root_dir, step["input"]),
+            profile=str(step.get("profile", "dental-basic")),
+            resource_id=str(step.get("resource_id", "<orthanc-resource-id>")),
+            orthanc_base_url=str(step.get("base_url", "http://localhost:8042")),
+            dicom_version=str(step.get("dicom_version", "2023b")),
+            force=bool(step.get("force", True)),
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_orthanc_plan_html(html_path, report)
+            artifacts.append(html_path)
         return artifacts
 
     if action == "anonymize":

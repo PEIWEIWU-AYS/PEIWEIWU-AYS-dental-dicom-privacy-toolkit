@@ -666,6 +666,47 @@ class DcmodifyPlanReport(BaseModel):
     )
 
 
+class OrthancPlanItem(BaseModel):
+    order: int
+    keyword: str
+    tag: str
+    profile_action: str
+    orthanc_section: Literal[
+        "Replace",
+        "Remove",
+        "KeepPrivateTags",
+        "StandardAnonymizer",
+        "ReviewOnly",
+    ]
+    orthanc_key: str
+    orthanc_value: str
+    note: str
+
+
+class OrthancAnonymizePlanReport(BaseModel):
+    input_path: str
+    profile: str
+    orthanc_base_url: str
+    resource_id: str
+    endpoint_path: str
+    endpoint_url: str
+    dicom_version: str
+    force: bool
+    keep_private_tags: bool
+    payload: dict[str, Any]
+    total_operations: int
+    replace_operations: int
+    remove_operations: int
+    standard_anonymizer_operations: int
+    review_only_operations: int
+    curl_commands: list[str]
+    items: list[OrthancPlanItem]
+    boundary_notes: list[str] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class WorkflowStepResult(BaseModel):
     id: str
     action: str

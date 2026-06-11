@@ -31,6 +31,7 @@ The bundle includes:
 - filename privacy scan JSON and HTML from the workflow recipe
 - privacy remediation plan JSON and HTML from the workflow recipe
 - dcmodify plan JSON, HTML, and review script from the workflow recipe
+- Orthanc REST anonymization plan JSON and HTML from the workflow recipe
 - DICOM confidentiality alignment JSON and HTML from the workflow recipe
 - profile conformance JSON and HTML from the workflow recipe and demo
 - pixel risk scan JSON and HTML from the workflow recipe
@@ -100,6 +101,7 @@ evidence-run/
       confidentiality-alignment.html
       dcmodify-plan.html
       dcmodify-plan.sh
+      orthanc-plan.html
       profile-conformance.html
       pixel-risk.html
       residual-risk.html

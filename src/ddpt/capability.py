@@ -469,6 +469,30 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="orthanc-anonymize-plan",
+        capability="Orthanc REST anonymization payload and curl plan export",
+        source_tools=("Orthanc", "RSNA CTP", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/orthanc_plan.py",
+            "docs/orthanc-plan.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt orthanc plan input.dcm --profile dental-basic "
+            "--resource-id sample-instance --json orthanc-plan.json "
+            "--html orthanc-plan.html"
+        ),
+        differentiator=(
+            "Dental YAML profile decisions become a review-only Orthanc REST "
+            "payload and curl command without contacting a PACS."
+        ),
+        note=(
+            "Bridges local evidence workflows to Orthanc-style server integration "
+            "while keeping public demos synthetic and offline-safe."
+        ),
+    ),
+    CapabilitySpec(
         id="local-browser-workbench",
         capability="Local browser workbench for synthetic DICOM workflow review",
         source_tools=("RSNA DICOM Anonymizer", "PixelMed DicomCleaner", "Orthanc"),
