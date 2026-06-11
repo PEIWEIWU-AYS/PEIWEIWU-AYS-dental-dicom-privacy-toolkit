@@ -36,6 +36,7 @@ jobs:
           test -f docs/product-requirements.md
           test -f docs/policy-registry.md
           test -f docs/demo-guide.md
+          test -f docs/audit-chain.md
           test -f scripts/generate_demo_assets.py
 
       - name: Run tests

@@ -24,6 +24,8 @@ demo-run/
   reports/audit.html
   reports/validation.json
   reports/redaction.json
+  reports/audit-chain.json
+  reports/audit-chain-verify.json
   reports/demo-summary.json
   reports/demo-summary.html
   share/manifest.json
@@ -50,6 +52,7 @@ The demo should show:
 - UID regeneration
 - validation pass result
 - manual pixel redaction audit
+- tamper-evident audit chain
 - encrypted package with manifest and checksums
 
 ## CLI Equivalent

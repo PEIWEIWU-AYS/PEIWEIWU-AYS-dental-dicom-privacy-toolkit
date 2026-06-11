@@ -53,6 +53,19 @@ Required:
 - batch summary HTML
 - non-zero exit status when failures occur
 
+### `ddpt audit chain/verify`
+
+Create and verify a tamper-evident hash chain for generated artifacts.
+
+Required:
+
+- deterministic file ordering
+- SHA-256 for each file
+- previous hash and chain hash per entry
+- root hash
+- default exclusion for key files
+- verification command with non-zero exit status on mismatch
+
 ### `ddpt profile list/show`
 
 Expose anonymization profile behavior so users can see what the toolkit will change.

@@ -165,6 +165,10 @@ DEMO_SUMMARY_TEMPLATE = Template(
       Validation:
       <span class="ok">{{ "passed" if result.validation_passed else "failed" }}</span>
     </li>
+    <li>
+      Audit chain:
+      <span class="ok">{{ "passed" if result.audit_chain_passed else "failed" }}</span>
+    </li>
     <li>Package entries: {{ result.package_entries }}</li>
     <li>Generated at: {{ result.generated_at }}</li>
   </ul>
@@ -182,6 +186,11 @@ DEMO_SUMMARY_TEMPLATE = Template(
       <tr><td>Encrypted package</td><td><code>{{ result.package_path }}</code></td></tr>
       <tr><td>Package manifest</td><td><code>{{ result.manifest_json }}</code></td></tr>
       <tr><td>Package key</td><td><code>{{ result.key_path }}</code></td></tr>
+      <tr><td>Audit chain</td><td><code>{{ result.audit_chain_json }}</code></td></tr>
+      <tr>
+        <td>Audit chain verification</td>
+        <td><code>{{ result.audit_chain_verify_json }}</code></td>
+      </tr>
     </tbody>
   </table>
 </body>

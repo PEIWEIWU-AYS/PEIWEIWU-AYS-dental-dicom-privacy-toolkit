@@ -123,8 +123,11 @@ class DemoPipelineResult(BaseModel):
     manifest_json: str
     package_path: str
     key_path: str
+    audit_chain_json: str
+    audit_chain_verify_json: str
     summary_html: str
     validation_passed: bool
+    audit_chain_passed: bool
     package_entries: int
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
@@ -182,6 +185,34 @@ class ProfileCoverageReport(BaseModel):
     high_risk_uncovered: list[str]
     medium_risk_uncovered: list[str]
     items: list[ProfileCoverageItem]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
+class AuditChainEntry(BaseModel):
+    path: str
+    sha256: str
+    size_bytes: int
+    previous_chain_hash: str
+    chain_hash: str
+
+
+class AuditChainManifest(BaseModel):
+    root_dir: str
+    root_hash: str
+    entries: list[AuditChainEntry]
+    excluded_patterns: list[str]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
+class AuditChainVerification(BaseModel):
+    manifest_path: str
+    passed: bool
+    checked_files: int
+    errors: list[str]
     generated_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )

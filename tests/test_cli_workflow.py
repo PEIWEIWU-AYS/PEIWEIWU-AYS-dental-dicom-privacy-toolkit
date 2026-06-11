@@ -157,9 +157,30 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "reports" / "validation.json").exists()
     assert (demo_dir / "reports" / "redaction.json").exists()
     assert (demo_dir / "reports" / "demo-summary.html").exists()
+    assert (demo_dir / "reports" / "audit-chain.json").exists()
+    assert (demo_dir / "reports" / "audit-chain-verify.json").exists()
     assert (demo_dir / "share" / "package.ddpt").exists()
     assert (demo_dir / "share" / "manifest.json").exists()
     assert (demo_dir / "share" / "package.key").exists()
+
+
+def test_audit_chain_detects_tampering(tmp_path: Path) -> None:
+    demo_dir = tmp_path / "demo"
+    chain_json = demo_dir / "reports" / "audit-chain.json"
+    verify_json = demo_dir / "reports" / "manual-chain-verify.json"
+
+    result = runner.invoke(app, ["demo", str(demo_dir)])
+    assert result.exit_code == 0, result.output
+
+    result = runner.invoke(app, ["audit", "verify", str(chain_json), "--json", str(verify_json)])
+    assert result.exit_code == 0, result.output
+    assert json.loads(verify_json.read_text())["passed"] is True
+
+    (demo_dir / "reports" / "validation.json").write_text('{"tampered": true}')
+
+    result = runner.invoke(app, ["audit", "verify", str(chain_json)])
+    assert result.exit_code == 1
+    assert "mismatch" in result.output
 
 
 def test_batch_workflow_command(tmp_path: Path) -> None:
@@ -205,6 +226,7 @@ def test_demo_asset_script(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     assert "Validation passed: True" in result.stdout
     assert (output_dir / "reports" / "demo-summary.html").exists()
+    assert (output_dir / "reports" / "audit-chain.json").exists()
     assert (output_dir / "share" / "package.ddpt").exists()
 
 

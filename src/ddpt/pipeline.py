@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ddpt.anonymize import anonymize_dicom
+from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.inspection import inspect_dicom
 from ddpt.models import DemoPipelineResult
 from ddpt.pixels import parse_rectangle, redact_pixels
@@ -39,6 +40,8 @@ def run_demo_pipeline(
     redaction_json = reports_dir / "redaction.json"
     summary_json = reports_dir / "demo-summary.json"
     summary_html = reports_dir / "demo-summary.html"
+    audit_chain_json = reports_dir / "audit-chain.json"
+    audit_chain_verify_json = reports_dir / "audit-chain-verify.json"
     manifest_json = share_dir / "manifest.json"
     package_path = share_dir / "package.ddpt"
     key_path = share_dir / "package.key"
@@ -68,6 +71,10 @@ def run_demo_pipeline(
     )
     verify_package(package_path, key_path)
 
+    create_audit_chain(output_dir, audit_chain_json)
+    audit_chain_verification = verify_audit_chain(audit_chain_json)
+    write_json(audit_chain_verify_json, model_to_dict(audit_chain_verification))
+
     result = DemoPipelineResult(
         output_dir=str(output_dir),
         input_dicom=str(input_dicom),
@@ -82,8 +89,11 @@ def run_demo_pipeline(
         manifest_json=str(manifest_json),
         package_path=str(package_path),
         key_path=str(key_path),
+        audit_chain_json=str(audit_chain_json),
+        audit_chain_verify_json=str(audit_chain_verify_json),
         summary_html=str(summary_html),
         validation_passed=validation.passed,
+        audit_chain_passed=audit_chain_verification.passed,
         package_entries=len(manifest.entries),
     )
     write_json(summary_json, model_to_dict(result))

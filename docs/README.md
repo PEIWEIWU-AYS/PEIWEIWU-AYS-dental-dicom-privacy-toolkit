@@ -9,6 +9,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Product Requirements](product-requirements.md)
 - [Policy Registry](policy-registry.md)
 - [Demo Guide](demo-guide.md)
+- [Audit Chain](audit-chain.md)
 - [Data Safety](data-safety.md)
 - [Discoverability Profile](discoverability.md)
 - [Project Charter](project-charter.md)

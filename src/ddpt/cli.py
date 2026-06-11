@@ -9,6 +9,7 @@ from rich.table import Table
 
 from ddpt import __version__
 from ddpt.anonymize import anonymize_dicom
+from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
 from ddpt.inspection import inspect_dicom
 from ddpt.pipeline import run_demo_pipeline
@@ -23,7 +24,9 @@ from ddpt.validation import validate_anonymized_dicom
 
 app = typer.Typer(help="Dental DICOM Privacy Toolkit", invoke_without_command=True)
 profile_app = typer.Typer(help="Inspect anonymization profiles.")
+audit_app = typer.Typer(help="Create and verify audit chains.")
 app.add_typer(profile_app, name="profile")
+app.add_typer(audit_app, name="audit")
 console = Console()
 
 
@@ -163,6 +166,38 @@ def profile_coverage_command(
     console.print(f"Covered: {report.covered_items}/{report.total_items}")
     console.print(f"High-risk uncovered: {len(report.high_risk_uncovered)}")
     console.print(f"Medium-risk uncovered: {len(report.medium_risk_uncovered)}")
+
+
+@audit_app.command("chain")
+def audit_chain_command(
+    root_dir: Annotated[Path, typer.Argument(help="Directory of artifacts to hash.")],
+    output_path: Annotated[Path, typer.Option("--out", help="Output audit chain JSON.")],
+    include_keys: Annotated[
+        bool, typer.Option("--include-keys", help="Include .key files in the chain.")
+    ] = False,
+) -> None:
+    manifest = create_audit_chain(root_dir, output_path, include_key_files=include_keys)
+    console.print(f"Audit chain written to: {output_path}")
+    console.print(f"Files chained: {len(manifest.entries)}")
+    console.print(f"Root hash: {manifest.root_hash}")
+
+
+@audit_app.command("verify")
+def audit_verify_command(
+    manifest_path: Annotated[Path, typer.Argument(help="Audit chain JSON path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write verification JSON.")
+    ] = None,
+) -> None:
+    result = verify_audit_chain(manifest_path)
+    if json_output:
+        write_json(json_output, model_to_dict(result))
+    console.print(f"Audit chain passed: {result.passed}")
+    console.print(f"Checked files: {result.checked_files}")
+    for error in result.errors:
+        console.print(f"ERROR {error}")
+    if not result.passed:
+        raise typer.Exit(1)
 
 
 @app.command()
