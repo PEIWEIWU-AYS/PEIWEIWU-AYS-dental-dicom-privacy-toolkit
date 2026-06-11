@@ -73,15 +73,20 @@ OBJECTIVE_REQUIREMENTS = [
         requirement="Study Orthanc and inherit local REST/Web UI workflow integration.",
         evidence_files=(
             "docs/competitor-analysis.md",
+            "docs/dicom-json-export.md",
             "docs/local-api.md",
             "docs/local-workbench.md",
         ),
-        capability_ids=("local-rest-api", "local-browser-workbench"),
+        capability_ids=("local-rest-api", "dicom-json-export", "local-browser-workbench"),
         evidence_terms=(
             ("docs/competitor-analysis.md", "Orthanc"),
+            ("docs/dicom-json-export.md", "ddpt dicom-json export"),
             ("docs/local-api.md", "/workbench"),
         ),
-        note="Keeps Orthanc-inspired integration lightweight and local-first.",
+        note=(
+            "Keeps Orthanc-inspired integration lightweight and local-first, "
+            "including safe metadata JSON export for API demos."
+        ),
     ),
     ObjectiveRequirement(
         id="study-rsna-ctp",

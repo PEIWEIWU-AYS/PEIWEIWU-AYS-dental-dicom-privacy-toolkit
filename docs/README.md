@@ -12,6 +12,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Filename Privacy Scan](filename-privacy-scan.md)
 - [Privacy Remediation Plan](remediation-plan.md)
 - [dcmodify Plan Export](dcmodify-plan.md)
+- [DICOM JSON Export](dicom-json-export.md)
 - [De-identification Comparison](deid-comparison.md)
 - [De-identification Certificate](deid-certificate.md)
 - [Batch De-identification Evidence](batch.md)

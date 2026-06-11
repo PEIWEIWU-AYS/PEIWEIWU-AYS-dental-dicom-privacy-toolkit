@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -39,6 +39,35 @@ class InspectionReport(BaseModel):
     @property
     def medium_risk_count(self) -> int:
         return sum(1 for item in self.findings if item.risk == "medium")
+
+
+class DicomJsonElement(BaseModel):
+    tag: str
+    keyword: str
+    name: str
+    vr: str
+    risk: RiskLevel
+    category: str
+    recommended_action: str
+    value: list[str]
+    redacted: bool
+    note: str
+
+
+class DicomJsonExportReport(BaseModel):
+    input_path: str
+    safe_mode: bool
+    include_values: bool
+    total_elements: int
+    redacted_elements: int
+    high_risk_elements: int
+    medium_risk_elements: int
+    unknown_risk_elements: int
+    dicom_json: dict[str, dict[str, Any]]
+    elements: list[DicomJsonElement]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
 
 
 class AnonymizationAction(BaseModel):

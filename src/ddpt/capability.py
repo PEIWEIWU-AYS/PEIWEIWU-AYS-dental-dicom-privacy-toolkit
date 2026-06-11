@@ -400,6 +400,29 @@ CAPABILITY_SPECS = [
         note="Keeps the first release lightweight while still enabling integration testing.",
     ),
     CapabilitySpec(
+        id="dicom-json-export",
+        capability="Orthanc-inspired safe DICOM metadata JSON export",
+        source_tools=("Orthanc", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/dicom_json.py",
+            "docs/dicom-json-export.md",
+            "src/ddpt/api.py",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt dicom-json export input.dcm --json dicom-json.json "
+            "--html dicom-json.html"
+        ),
+        differentiator=(
+            "Exports integration-friendly metadata while redacting high, medium, "
+            "and unknown risk values by default."
+        ),
+        note=(
+            "This inherits Orthanc's API lesson without becoming a PACS or "
+            "production DICOMweb server."
+        ),
+    ),
+    CapabilitySpec(
         id="local-browser-workbench",
         capability="Local browser workbench for synthetic DICOM workflow review",
         source_tools=("RSNA DICOM Anonymizer", "PixelMed DicomCleaner", "Orthanc"),

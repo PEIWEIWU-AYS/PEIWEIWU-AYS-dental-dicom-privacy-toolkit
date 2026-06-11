@@ -18,6 +18,7 @@ from ddpt.completion import run_objective_audit
 from ddpt.dashboard import build_review_dashboard_report
 from ddpt.dcmodify_plan import build_dcmodify_plan, write_dcmodify_script
 from ddpt.deid_compare import compare_deidentification
+from ddpt.dicom_json import export_dicom_json
 from ddpt.doctor import run_doctor
 from ddpt.evidence import run_evidence_bundle
 from ddpt.filename_privacy import scan_filename_privacy
@@ -55,6 +56,7 @@ from ddpt.reports import (
     write_dcmodify_plan_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
+    write_dicom_json_html,
     write_filename_privacy_html,
     write_inspection_html,
     write_inventory_html,
@@ -91,6 +93,7 @@ pixel_risk_app = typer.Typer(help="Scan pixel-layer privacy risk signals.")
 filename_app = typer.Typer(help="Scan DICOM filename and path privacy risk.")
 tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
 dcmodify_app = typer.Typer(help="Export DCMTK dcmodify-style review plans.")
+dicom_json_app = typer.Typer(help="Export safe DICOM metadata JSON.")
 api_app = typer.Typer(help="Run local REST API demo.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
 release_app = typer.Typer(help="Audit local release readiness.")
@@ -112,6 +115,7 @@ app.add_typer(pixel_risk_app, name="pixel-risk")
 app.add_typer(filename_app, name="filename")
 app.add_typer(tag_app, name="tag")
 app.add_typer(dcmodify_app, name="dcmodify")
+app.add_typer(dicom_json_app, name="dicom-json")
 app.add_typer(api_app, name="api")
 app.add_typer(workflow_app, name="workflow")
 app.add_typer(release_app, name="release")
@@ -1169,6 +1173,48 @@ def dcmodify_plan_command(
     console.print(table)
     console.print(f"Operations: {report.total_operations}")
     console.print("Review only. Commands were not executed.")
+
+
+@dicom_json_app.command("export")
+def dicom_json_export_command(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write safe DICOM JSON report.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write safe DICOM JSON HTML report.")
+    ] = None,
+    include_values: Annotated[
+        bool,
+        typer.Option(
+            "--include-values",
+            help="Include raw metadata values instead of safe-mode redaction.",
+        ),
+    ] = False,
+) -> None:
+    report = export_dicom_json(input_path, include_values=include_values)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_dicom_json_html(html_output, report)
+
+    table = Table(title="DICOM Safe JSON Export")
+    table.add_column("Risk")
+    table.add_column("Tag")
+    table.add_column("Keyword")
+    table.add_column("Redacted")
+    table.add_column("Value")
+    for item in report.elements:
+        table.add_row(
+            item.risk,
+            item.tag,
+            item.keyword,
+            str(item.redacted),
+            ", ".join(item.value),
+        )
+    console.print(table)
+    console.print(f"Elements: {report.total_elements}")
+    console.print(f"Redacted: {report.redacted_elements}")
 
 
 @audit_app.command("chain")

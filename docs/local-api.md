@@ -25,6 +25,7 @@ http://127.0.0.1:8765/workbench
 - `POST /demo`
 - `POST /inventory`
 - `POST /inspect`
+- `POST /dicom-json`
 - `POST /anonymize`
 - `POST /validate`
 - `POST /preview`
@@ -33,6 +34,14 @@ Example request:
 
 ```bash
 curl -X POST http://127.0.0.1:8765/inspect \
+  -H "Content-Type: application/json" \
+  -d '{"path":"input/sample.synthetic.dcm"}'
+```
+
+Safe metadata JSON export:
+
+```bash
+curl -X POST http://127.0.0.1:8765/dicom-json \
   -H "Content-Type: application/json" \
   -d '{"path":"input/sample.synthetic.dcm"}'
 ```

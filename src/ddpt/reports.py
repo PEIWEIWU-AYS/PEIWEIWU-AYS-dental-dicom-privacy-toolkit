@@ -13,6 +13,7 @@ from ddpt.models import (
     DeidentificationCertificate,
     DeidentificationComparisonReport,
     DemoPipelineResult,
+    DicomJsonExportReport,
     EvidenceBundleResult,
     FilenamePrivacyScanReport,
     InspectionReport,
@@ -229,6 +230,85 @@ DCMODIFY_PLAN_TEMPLATE = Template(
     </tbody>
   </table>
   <p>{{ report.note }}</p>
+</body>
+</html>
+"""
+)
+
+DICOM_JSON_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Safe JSON Export</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .high { color: #b00020; font-weight: 700; }
+    .medium { color: #8a5a00; font-weight: 700; }
+    .low { color: #1f6f43; }
+    .unknown { color: #4b5563; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Safe JSON Export</h1>
+  <p class="warning">
+    Orthanc-inspired local metadata JSON export. Safe mode redacts high-risk,
+    medium-risk, and unknown-risk values by default. This is not a production
+    DICOMweb server or clinical viewer.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>Safe mode: {{ report.safe_mode }}</li>
+    <li>Include values: {{ report.include_values }}</li>
+    <li>Total elements: {{ report.total_elements }}</li>
+    <li>Redacted elements: {{ report.redacted_elements }}</li>
+    <li>High-risk elements: {{ report.high_risk_elements }}</li>
+    <li>Medium-risk elements: {{ report.medium_risk_elements }}</li>
+    <li>Unknown-risk elements: {{ report.unknown_risk_elements }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Elements</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Risk</th>
+        <th>Tag</th>
+        <th>Keyword</th>
+        <th>VR</th>
+        <th>Category</th>
+        <th>Recommended</th>
+        <th>Redacted</th>
+        <th>Value</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.elements %}
+      <tr>
+        <td class="{{ item.risk }}">{{ item.risk }}</td>
+        <td><code>{{ item.tag }}</code></td>
+        <td><code>{{ item.keyword }}</code></td>
+        <td>{{ item.vr }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.recommended_action }}</td>
+        <td>{{ item.redacted }}</td>
+        <td><code>{{ item.value|join(", ") }}</code></td>
+        <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </body>
 </html>
 """
@@ -2095,6 +2175,10 @@ def write_audit_html(path: Path, audit: AnonymizationAudit) -> None:
 
 def write_dcmodify_plan_html(path: Path, report: DcmodifyPlanReport) -> None:
     _write_html(path, DCMODIFY_PLAN_TEMPLATE.render(report=report))
+
+
+def write_dicom_json_html(path: Path, report: DicomJsonExportReport) -> None:
+    _write_html(path, DICOM_JSON_TEMPLATE.render(report=report))
 
 
 def write_demo_summary_html(path: Path, result: DemoPipelineResult) -> None:

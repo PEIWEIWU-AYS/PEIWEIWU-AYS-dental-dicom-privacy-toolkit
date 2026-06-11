@@ -10,6 +10,7 @@ from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.certificate import build_deidentification_certificate
 from ddpt.dcmodify_plan import build_dcmodify_plan, write_dcmodify_script
 from ddpt.deid_compare import compare_deidentification
+from ddpt.dicom_json import export_dicom_json
 from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
@@ -26,6 +27,7 @@ from ddpt.reports import (
     write_dcmodify_plan_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
+    write_dicom_json_html,
     write_filename_privacy_html,
     write_inspection_html,
     write_inventory_html,
@@ -151,6 +153,22 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
         if step.get("html"):
             html_path = _path(root_dir, step["html"])
             write_inspection_html(html_path, report)
+            artifacts.append(html_path)
+        return artifacts
+
+    if action == "dicom-json-export":
+        report = export_dicom_json(
+            _path(root_dir, step["input"]),
+            include_values=bool(step.get("include_values", False)),
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_dicom_json_html(html_path, report)
             artifacts.append(html_path)
         return artifacts
 

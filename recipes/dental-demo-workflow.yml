@@ -24,6 +24,12 @@ steps:
     json: reports/inspect.json
     html: reports/inspect.html
 
+  - id: dicom-json-export
+    action: dicom-json-export
+    input: input/sample.synthetic.dcm
+    json: reports/dicom-json.json
+    html: reports/dicom-json.html
+
   - id: remediation-plan
     action: remediation-plan
     input: input

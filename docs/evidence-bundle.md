@@ -25,6 +25,7 @@ The bundle includes:
 - competitor-informed capability matrix JSON and HTML
 - policy registry JSON, CSV, and HTML
 - built-in profile lint JSON and HTML
+- safe DICOM JSON export JSON and HTML from the workflow recipe
 - filename privacy scan JSON and HTML from the workflow recipe
 - privacy remediation plan JSON and HTML from the workflow recipe
 - dcmodify plan JSON, HTML, and review script from the workflow recipe
@@ -83,6 +84,7 @@ evidence-run/
     outputs/sample.redacted.dcm
     reports/
       filename-privacy.html
+      dicom-json.html
       remediation-plan.html
       dcmodify-plan.html
       dcmodify-plan.sh

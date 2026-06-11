@@ -274,6 +274,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "dicom-json.html",
+            "DICOM JSON export HTML",
+            "integration",
+            "Orthanc-inspired safe metadata JSON export from the workflow.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "filename-privacy.html",
             "Filename privacy scan HTML",
             "path-privacy",

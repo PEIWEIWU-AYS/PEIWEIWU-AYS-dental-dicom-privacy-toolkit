@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from ddpt import __version__
 from ddpt.anonymize import anonymize_dicom
+from ddpt.dicom_json import export_dicom_json
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory
 from ddpt.pipeline import run_demo_pipeline
@@ -20,6 +21,11 @@ from ddpt.workbench import render_workbench_html
 
 class PathRequest(BaseModel):
     path: str
+
+
+class DicomJsonRequest(BaseModel):
+    path: str
+    include_values: bool = False
 
 
 class AnonymizeRequest(BaseModel):
@@ -66,6 +72,7 @@ def create_api_app(root_dir: Path) -> FastAPI:
                 "/demo",
                 "/inventory",
                 "/inspect",
+                "/dicom-json",
                 "/anonymize",
                 "/validate",
                 "/preview",
@@ -96,6 +103,13 @@ def create_api_app(root_dir: Path) -> FastAPI:
     def inspect(request: PathRequest) -> dict:
         dicom_path = _resolve_inside_root(root, request.path)
         return model_to_dict(inspect_dicom(dicom_path))
+
+    @app.post("/dicom-json")
+    def dicom_json(request: DicomJsonRequest) -> dict:
+        dicom_path = _resolve_inside_root(root, request.path)
+        return model_to_dict(
+            export_dicom_json(dicom_path, include_values=request.include_values)
+        )
 
     @app.post("/anonymize")
     def anonymize(request: AnonymizeRequest) -> dict:

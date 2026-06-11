@@ -39,6 +39,7 @@ jobs:
           test -f docs/remediation-plan.md
           test -f docs/demo-guide.md
           test -f docs/deid-certificate.md
+          test -f docs/dicom-json-export.md
           test -f docs/evidence-bundle.md
           test -f docs/workflow-recipes.md
           test -f docs/quality-gate.md
@@ -115,6 +116,9 @@ jobs:
 
       - name: Run dcmodify operation plan
         run: python -m ddpt dcmodify plan evidence-run/demo-run/input/sample.synthetic.dcm --json dcmodify-plan.json --html dcmodify-plan.html --script dcmodify-plan.sh
+
+      - name: Run safe DICOM JSON export
+        run: python -m ddpt dicom-json export evidence-run/demo-run/input/sample.synthetic.dcm --json dicom-json.json --html dicom-json.html
 
       - name: Run pixel risk scan
         run: python -m ddpt pixel-risk scan evidence-run/demo-run/outputs/sample.anonymized.dcm --json pixel-risk.json --html pixel-risk.html

@@ -19,6 +19,7 @@ Expected outputs:
 - `workflow-run/reports/filename-privacy.html`
 - `workflow-run/reports/inventory.json`
 - `workflow-run/reports/inspect.html`
+- `workflow-run/reports/dicom-json.html`
 - `workflow-run/reports/remediation-plan.html`
 - `workflow-run/reports/dcmodify-plan.html`
 - `workflow-run/reports/dcmodify-plan.sh`
@@ -43,6 +44,7 @@ Expected outputs:
 - `filename-scan`
 - `inventory`
 - `inspect`
+- `dicom-json-export`
 - `remediation-plan`
 - `dcmodify-plan`
 - `anonymize`

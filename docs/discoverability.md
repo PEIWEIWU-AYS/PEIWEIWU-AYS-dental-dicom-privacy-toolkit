@@ -8,11 +8,11 @@
 
 ## GitHub Description
 
-Open-source dental DICOM anonymization, de-identification, filename privacy scan, path privacy, privacy remediation plan, dcmodify plan export, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
+Open-source dental DICOM anonymization, de-identification, DICOM JSON export, Orthanc-inspired API, filename privacy scan, path privacy, privacy remediation plan, dcmodify plan export, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `filename-privacy` `privacy-remediation` `dcmodify` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-json` `orthanc` `filename-privacy` `privacy-remediation` `dcmodify` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## English Keywords
 
@@ -20,6 +20,8 @@ Open-source dental DICOM anonymization, de-identification, filename privacy scan
 - dental imaging
 - DICOM anonymization
 - DICOM de-identification
+- DICOM JSON export
+- Orthanc-inspired API
 - DICOM filename privacy scan
 - DICOM path privacy
 - DICOM privacy remediation plan
@@ -59,6 +61,8 @@ Open-source dental DICOM anonymization, de-identification, filename privacy scan
 - 牙科影像
 - DICOM脱敏
 - DICOM去标识化
+- DICOM JSON导出
+- Orthanc风格接口
 - 文件名隐私扫描
 - 路径隐私
 - 隐私整改计划
@@ -95,6 +99,8 @@ Open-source dental DICOM anonymization, de-identification, filename privacy scan
 
 - dental DICOM anonymization toolkit
 - open source DICOM de-identification
+- DICOM JSON export
+- Orthanc-inspired DICOM API
 - DICOM filename privacy scan
 - DICOM path privacy
 - DICOM de-identification certificate
@@ -122,6 +128,8 @@ Open-source dental DICOM anonymization, de-identification, filename privacy scan
 - YAML DICOM workflow
 - CBCT privacy open source
 - 牙科 DICOM 脱敏 工具
+- 牙科 DICOM JSON 导出
+- 牙科 Orthanc 风格接口
 - 牙科 DICOM 文件名隐私扫描
 - 牙科 DICOM 路径隐私
 - 牙科 DICOM 伪名化
@@ -138,4 +146,4 @@ Open-source dental DICOM anonymization, de-identification, filename privacy scan
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, filename privacy scans, privacy remediation plans, dcmodify plan exports, pixel risk scans, workflow quality gates, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, de-identification certificates, local REST API integration demos, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, safe DICOM JSON exports, filename privacy scans, privacy remediation plans, dcmodify plan exports, pixel risk scans, workflow quality gates, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, de-identification certificates, local REST API integration demos, encrypted sharing packages, and audit reporting.

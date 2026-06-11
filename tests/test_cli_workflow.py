@@ -298,6 +298,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "filename-privacy.html").exists()
     assert (workflow_dir / "reports" / "inventory.json").exists()
     assert (workflow_dir / "reports" / "inspect.html").exists()
+    assert (workflow_dir / "reports" / "dicom-json.json").exists()
+    assert (workflow_dir / "reports" / "dicom-json.html").exists()
     assert (workflow_dir / "reports" / "remediation-plan.json").exists()
     assert (workflow_dir / "reports" / "remediation-plan.html").exists()
     assert (workflow_dir / "reports" / "dcmodify-plan.json").exists()
@@ -331,6 +333,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "filename-privacy-scan",
         "inventory-input",
         "inspect-input",
+        "dicom-json-export",
         "remediation-plan",
         "dcmodify-plan",
         "anonymize",
@@ -358,6 +361,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
     assert "filename-privacy-scan" in html
+    assert "dicom-json-export" in html
     assert "remediation-plan" in html
     assert "dcmodify-plan" in html
     assert "pixel-risk-scan" in html
@@ -653,6 +657,46 @@ def test_dcmodify_plan_command_exports_profile_operations(tmp_path: Path) -> Non
     assert "dcmodify" in script
 
 
+def test_dicom_json_export_redacts_sensitive_values_by_default(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    export_json = tmp_path / "reports" / "dicom-json.json"
+    export_html = tmp_path / "reports" / "dicom-json.html"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    result = runner.invoke(
+        app,
+        [
+            "dicom-json",
+            "export",
+            str(source),
+            "--json",
+            str(export_json),
+            "--html",
+            str(export_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert export_json.exists()
+    assert export_html.exists()
+    report = json.loads(export_json.read_text())
+    assert report["safe_mode"] is True
+    assert report["include_values"] is False
+    assert report["redacted_elements"] >= 1
+    patient_name = report["dicom_json"]["00100010"]
+    assert patient_name["Keyword"] == "PatientName"
+    assert patient_name["Risk"] == "high"
+    assert patient_name["Redacted"] is True
+    assert patient_name["Value"] == ["[redacted]"]
+    modality = report["dicom_json"]["00080060"]
+    assert modality["Keyword"] == "Modality"
+    assert modality["Redacted"] is False
+    assert modality["Value"] == ["DX"]
+    html = export_html.read_text()
+    assert "Dental DICOM Safe JSON Export" in html
+    assert "Safe mode" in html
+
+
 def test_pixel_review_command_generates_overlay_and_report(tmp_path: Path) -> None:
     source = tmp_path / "sample.dcm"
     review_dir = tmp_path / "reports" / "pixel-review"
@@ -823,6 +867,12 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     inspection = response.json()
     assert inspection["patient_name_present"] is True
 
+    response = client.post("/dicom-json", json={"path": "input/api.synthetic.dcm"})
+    assert response.status_code == 200
+    dicom_json = response.json()
+    assert dicom_json["dicom_json"]["00100010"]["Redacted"] is True
+    assert dicom_json["dicom_json"]["00100010"]["Value"] == ["[redacted]"]
+
     response = client.post(
         "/anonymize",
         json={
@@ -984,6 +1034,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "pixel-risk-scan" in capability_ids
     assert "pixel-review-redaction" in capability_ids
     assert "dcmodify-plan-export" in capability_ids
+    assert "dicom-json-export" in capability_ids
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
     assert "share-readiness-gate" in capability_ids
@@ -1058,6 +1109,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "filename-privacy.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "dicom-json.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "remediation-plan.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "dcmodify-plan.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "pixel-risk.html").exists()
@@ -1082,6 +1134,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
     assert "workflow-run/reports/filename-privacy.html" in artifact_paths
+    assert "workflow-run/reports/dicom-json.html" in artifact_paths
     assert "workflow-run/reports/remediation-plan.html" in artifact_paths
     assert "workflow-run/reports/dcmodify-plan.html" in artifact_paths
     assert "workflow-run/reports/pixel-risk.html" in artifact_paths
@@ -1101,6 +1154,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "De-identification certificate HTML" in html
     assert "Workflow quality gate HTML" in html
     assert "Filename privacy scan HTML" in html
+    assert "DICOM JSON export HTML" in html
     assert "Privacy remediation plan HTML" in html
     assert "dcmodify plan HTML" in html
     assert "Pixel risk scan HTML" in html
