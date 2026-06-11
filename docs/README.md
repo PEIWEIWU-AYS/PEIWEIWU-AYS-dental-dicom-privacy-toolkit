@@ -9,6 +9,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Capability Matrix](capability-matrix.md)
 - [Product Requirements](product-requirements.md)
 - [Policy Registry](policy-registry.md)
+- [Filename Privacy Scan](filename-privacy-scan.md)
 - [Privacy Remediation Plan](remediation-plan.md)
 - [De-identification Comparison](deid-comparison.md)
 - [De-identification Certificate](deid-certificate.md)

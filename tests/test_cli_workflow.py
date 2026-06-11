@@ -294,6 +294,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert workflow_json.exists()
     assert workflow_html.exists()
     assert (workflow_dir / "input" / "sample.synthetic.dcm").exists()
+    assert (workflow_dir / "reports" / "filename-privacy.json").exists()
+    assert (workflow_dir / "reports" / "filename-privacy.html").exists()
     assert (workflow_dir / "reports" / "inventory.json").exists()
     assert (workflow_dir / "reports" / "inspect.html").exists()
     assert (workflow_dir / "reports" / "remediation-plan.json").exists()
@@ -323,6 +325,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert report["passed"] is True
     assert [step["id"] for step in report["steps"]] == [
         "create-synthetic",
+        "filename-privacy-scan",
         "inventory-input",
         "inspect-input",
         "remediation-plan",
@@ -350,6 +353,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
+    assert "filename-privacy-scan" in html
     assert "remediation-plan" in html
     assert "pixel-risk-scan" in html
     assert "deid-certificate" in html
@@ -559,6 +563,43 @@ def test_pixel_risk_scan_command_reports_conservative_signals(tmp_path: Path) ->
     html = risk_html.read_text()
     assert "Dental DICOM Pixel Risk Scan" in html
     assert "not OCR" in html
+
+
+def test_filename_privacy_scan_command_flags_path_identifiers(tmp_path: Path) -> None:
+    risky_dir = tmp_path / "患者-13800138000"
+    source = risky_dir / "scan.dcm"
+    filename_json = tmp_path / "reports" / "filename-privacy.json"
+    filename_html = tmp_path / "reports" / "filename-privacy.html"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    result = runner.invoke(
+        app,
+        [
+            "filename",
+            "scan",
+            str(tmp_path),
+            "--json",
+            str(filename_json),
+            "--html",
+            str(filename_html),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert filename_json.exists()
+    assert filename_html.exists()
+    report = json.loads(filename_json.read_text())
+    assert report["passed"] is False
+    assert report["scanned_files"] == 1
+    assert report["high_findings"] >= 1
+    findings = report["files"][0]["findings"]
+    rule_ids = {item["rule_id"] for item in findings}
+    assert "patient-marker-in-path" in rule_ids
+    assert "phone-in-path" in rule_ids
+    assert report["files"][0]["suggested_safe_name"].startswith("ddpt-file-")
+    html = filename_html.read_text()
+    assert "Dental DICOM Filename Privacy Scan" in html
+    assert "Suggested Safe Name" in html
 
 
 def test_pixel_review_command_generates_overlay_and_report(tmp_path: Path) -> None:
@@ -888,6 +929,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "privacy-remediation-plan" in capability_ids
     assert "linkable-pseudonymization" in capability_ids
     assert "before-after-deid-comparison" in capability_ids
+    assert "filename-privacy-scan" in capability_ids
     assert "pixel-risk-scan" in capability_ids
     assert "pixel-review-redaction" in capability_ids
     assert "pipeline-recipes" in capability_ids
@@ -963,6 +1005,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "profile-lint-dental-research-sharing.html").exists()
     assert (output_dir / "reports" / "profile-lint-dental-linkable-research.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "filename-privacy.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "remediation-plan.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "pixel-risk.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
@@ -985,6 +1028,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/profile-lint-dental-research-sharing.html" in artifact_paths
     assert "reports/profile-lint-dental-linkable-research.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
+    assert "workflow-run/reports/filename-privacy.html" in artifact_paths
     assert "workflow-run/reports/remediation-plan.html" in artifact_paths
     assert "workflow-run/reports/pixel-risk.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
@@ -1002,6 +1046,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Release audit HTML" in html
     assert "De-identification certificate HTML" in html
     assert "Workflow quality gate HTML" in html
+    assert "Filename privacy scan HTML" in html
     assert "Privacy remediation plan HTML" in html
     assert "Pixel risk scan HTML" in html
 

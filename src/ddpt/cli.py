@@ -19,6 +19,7 @@ from ddpt.dashboard import build_review_dashboard_report
 from ddpt.deid_compare import compare_deidentification
 from ddpt.doctor import run_doctor
 from ddpt.evidence import run_evidence_bundle
+from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.pipeline import run_demo_pipeline
@@ -52,6 +53,7 @@ from ddpt.reports import (
     write_capability_matrix_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
+    write_filename_privacy_html,
     write_inspection_html,
     write_inventory_html,
     write_objective_audit_html,
@@ -84,6 +86,7 @@ audit_app = typer.Typer(help="Create and verify audit chains.")
 safety_app = typer.Typer(help="Run public repository safety checks.")
 redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.")
 pixel_risk_app = typer.Typer(help="Scan pixel-layer privacy risk signals.")
+filename_app = typer.Typer(help="Scan DICOM filename and path privacy risk.")
 tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
 api_app = typer.Typer(help="Run local REST API demo.")
 workflow_app = typer.Typer(help="Run YAML privacy workflow recipes.")
@@ -103,6 +106,7 @@ app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
 app.add_typer(redaction_plan_app, name="redaction-plan")
 app.add_typer(pixel_risk_app, name="pixel-risk")
+app.add_typer(filename_app, name="filename")
 app.add_typer(tag_app, name="tag")
 app.add_typer(api_app, name="api")
 app.add_typer(workflow_app, name="workflow")
@@ -728,6 +732,45 @@ def remediation_plan(
     console.print(f"Uncovered high-risk items: {report.uncovered_high_risk_items}")
     console.print(f"Uncovered medium-risk items: {report.uncovered_medium_risk_items}")
     console.print(f"Pixel review recommended files: {report.pixel_review_recommended_files}")
+    console.print(f"Overall: {'PASS' if report.passed else 'REVIEW'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@filename_app.command("scan")
+def filename_scan(
+    input_path: Annotated[Path, typer.Argument(help="DICOM file or directory.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON filename privacy scan.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML filename privacy scan.")
+    ] = None,
+    recursive: Annotated[
+        bool, typer.Option("--recursive/--no-recursive", help="Recurse through directories.")
+    ] = True,
+) -> None:
+    report = scan_filename_privacy(input_path, recursive=recursive)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_filename_privacy_html(html_output, report)
+
+    table = Table(title="Dental DICOM Filename Privacy Scan")
+    table.add_column("Findings")
+    table.add_column("Path")
+    table.add_column("Suggested Safe Name")
+    for file_result in report.files:
+        table.add_row(
+            str(len(file_result.findings)),
+            file_result.path,
+            file_result.suggested_safe_name,
+        )
+    console.print(table)
+    console.print(f"Scanned files: {report.scanned_files}")
+    console.print(f"Findings: {report.findings_count}")
+    console.print(f"High findings: {report.high_findings}")
+    console.print(f"Medium findings: {report.medium_findings}")
     console.print(f"Overall: {'PASS' if report.passed else 'REVIEW'}")
     if not report.passed:
         raise typer.Exit(1)

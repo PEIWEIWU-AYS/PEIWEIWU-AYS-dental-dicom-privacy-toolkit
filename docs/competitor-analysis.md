@@ -62,6 +62,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - static local review dashboard for non-programmer walkthroughs
 - competitor-informed capability matrix that maps claims to repository evidence
 - PNG previews for GitHub-friendly visual review
+- filename/path privacy scan before sharing
 - conservative pixel risk scan before manual burned-in review
 - pixel review reports with original, overlay, and redacted previews
 - read-only directory inventory before anonymization
@@ -122,6 +123,7 @@ The project should add:
 - dental-specific profile names and documentation
 - audit event JSON output
 - directory inventory with JSON, CSV, and HTML exports
+- filename/path privacy scan with JSON and HTML outputs before sharing
 - privacy remediation plan with JSON and HTML outputs before anonymization
 - multi-stage YAML workflow runner with step-level artifacts
 - human-readable HTML report for workflow execution

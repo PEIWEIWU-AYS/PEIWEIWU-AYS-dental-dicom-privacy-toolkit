@@ -8,11 +8,11 @@
 
 ## GitHub Description
 
-Open-source dental DICOM anonymization, de-identification, privacy remediation plan, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
+Open-source dental DICOM anonymization, de-identification, filename privacy scan, path privacy, privacy remediation plan, pixel risk scan, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy-remediation` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `filename-privacy` `privacy-remediation` `pixel-risk` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## English Keywords
 
@@ -20,6 +20,8 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - dental imaging
 - DICOM anonymization
 - DICOM de-identification
+- DICOM filename privacy scan
+- DICOM path privacy
 - DICOM privacy remediation plan
 - DICOM pixel risk scan
 - DICOM workflow quality gate
@@ -31,6 +33,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - objective completion audit
 - multi-file synthetic DICOM study
 - DICOM anonymization dry run
+- DICOM filename de-identification
 - DICOM remediation report
 - burned-in identifier triage
 - medical imaging privacy
@@ -54,6 +57,8 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - 牙科影像
 - DICOM脱敏
 - DICOM去标识化
+- 文件名隐私扫描
+- 路径隐私
 - 隐私整改计划
 - 像素风险扫描
 - 工作流质量门禁
@@ -65,6 +70,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - 原始目标完成度审计
 - 多文件合成DICOM数据集
 - 脱敏预演
+- DICOM文件名脱敏
 - 脱敏前整改计划
 - burned-in 标识风险扫描
 - 医学影像隐私
@@ -85,6 +91,8 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 
 - dental DICOM anonymization toolkit
 - open source DICOM de-identification
+- DICOM filename privacy scan
+- DICOM path privacy
 - DICOM de-identification certificate
 - DICOM privacy remediation plan
 - DICOM pixel risk scan
@@ -96,6 +104,7 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - DICOM project objective completion audit
 - synthetic dental DICOM study generator
 - DICOM anonymization dry run
+- DICOM filename anonymization
 - DICOM privacy remediation report
 - DICOM burned-in pixel risk scan
 - dental imaging privacy toolkit
@@ -107,6 +116,8 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 - YAML DICOM workflow
 - CBCT privacy open source
 - 牙科 DICOM 脱敏 工具
+- 牙科 DICOM 文件名隐私扫描
+- 牙科 DICOM 路径隐私
 - 牙科 DICOM 伪名化
 - 牙科 DICOM 去标识化证明书
 - 牙科 DICOM 隐私整改计划
@@ -120,4 +131,4 @@ Open-source dental DICOM anonymization, de-identification, privacy remediation p
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, privacy remediation plans, pixel risk scans, workflow quality gates, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, de-identification certificates, local REST API integration demos, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including YAML workflow recipes, filename privacy scans, privacy remediation plans, pixel risk scans, workflow quality gates, anonymization dry-run reports, multi-file synthetic DICOM study generation, linkable research pseudonymization profiles, a local browser workbench, objective completion audit, DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, de-identification certificates, local REST API integration demos, encrypted sharing packages, and audit reporting.

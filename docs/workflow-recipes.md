@@ -16,6 +16,7 @@ ddpt workflow run recipes/dental-demo-workflow.yml \
 Expected outputs:
 
 - `workflow-run/input/sample.synthetic.dcm`
+- `workflow-run/reports/filename-privacy.html`
 - `workflow-run/reports/inventory.json`
 - `workflow-run/reports/inspect.html`
 - `workflow-run/reports/remediation-plan.html`
@@ -37,6 +38,7 @@ Expected outputs:
 ## Supported Actions
 
 - `synthetic`
+- `filename-scan`
 - `inventory`
 - `inspect`
 - `remediation-plan`

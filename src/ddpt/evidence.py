@@ -267,6 +267,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "filename-privacy.html",
+            "Filename privacy scan HTML",
+            "path-privacy",
+            "Path-level privacy guardrail from the staged workflow.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "pixel-risk.html",
             "Pixel risk scan HTML",
             "pixel-risk",

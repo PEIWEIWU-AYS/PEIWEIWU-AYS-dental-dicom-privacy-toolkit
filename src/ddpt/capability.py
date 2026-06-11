@@ -158,6 +158,28 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="filename-privacy-scan",
+        capability="Filename and path privacy scan before sharing",
+        source_tools=("PixelMed DicomCleaner", "RSNA CTP", "pydicom anonymization example"),
+        evidence_files=(
+            "src/ddpt/filename_privacy.py",
+            "docs/filename-privacy-scan.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt filename scan input-dir --json filename-privacy.json "
+            "--html filename-privacy.html"
+        ),
+        differentiator=(
+            "Catches path-level PHI risk that metadata and pixel tools can miss."
+        ),
+        note=(
+            "Checks file and folder names for email, phone, date, patient, case, "
+            "MRN, ID, Chinese patient markers, and private-data folder hints."
+        ),
+    ),
+    CapabilitySpec(
         id="synthetic-study-generator",
         capability="Multi-file synthetic dental study generation for local workflow demos",
         source_tools=("RSNA CTP", "pydicom anonymization example"),

@@ -287,6 +287,35 @@ class PixelRiskScanReport(BaseModel):
     )
 
 
+class FilenamePrivacyFinding(BaseModel):
+    path: str
+    part: str
+    severity: Literal["high", "medium", "low"]
+    rule_id: str
+    message: str
+    suggested_safe_name: str
+
+
+class FilenamePrivacyFileResult(BaseModel):
+    path: str
+    suggested_safe_name: str
+    findings: list[FilenamePrivacyFinding] = Field(default_factory=list)
+
+
+class FilenamePrivacyScanReport(BaseModel):
+    input_path: str
+    recursive: bool
+    passed: bool
+    scanned_files: int
+    findings_count: int
+    high_findings: int
+    medium_findings: int
+    files: list[FilenamePrivacyFileResult]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class DoctorCheck(BaseModel):
     name: str
     passed: bool

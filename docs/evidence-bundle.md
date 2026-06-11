@@ -25,6 +25,7 @@ The bundle includes:
 - competitor-informed capability matrix JSON and HTML
 - policy registry JSON, CSV, and HTML
 - built-in profile lint JSON and HTML
+- filename privacy scan JSON and HTML from the workflow recipe
 - privacy remediation plan JSON and HTML from the workflow recipe
 - pixel risk scan JSON and HTML from the workflow recipe
 - one-command synthetic demo output
@@ -80,6 +81,7 @@ evidence-run/
     outputs/sample.anonymized.dcm
     outputs/sample.redacted.dcm
     reports/
+      filename-privacy.html
       remediation-plan.html
       pixel-risk.html
     share/

@@ -13,6 +13,7 @@ from ddpt.models import (
     DeidentificationComparisonReport,
     DemoPipelineResult,
     EvidenceBundleResult,
+    FilenamePrivacyScanReport,
     InspectionReport,
     InventoryReport,
     ObjectiveAuditReport,
@@ -586,6 +587,101 @@ WORKFLOW_QUALITY_GATE_TEMPLATE = Template(
           <code>{{ item }}</code>{% if not loop.last %}<br>{% endif %}
           {% endfor %}
         </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
+FILENAME_PRIVACY_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Filename Privacy Scan</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    .high { color: #b00020; font-weight: 700; }
+    .medium { color: #8a5a00; font-weight: 700; }
+    .low { color: #1f6f43; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Filename Privacy Scan</h1>
+  <p class="warning">
+    This report checks DICOM path names before sharing. It does not inspect
+    DICOM metadata or pixel data; use it together with inventory, remediation,
+    anonymization, validation, pixel review, and quality gates.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>Recursive: {{ report.recursive }}</li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "REVIEW" }}
+      </span>
+    </li>
+    <li>Scanned files: {{ report.scanned_files }}</li>
+    <li>Findings: {{ report.findings_count }}</li>
+    <li>High findings: {{ report.high_findings }}</li>
+    <li>Medium findings: {{ report.medium_findings }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Findings</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Severity</th>
+        <th>Rule</th>
+        <th>Path</th>
+        <th>Part</th>
+        <th>Message</th>
+        <th>Suggested Safe Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for file in report.files %}
+      {% for finding in file.findings %}
+      <tr>
+        <td class="{{ finding.severity }}">{{ finding.severity }}</td>
+        <td>{{ finding.rule_id }}</td>
+        <td><code>{{ finding.path }}</code></td>
+        <td><code>{{ finding.part }}</code></td>
+        <td>{{ finding.message }}</td>
+        <td><code>{{ finding.suggested_safe_name }}</code></td>
+      </tr>
+      {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Files</h2>
+  <table>
+    <thead>
+      <tr><th>Path</th><th>Suggested Safe Name</th><th>Findings</th></tr>
+    </thead>
+    <tbody>
+      {% for file in report.files %}
+      <tr>
+        <td><code>{{ file.path }}</code></td>
+        <td><code>{{ file.suggested_safe_name }}</code></td>
+        <td>{{ file.findings|length }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -1948,6 +2044,10 @@ def write_workflow_quality_gate_html(
     report: WorkflowQualityGateReport,
 ) -> None:
     _write_html(path, WORKFLOW_QUALITY_GATE_TEMPLATE.render(report=report))
+
+
+def write_filename_privacy_html(path: Path, report: FilenamePrivacyScanReport) -> None:
+    _write_html(path, FILENAME_PRIVACY_TEMPLATE.render(report=report))
 
 
 def write_pixel_risk_scan_html(path: Path, report: PixelRiskScanReport) -> None:

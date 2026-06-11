@@ -5,6 +5,12 @@ steps:
     action: synthetic
     output: input/sample.synthetic.dcm
 
+  - id: filename-privacy-scan
+    action: filename-scan
+    input: input
+    json: reports/filename-privacy.json
+    html: reports/filename-privacy.html
+
   - id: inventory-input
     action: inventory
     input_dir: input

@@ -9,6 +9,7 @@ from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.certificate import build_deidentification_certificate
 from ddpt.deid_compare import compare_deidentification
+from ddpt.filename_privacy import scan_filename_privacy
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
 from ddpt.models import WorkflowRunReport, WorkflowStepResult
@@ -23,6 +24,7 @@ from ddpt.reports import (
     write_audit_html,
     write_deid_certificate_html,
     write_deid_comparison_html,
+    write_filename_privacy_html,
     write_inspection_html,
     write_inventory_html,
     write_package_receipt_html,
@@ -117,6 +119,24 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             html_path = _path(root_dir, step["html"])
             write_inventory_html(html_path, report)
             artifacts.append(html_path)
+        return artifacts
+
+    if action == "filename-scan":
+        report = scan_filename_privacy(
+            _path(root_dir, step["input"]),
+            recursive=bool(step.get("recursive", True)),
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_filename_privacy_html(html_path, report)
+            artifacts.append(html_path)
+        if not report.passed:
+            raise ValueError("Filename privacy scan requires review")
         return artifacts
 
     if action == "inspect":
