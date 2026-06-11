@@ -1036,12 +1036,19 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
 
     response = client.get("/")
     assert response.status_code == 200
-    assert "/workbench" in response.json()["endpoints"]
+    endpoints = response.json()["endpoints"]
+    assert "/workbench" in endpoints
+    assert "/filename-scan" in endpoints
+    assert "/remediation-plan" in endpoints
+    assert "/pixel-risk" in endpoints
+    assert "/regression-suite" in endpoints
+    assert "/publish-preflight" in endpoints
 
     response = client.get("/workbench")
     assert response.status_code == 200
     assert "Dental DICOM Local Workbench" in response.text
     assert "dental-linkable-research" in response.text
+    assert "Evidence Reports" in response.text
 
     response = client.post("/inventory", json={"path": "input"})
     assert response.status_code == 200
@@ -1059,6 +1066,23 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     dicom_json = response.json()
     assert dicom_json["dicom_json"]["00100010"]["Redacted"] is True
     assert dicom_json["dicom_json"]["00100010"]["Value"] == ["[redacted]"]
+
+    response = client.post("/filename-scan", json={"path": "input"})
+    assert response.status_code == 200
+    filename_report = response.json()
+    assert filename_report["passed"] is True
+    assert filename_report["_api_artifacts"]["html"] == "reports/api-filename-privacy.html"
+    assert (tmp_path / "reports" / "api-filename-privacy.html").exists()
+
+    response = client.post(
+        "/remediation-plan",
+        json={"path": "input", "profile": "dental-basic"},
+    )
+    assert response.status_code == 200
+    remediation = response.json()
+    assert remediation["profile"] == "dental-basic"
+    assert remediation["files"][0]["readable"] is True
+    assert (tmp_path / "reports" / "api-remediation-plan.html").exists()
 
     response = client.post(
         "/anonymize",
@@ -1084,6 +1108,13 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     assert response.status_code == 200
     assert (tmp_path / preview_png).exists()
 
+    response = client.post("/pixel-risk", json={"path": anonymized})
+    assert response.status_code == 200
+    pixel_risk = response.json()
+    assert pixel_risk["pixel_data_present"] is True
+    assert pixel_risk["_api_artifacts"]["html"] == "reports/api-pixel-risk.html"
+    assert (tmp_path / "reports" / "api-pixel-risk.html").exists()
+
     response = client.get(f"/files/{preview_png}")
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("image/png")
@@ -1097,7 +1128,22 @@ def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
     assert demo["validation_passed"] is True
     assert (tmp_path / "api-workbench-demo" / "reports" / "demo-summary.html").exists()
 
+    response = client.post("/regression-suite", json={"output_dir": "api-regression-run"})
+    assert response.status_code == 200
+    regression = response.json()
+    assert regression["passed"] is True
+    assert regression["total_cases"] == 4
+    assert regression["_api_artifacts"]["html"] == (
+        "api-regression-run/reports/privacy-regression-suite.html"
+    )
+    assert (
+        tmp_path / "api-regression-run" / "reports" / "privacy-regression-suite.html"
+    ).exists()
+
     response = client.post("/inspect", json={"path": "../outside.dcm"})
+    assert response.status_code == 400
+
+    response = client.post("/filename-scan", json={"path": "../outside"})
     assert response.status_code == 400
 
     response = client.get("/files/../outside.png")
@@ -1117,6 +1163,16 @@ def test_local_api_competitor_coverage_endpoint() -> None:
     assert "RSNA DICOM Anonymizer" in tool_names
     assert "PixelMed DicomCleaner" in tool_names
     assert "Orthanc" in tool_names
+
+    response = client.post("/publish-preflight", json={})
+    assert response.status_code == 200
+    publish = response.json()
+    assert publish["owner"] == "PEIWEIWU-AYS"
+    assert publish["repo_slug"] == "dental-dicom-privacy-toolkit"
+    assert publish["_api_artifacts"]["html"] == "reports/api-publish-preflight.html"
+    assert Path("reports/api-publish-preflight.html").exists()
+    Path("reports/api-publish-preflight.json").unlink()
+    Path("reports/api-publish-preflight.html").unlink()
 
 
 def test_doctor_command_reports_environment(tmp_path: Path) -> None:
@@ -1240,6 +1296,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "dcmodify-plan-export" in capability_ids
     assert "dicom-json-export" in capability_ids
     assert "orthanc-anonymize-plan" in capability_ids
+    assert "local-api-evidence-endpoints" in capability_ids
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
     assert "share-readiness-gate" in capability_ids
@@ -1296,6 +1353,7 @@ def test_competitor_coverage_reports_reference_tool_mapping(tmp_path: Path) -> N
     assert "pixel-review-redaction" in capability_ids
     assert "dicom-json-export" in capability_ids
     assert "orthanc-anonymize-plan" in capability_ids
+    assert "local-api-evidence-endpoints" in capability_ids
     assert "dcmodify-plan-export" in capability_ids
     assert "privacy-regression-suite" in capability_ids
     assert "github-publish-preflight" in capability_ids

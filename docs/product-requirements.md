@@ -567,6 +567,12 @@ Required:
 - inventory endpoint
 - inspect endpoint
 - safe DICOM JSON endpoint
+- filename privacy scan endpoint
+- privacy remediation plan endpoint
+- pixel risk scan endpoint
+- synthetic privacy regression suite endpoint
+- GitHub publish preflight endpoint
+- generated report artifact paths in API responses
 - anonymize endpoint
 - validate endpoint
 - preview endpoint

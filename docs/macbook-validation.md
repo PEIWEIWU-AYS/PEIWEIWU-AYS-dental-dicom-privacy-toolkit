@@ -343,9 +343,12 @@ Expected:
 
 - the API docs page loads locally
 - the local browser workbench loads locally
-- `/health`, `/inventory`, `/inspect`, `/anonymize`, `/validate`, and `/preview` are listed
+- `/health`, `/inventory`, `/inspect`, `/anonymize`, `/validate`, `/preview`,
+  `/filename-scan`, `/remediation-plan`, `/pixel-risk`, `/regression-suite`, and
+  `/publish-preflight` are listed
 - the workbench profile selector includes `dental-linkable-research`
-- the workbench buttons can run against synthetic files inside the API root
+- the workbench buttons can run workflow and evidence reports against synthetic
+  files inside the API root
 
 ## Safety Boundary
 

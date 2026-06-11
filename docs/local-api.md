@@ -26,6 +26,11 @@ http://127.0.0.1:8765/workbench
 - `POST /inventory`
 - `POST /inspect`
 - `POST /dicom-json`
+- `POST /filename-scan`
+- `POST /remediation-plan`
+- `POST /pixel-risk`
+- `POST /regression-suite`
+- `POST /publish-preflight`
 - `GET /competitor-coverage`
 - `POST /anonymize`
 - `POST /validate`
@@ -53,6 +58,39 @@ Competitor coverage report, when the API root is inside this repository:
 curl http://127.0.0.1:8765/competitor-coverage
 ```
 
+Generate local privacy evidence reports from the API:
+
+```bash
+curl -X POST http://127.0.0.1:8765/remediation-plan \
+  -H "Content-Type: application/json" \
+  -d '{"path":"input","profile":"dental-basic"}'
+
+curl -X POST http://127.0.0.1:8765/filename-scan \
+  -H "Content-Type: application/json" \
+  -d '{"path":"input"}'
+
+curl -X POST http://127.0.0.1:8765/pixel-risk \
+  -H "Content-Type: application/json" \
+  -d '{"path":"outputs/sample.anonymized.dcm"}'
+
+curl -X POST http://127.0.0.1:8765/regression-suite \
+  -H "Content-Type: application/json" \
+  -d '{"output_dir":"api-regression-run"}'
+```
+
+When the API root is inside this repository, publish readiness can also be
+checked locally:
+
+```bash
+curl -X POST http://127.0.0.1:8765/publish-preflight \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+These report endpoints return JSON and write matching JSON/HTML report files
+inside the API root. The response includes `_api_artifacts` with relative paths
+to the generated files.
+
 ## Path Safety
 
 All paths are resolved inside the API root directory. Requests such as `../outside.dcm` are rejected.
@@ -60,7 +98,8 @@ All paths are resolved inside the API root directory. Requests such as `../outsi
 ## Local Workbench
 
 The `/workbench` page provides browser controls for synthetic demo generation,
-inventory, inspection, anonymization, validation, and preview. It is a GUI-style
+inventory, inspection, anonymization, validation, preview, privacy evidence
+reports, regression suite runs, and publish preflight checks. It is a GUI-style
 entrypoint for MacBook demonstrations, not a production viewer.
 
 ## Safety Boundary

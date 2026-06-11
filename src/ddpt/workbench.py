@@ -240,6 +240,21 @@ WORKBENCH_TEMPLATE = Template(
         </div>
         <div id="status" class="status">Ready.</div>
       </section>
+      <section class="stack">
+        <h2>Evidence Reports</h2>
+        <div class="grid">
+          <label>Regression output
+            <input id="regression-output" value="api-regression-run">
+          </label>
+        </div>
+        <div class="actions">
+          <button id="filename-scan">Filename Scan</button>
+          <button id="remediation-plan">Remediation Plan</button>
+          <button id="pixel-risk">Pixel Risk</button>
+          <button id="regression-suite">Regression Suite</button>
+          <button id="publish-preflight" class="secondary">Publish Preflight</button>
+        </div>
+      </section>
       <section class="grid">
         <div class="stack">
           <h2>JSON Result</h2>
@@ -340,6 +355,24 @@ WORKBENCH_TEMPLATE = Template(
         imageEl.hidden = false;
         noteEl.textContent = value("preview-path");
       }
+    });
+    document.getElementById("filename-scan").addEventListener("click", () => {
+      run("Filename scan", "/filename-scan", {path: value("input-dir")});
+    });
+    document.getElementById("remediation-plan").addEventListener("click", () => {
+      run("Remediation plan", "/remediation-plan", {
+        path: value("input-dir"),
+        profile: value("profile")
+      });
+    });
+    document.getElementById("pixel-risk").addEventListener("click", () => {
+      run("Pixel risk", "/pixel-risk", {path: value("output-path") || value("input-path")});
+    });
+    document.getElementById("regression-suite").addEventListener("click", () => {
+      run("Regression suite", "/regression-suite", {output_dir: value("regression-output")});
+    });
+    document.getElementById("publish-preflight").addEventListener("click", () => {
+      run("Publish preflight", "/publish-preflight", {});
     });
     document.getElementById("run-demo").addEventListener("click", () => {
       run("Synthetic demo", "/demo", {

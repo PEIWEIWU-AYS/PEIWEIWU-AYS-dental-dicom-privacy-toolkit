@@ -446,6 +446,27 @@ CAPABILITY_SPECS = [
         note="Keeps the first release lightweight while still enabling integration testing.",
     ),
     CapabilitySpec(
+        id="local-api-evidence-endpoints",
+        capability="Local REST API endpoints for privacy evidence reports",
+        source_tools=("Orthanc", "RSNA CTP", "PixelMed DicomCleaner"),
+        evidence_files=(
+            "src/ddpt/api.py",
+            "src/ddpt/workbench.py",
+            "docs/local-api.md",
+            "docs/local-workbench.md",
+            "tests/test_cli_workflow.py",
+        ),
+        command="ddpt api serve demo-run --host 127.0.0.1 --port 8765",
+        differentiator=(
+            "Browser and REST clients can trigger filename, remediation, pixel-risk, "
+            "regression, and publish-preflight reports without cloud upload."
+        ),
+        note=(
+            "Extends Orthanc-style API thinking into a local report workstation "
+            "for synthetic privacy evidence."
+        ),
+    ),
+    CapabilitySpec(
         id="dicom-json-export",
         capability="Orthanc-inspired safe DICOM metadata JSON export",
         source_tools=("Orthanc", "pydicom anonymization example"),
@@ -509,7 +530,8 @@ CAPABILITY_SPECS = [
         ),
         note=(
             "Workbench exposes health, demo, inventory, inspect, anonymize, "
-            "validate, preview, and safe file links for synthetic workflows."
+            "validate, preview, evidence reports, regression runs, publish "
+            "preflight, and safe file links for synthetic workflows."
         ),
     ),
     CapabilitySpec(

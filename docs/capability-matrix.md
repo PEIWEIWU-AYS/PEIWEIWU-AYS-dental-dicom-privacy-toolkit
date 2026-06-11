@@ -47,6 +47,7 @@ The matrix reviews whether the repository has evidence for:
 - residual privacy risk score across generated workflow evidence
 - synthetic adversarial privacy regression suite
 - local Orthanc-inspired REST API
+- local API evidence endpoints for privacy reports and publish preflight
 - Orthanc-inspired safe DICOM metadata JSON export
 - local browser workbench for GUI-style synthetic workflow review
 - original objective completion audit with requirement-level evidence

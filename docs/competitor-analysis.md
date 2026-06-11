@@ -85,6 +85,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - Orthanc-inspired safe metadata JSON export without running a PACS
 - Orthanc REST anonymization payload and curl plan export without contacting a PACS
 - local browser workbench that runs against the REST API without cloud upload
+- local API evidence endpoints for remediation, filename, pixel-risk, regression, and publish-readiness reports
 - JSON audit events and manifests
 - release-readiness audit for docs, discoverability, workflow coverage, CI, safety, and profile coverage
 - local evidence bundle that packages environment, safety, release, demo, workflow, audit, and sharing proof
@@ -151,6 +152,7 @@ The project should add:
 - safe DICOM JSON export for local integration demos
 - Orthanc anonymization plan export for review-only server integration
 - local browser workbench for synthetic demo, inventory, inspect, anonymize, validate, and preview
+- local REST evidence endpoints for privacy reports, regression tests, and GitHub publish preflight
 - static HTML reports
 - release-readiness audit with JSON and HTML output before public GitHub milestones
 - capability matrix with JSON and HTML output for competitor-informed project review

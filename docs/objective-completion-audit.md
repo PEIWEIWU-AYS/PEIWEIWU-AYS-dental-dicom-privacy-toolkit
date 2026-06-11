@@ -29,7 +29,7 @@ The audit checks evidence for:
 
 - RSNA DICOM Anonymizer: configurable research de-identification
 - DicomCleaner: DICOM header cleaning and burned-in pixel review
-- Orthanc: local REST API, browser workbench, safe JSON export, and REST anonymization plan export
+- Orthanc: local REST API, browser workbench, evidence report endpoints, safe JSON export, and REST anonymization plan export
 - RSNA CTP: multi-stage pipeline, audit, evidence, and share-readiness gates
 - DCMTK `dcmodify`: exact tag dump, set, blank, and delete operations
 - pydicom anonymization example: readable Python DICOM editing implementation
