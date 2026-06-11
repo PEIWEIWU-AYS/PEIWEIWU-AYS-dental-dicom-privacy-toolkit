@@ -43,6 +43,7 @@ Expected key artifacts:
 - `demo-run/reports/audit.html`
 - `demo-run/reports/audit-chain.json`
 - `demo-run/reports/package-receipt.html`
+- `demo-run/reports/share-readiness.html`
 - `demo-run/share/package.ddpt`
 - `demo-run/share/package.key`
 
@@ -104,6 +105,9 @@ ddpt compare deid \
   demo-run/outputs/sample.anonymized.dcm \
   --json demo-run/reports/deid-comparison.json \
   --html demo-run/reports/deid-comparison.html
+ddpt share readiness demo-run \
+  --json demo-run/reports/share-readiness.json \
+  --html demo-run/reports/share-readiness.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm \
   --profile dental-research-sharing \
   --dry-run \
@@ -118,6 +122,7 @@ Expected:
 - the profile output lists date-shift keywords
 - the profile comparison report shows date fields changed from `blank` to `date_shift`
 - the de-identification comparison report passes and shows direct identifiers changed
+- the share-readiness report passes all sharing gates
 - dry-run audit includes `date_shift` actions for study-level date fields
 - no DICOM output is written during dry run
 
@@ -168,6 +173,7 @@ Expected:
 - `evidence-run/demo-run/reports/deid-comparison.html` exists
 - `evidence-run/demo-run/reports/pixel-review.html` exists
 - `evidence-run/demo-run/reports/package-receipt.html` exists
+- `evidence-run/demo-run/reports/share-readiness.html` exists
 
 ## 11. Open Human-Readable Outputs
 
@@ -183,6 +189,7 @@ demo-run/reports/inventory.html
 demo-run/reports/deid-comparison.html
 demo-run/reports/inspect.html
 demo-run/reports/audit.html
+demo-run/reports/share-readiness.html
 ```
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.

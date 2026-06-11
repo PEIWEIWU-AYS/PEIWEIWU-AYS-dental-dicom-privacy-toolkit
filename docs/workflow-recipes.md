@@ -25,6 +25,7 @@ Expected outputs:
 - `workflow-run/share/package.ddpt`
 - `workflow-run/reports/package-receipt.html`
 - `workflow-run/reports/audit-chain.json`
+- `workflow-run/reports/share-readiness.html`
 - `workflow-run/reports/workflow-run.json`
 - `workflow-run/reports/workflow-run.html`
 
@@ -43,6 +44,7 @@ Expected outputs:
 - `verify-package`
 - `audit-chain`
 - `audit-verify`
+- `share-readiness`
 
 ## Safety Boundary
 

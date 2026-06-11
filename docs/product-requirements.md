@@ -33,12 +33,13 @@ Version 0.1 is successful when a new user can:
 23. Encrypt the package.
 24. Verify or decrypt the package.
 25. Generate package verification receipts for receiver-side sharing evidence.
-26. Run local REST API workflow demos for integration testing.
-27. Run a release-readiness audit before public GitHub publishing.
-28. Run a competitor-informed capability matrix that maps features to repository evidence.
-29. Generate a static local review dashboard for non-programmer walkthroughs.
-30. Generate a local evidence bundle for MacBook validation and public demonstrations.
-31. Run automated tests locally and in GitHub Actions.
+26. Run a share-readiness gate before synthetic package handoff.
+27. Run local REST API workflow demos for integration testing.
+28. Run a release-readiness audit before public GitHub publishing.
+29. Run a competitor-informed capability matrix that maps features to repository evidence.
+30. Generate a static local review dashboard for non-programmer walkthroughs.
+31. Generate a local evidence bundle for MacBook validation and public demonstrations.
+32. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -58,6 +59,7 @@ Required:
 - encrypted package creation
 - package verification
 - package verification receipt JSON and HTML
+- share-readiness JSON and HTML
 - JSON reports
 - HTML reports
 - summary HTML page
@@ -186,7 +188,7 @@ Required:
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails
-- support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, and audit chain verification stages
+- support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, audit chain verification, and share-readiness stages
 - support before/after de-identification comparison stages
 
 ### `ddpt inventory`
@@ -440,6 +442,24 @@ Required:
 - optional verification receipt HTML
 - non-zero exit status when decryption, manifest, path safety, missing file, or checksum checks fail
 
+### `ddpt share readiness`
+
+Check whether a synthetic demo folder is ready for package handoff.
+
+Required:
+
+- demo or workflow output directory input
+- check anonymized DICOM exists
+- check validation report passed
+- check before/after de-identification comparison passed
+- check pixel review report and previews exist
+- check encrypted package verification receipt passed
+- check audit chain verification passed
+- JSON report
+- optional HTML report
+- non-zero exit status when any readiness check fails
+- documentation that this is a local synthetic-data gate, not legal, clinical, or regulatory certification
+
 ### `ddpt redact-pixels`
 
 Apply manual rectangular pixel redaction for known burned-in annotation regions.
@@ -577,6 +597,7 @@ To call Version 0.1 complete, we need:
 - a release-readiness audit command with JSON and HTML outputs
 - a capability matrix command with JSON and HTML outputs
 - a before/after de-identification comparison command with JSON and HTML outputs
+- a share-readiness command with JSON and HTML outputs
 - a static review dashboard command with JSON and HTML outputs
 - a local evidence bundle command with JSON and HTML index outputs
 - README demo commands updated

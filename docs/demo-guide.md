@@ -96,6 +96,7 @@ ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out d
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental-pixel-redaction.yml --out demo-run/outputs/sample.plan-redacted.dcm --audit demo-run/reports/plan-redaction.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
 ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key --receipt demo-run/reports/package-receipt.json --html demo-run/reports/package-receipt.html
+ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
 ```
 
 For a directory-level preflight before batch anonymization:

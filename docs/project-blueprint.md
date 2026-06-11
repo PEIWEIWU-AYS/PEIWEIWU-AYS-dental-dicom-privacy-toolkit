@@ -51,6 +51,7 @@ ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-research-sha
 ddpt pixel-review outputs/sample.anonymized.dcm --out-dir reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json reports/pixel-review.json --html reports/pixel-review.html
 ddpt package outputs/ --encrypt --key-out share/package.key --manifest reports/manifest.json --out share/dental-dicom-package.ddpt
 ddpt verify share/dental-dicom-package.ddpt --key share/package.key --receipt reports/package-receipt.json --html reports/package-receipt.html
+ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
 ddpt decrypt share/dental-dicom-package.ddpt --key share/package.key --out restored/
 ddpt api serve demo-run
 ddpt release audit . --json release-audit.json --html release-audit.html
@@ -301,6 +302,7 @@ dental-dicom-privacy-toolkit/
 - Remove private tags by default
 - Validate that known sensitive fields are absent or replaced
 - Compare original and anonymized files with side-by-side policy evidence
+- Check synthetic share-readiness before handoff
 
 ### Phase 5: Encrypted Sharing Package
 
@@ -308,6 +310,7 @@ dental-dicom-privacy-toolkit/
 - Calculate checksums
 - Encrypt package
 - Verify package integrity
+- Generate share-readiness report
 - Produce audit event JSON
 
 ### Phase 6: Public Demo

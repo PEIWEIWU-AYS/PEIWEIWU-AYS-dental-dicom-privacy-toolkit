@@ -22,6 +22,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Evidence Bundle](evidence-bundle.md)
 - [Review Dashboard](review-dashboard.md)
 - [Package Verification Receipts](package-verification-receipts.md)
+- [Share Readiness](share-readiness.md)
 - [DICOM Inventory Preflight](inventory.md)
 - [DICOM PNG Preview](preview.md)
 - [Pixel Review](pixel-review.md)

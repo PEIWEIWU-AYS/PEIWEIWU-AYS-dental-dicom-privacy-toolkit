@@ -261,6 +261,8 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "reports" / "audit-chain-verify.json").exists()
     assert (demo_dir / "reports" / "package-receipt.json").exists()
     assert (demo_dir / "reports" / "package-receipt.html").exists()
+    assert (demo_dir / "reports" / "share-readiness.json").exists()
+    assert (demo_dir / "reports" / "share-readiness.html").exists()
     assert (demo_dir / "share" / "package.ddpt").exists()
     assert (demo_dir / "share" / "manifest.json").exists()
     assert (demo_dir / "share" / "package.key").exists()
@@ -305,6 +307,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "package-receipt.html").exists()
     assert (workflow_dir / "reports" / "audit-chain.json").exists()
     assert (workflow_dir / "reports" / "audit-chain-verify.json").exists()
+    assert (workflow_dir / "reports" / "share-readiness.json").exists()
+    assert (workflow_dir / "reports" / "share-readiness.html").exists()
     report = json.loads(workflow_json.read_text())
     assert report["passed"] is True
     assert [step["id"] for step in report["steps"]] == [
@@ -321,6 +325,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "verify-package",
         "audit-chain",
         "audit-verify",
+        "share-readiness",
     ]
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
@@ -798,6 +803,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "pixel-review-redaction" in capability_ids
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
+    assert "share-readiness-gate" in capability_ids
     assert "secure-sharing" in capability_ids
     html = matrix_html.read_text()
     assert "Dental DICOM Capability Matrix" in html
@@ -828,6 +834,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "demo-run" / "reports" / "deid-comparison.html").exists()
     assert (output_dir / "demo-run" / "reports" / "pixel-review.html").exists()
     assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "share-readiness.html").exists()
     assert (output_dir / "demo-run" / "share" / "package.ddpt").exists()
     report = json.loads(evidence_json.read_text())
     assert report["passed"] is True
@@ -843,6 +850,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "demo-run/reports/deid-comparison.html" in artifact_paths
     assert "demo-run/reports/pixel-review.html" in artifact_paths
     assert "demo-run/reports/package-receipt.html" in artifact_paths
+    assert "demo-run/reports/share-readiness.html" in artifact_paths
     html = evidence_html.read_text()
     assert "Dental DICOM Evidence Bundle" in html
     assert "Review dashboard HTML" in html
@@ -883,6 +891,41 @@ def test_dashboard_build_command_summarizes_evidence_bundle(tmp_path: Path) -> N
     html = dashboard_html.read_text()
     assert "Dental DICOM Review Dashboard" in html
     assert "demo-run/reports/input-preview.png" in html
+
+
+def test_share_readiness_command_checks_demo_handoff_gate(tmp_path: Path) -> None:
+    demo_dir = tmp_path / "demo"
+    readiness_json = tmp_path / "reports" / "share-readiness.json"
+    readiness_html = tmp_path / "reports" / "share-readiness.html"
+
+    demo_result = runner.invoke(app, ["demo", str(demo_dir)])
+    assert demo_result.exit_code == 0, demo_result.output
+
+    result = runner.invoke(
+        app,
+        [
+            "share",
+            "readiness",
+            str(demo_dir),
+            "--json",
+            str(readiness_json),
+            "--html",
+            str(readiness_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert readiness_json.exists()
+    assert readiness_html.exists()
+    report = json.loads(readiness_json.read_text())
+    assert report["passed"] is True
+    check_ids = {item["id"] for item in report["checks"]}
+    assert "validation" in check_ids
+    assert "deid-comparison" in check_ids
+    assert "package-receipt" in check_ids
+    assert "audit-chain" in check_ids
+    html = readiness_html.read_text()
+    assert "Dental DICOM Share Readiness" in html
 
 
 def test_safety_scan_flags_private_material(tmp_path: Path) -> None:

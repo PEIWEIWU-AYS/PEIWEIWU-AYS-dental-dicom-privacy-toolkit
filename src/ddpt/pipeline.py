@@ -20,7 +20,9 @@ from ddpt.reports import (
     write_inventory_html,
     write_package_receipt_html,
     write_pixel_review_html,
+    write_share_readiness_html,
 )
+from ddpt.share_readiness import run_share_readiness
 from ddpt.sharing import create_package, create_verification_receipt
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.utils import write_json
@@ -66,6 +68,8 @@ def run_demo_pipeline(
     key_path = share_dir / "package.key"
     package_receipt_json = reports_dir / "package-receipt.json"
     package_receipt_html = reports_dir / "package-receipt.html"
+    share_readiness_json = reports_dir / "share-readiness.json"
+    share_readiness_html = reports_dir / "share-readiness.html"
 
     create_synthetic_dicom(input_dicom)
     render_dicom_preview(input_dicom, input_preview_png)
@@ -121,6 +125,10 @@ def run_demo_pipeline(
     audit_chain_verification = verify_audit_chain(audit_chain_json)
     write_json(audit_chain_verify_json, model_to_dict(audit_chain_verification))
 
+    share_readiness = run_share_readiness(output_dir)
+    write_json(share_readiness_json, model_to_dict(share_readiness))
+    write_share_readiness_html(share_readiness_html, share_readiness)
+
     result = DemoPipelineResult(
         output_dir=str(output_dir),
         input_dicom=str(input_dicom),
@@ -139,6 +147,8 @@ def run_demo_pipeline(
         deid_comparison_json=str(deid_comparison_json),
         deid_comparison_html=str(deid_comparison_html),
         validation_json=str(validation_json),
+        share_readiness_json=str(share_readiness_json),
+        share_readiness_html=str(share_readiness_html),
         pixel_review_json=str(pixel_review_json),
         pixel_review_html=str(pixel_review_html),
         redaction_json=str(redaction_json),

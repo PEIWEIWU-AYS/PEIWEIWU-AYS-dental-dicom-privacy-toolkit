@@ -85,3 +85,9 @@ steps:
     action: audit-verify
     manifest: reports/audit-chain.json
     json: reports/audit-chain-verify.json
+
+  - id: share-readiness
+    action: share-readiness
+    root: .
+    json: reports/share-readiness.json
+    html: reports/share-readiness.html

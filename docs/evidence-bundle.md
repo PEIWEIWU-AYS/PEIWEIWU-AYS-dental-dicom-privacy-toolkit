@@ -31,6 +31,7 @@ The bundle includes:
 - pixel review HTML with original, overlay, and redacted previews
 - encrypted sharing package from anonymized synthetic DICOM files
 - package verification receipt HTML
+- share-readiness JSON and HTML gate
 - tamper-evident demo audit chain
 - YAML workflow JSON and HTML report
 - static review dashboard JSON and HTML
@@ -61,6 +62,7 @@ evidence-run/
   demo-run/
     reports/demo-summary.html
     reports/deid-comparison.html
+    reports/share-readiness.html
     reports/pixel-review.html
     reports/pixel-review/pixel-review-overlay.png
     reports/audit-chain.json

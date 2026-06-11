@@ -55,9 +55,11 @@ from ddpt.reports import (
     write_profile_lint_html,
     write_release_audit_html,
     write_review_dashboard_html,
+    write_share_readiness_html,
     write_workflow_html,
 )
 from ddpt.safety import scan_repository_safety
+from ddpt.share_readiness import run_share_readiness
 from ddpt.sharing import create_package, create_verification_receipt, decrypt_package
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.tag_ops import blank_tag_value, delete_tag, dump_tags, set_tag_value
@@ -79,6 +81,7 @@ evidence_app = typer.Typer(help="Build local demonstration evidence bundles.")
 capability_app = typer.Typer(help="Audit competitor-informed project capabilities.")
 dashboard_app = typer.Typer(help="Build static local review dashboards.")
 compare_app = typer.Typer(help="Compare DICOM privacy outputs.")
+share_app = typer.Typer(help="Check sharing readiness gates.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(audit_app, name="audit")
@@ -92,6 +95,7 @@ app.add_typer(evidence_app, name="evidence")
 app.add_typer(capability_app, name="capability")
 app.add_typer(dashboard_app, name="dashboard")
 app.add_typer(compare_app, name="compare")
+app.add_typer(share_app, name="share")
 console = Console()
 
 
@@ -457,6 +461,41 @@ def compare_deid(
     console.print(f"Passed items: {report.passed_items}/{report.total_items}")
     console.print(f"Private tags after: {report.private_tags_after}")
     console.print(f"Pixel data changed: {report.pixel_data_changed}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    if not report.passed:
+        raise typer.Exit(1)
+
+
+@share_app.command("readiness")
+def share_readiness(
+    root_dir: Annotated[Path, typer.Argument(help="Demo or workflow output directory.")],
+    json_output: Annotated[
+        Path | None, typer.Option("--json", help="Write JSON readiness report.")
+    ] = None,
+    html_output: Annotated[
+        Path | None, typer.Option("--html", help="Write HTML readiness report.")
+    ] = None,
+) -> None:
+    report = run_share_readiness(root_dir)
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_share_readiness_html(html_output, report)
+
+    table = Table(title="Dental DICOM Share Readiness")
+    table.add_column("Status")
+    table.add_column("Check")
+    table.add_column("Category")
+    table.add_column("Message")
+    for check in report.checks:
+        table.add_row(
+            "PASS" if check.passed else "FAIL",
+            check.id,
+            check.category,
+            check.message,
+        )
+    console.print(table)
+    console.print(f"Passed checks: {report.passed_checks}/{len(report.checks)}")
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)

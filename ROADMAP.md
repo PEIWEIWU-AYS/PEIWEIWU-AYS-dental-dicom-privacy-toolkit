@@ -30,6 +30,7 @@
 - Access-control workflow sketch
 - Transfer audit event examples
 - Package verification receipts
+- Share-readiness gate
 
 ## Milestone 5: Demonstration Workflow
 

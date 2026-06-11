@@ -134,6 +134,7 @@ The project should add:
 - evidence bundle with JSON and HTML index for MacBook validation and public demonstrations
 - encrypted sharing package with manifest and checksums
 - package verification receipts with JSON and HTML outputs
+- share-readiness gate that combines privacy, pixel, package, and audit evidence
 - manual pixel redaction audit for known burned-in annotation regions
 - one-command synthetic demo path
 - GitHub topics and bilingual keyword strategy

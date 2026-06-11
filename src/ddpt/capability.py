@@ -272,6 +272,23 @@ CAPABILITY_SPECS = [
         note="Adds a practical collaboration layer beyond basic anonymization.",
     ),
     CapabilitySpec(
+        id="share-readiness-gate",
+        capability="Share-readiness gate for package, privacy, pixel, and audit evidence",
+        source_tools=("RSNA CTP", "Orthanc", "PixelMed DicomCleaner"),
+        evidence_files=(
+            "src/ddpt/share_readiness.py",
+            "docs/share-readiness.md",
+            "src/ddpt/pipeline.py",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt share readiness demo-run --json reports/share-readiness.json "
+            "--html reports/share-readiness.html"
+        ),
+        differentiator="One gate checks whether synthetic sharing evidence is complete.",
+        note="Turns individual reports into a final reviewer-friendly sharing checklist.",
+    ),
+    CapabilitySpec(
         id="audit-evidence-bundle",
         capability="Audit chain, release audit, safety scan, and evidence bundle",
         source_tools=("RSNA CTP", "Orthanc"),

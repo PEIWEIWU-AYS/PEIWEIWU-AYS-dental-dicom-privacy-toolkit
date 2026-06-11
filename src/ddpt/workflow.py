@@ -22,7 +22,9 @@ from ddpt.reports import (
     write_inventory_html,
     write_package_receipt_html,
     write_pixel_review_html,
+    write_share_readiness_html,
 )
+from ddpt.share_readiness import run_share_readiness
 from ddpt.sharing import create_package, create_verification_receipt
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.utils import write_json
@@ -273,6 +275,21 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             artifacts.append(json_path)
         if not verification.passed:
             raise ValueError("Audit chain verification failed")
+        return artifacts
+
+    if action == "share-readiness":
+        report = run_share_readiness(_path(root_dir, step.get("root", ".")))
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_share_readiness_html(html_path, report)
+            artifacts.append(html_path)
+        if not report.passed:
+            raise ValueError("Share readiness failed")
         return artifacts
 
     raise ValueError(f"Unsupported workflow action: {action}")

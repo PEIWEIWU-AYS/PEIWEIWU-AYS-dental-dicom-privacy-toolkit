@@ -33,6 +33,7 @@ REQUIRED_FILES = [
     "docs/research-sharing-profile.md",
     "docs/review-dashboard.md",
     "docs/deid-comparison.md",
+    "docs/share-readiness.md",
     "profiles/dental-basic.yml",
     "profiles/dental-pixel-redaction.yml",
     "profiles/dental-research-sharing.yml",
@@ -65,6 +66,7 @@ DOCUMENTED_COMMANDS = [
     "ddpt evidence bundle",
     "ddpt dashboard build",
     "ddpt compare deid",
+    "ddpt share readiness",
     "ddpt workflow run",
     "ddpt inventory",
     "ddpt anonymize",
@@ -107,6 +109,7 @@ REQUIRED_SOURCE_MODULES = [
     "src/ddpt/release.py",
     "src/ddpt/reports.py",
     "src/ddpt/safety.py",
+    "src/ddpt/share_readiness.py",
     "src/ddpt/sharing.py",
     "src/ddpt/tag_ops.py",
     "src/ddpt/validation.py",
@@ -134,6 +137,7 @@ CI_TERMS = [
     "python -m ddpt profile lint",
     "python -m ddpt evidence bundle",
     "python -m ddpt compare deid",
+    "python -m ddpt share readiness",
     "python -m ddpt dashboard build",
     "ruff check .",
     "pytest",
@@ -152,6 +156,7 @@ WORKFLOW_ACTIONS = {
     "verify-package",
     "audit-chain",
     "audit-verify",
+    "share-readiness",
 }
 
 

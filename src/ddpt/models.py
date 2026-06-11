@@ -90,6 +90,31 @@ class PackageVerificationReceipt(BaseModel):
     )
 
 
+class ShareReadinessCheck(BaseModel):
+    id: str
+    category: str
+    passed: bool
+    message: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class ShareReadinessReport(BaseModel):
+    root_dir: str
+    passed: bool
+    checks: list[ShareReadinessCheck]
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+    @property
+    def passed_checks(self) -> int:
+        return sum(1 for check in self.checks if check.passed)
+
+    @property
+    def failed_checks(self) -> int:
+        return sum(1 for check in self.checks if not check.passed)
+
+
 class ValidationCheck(BaseModel):
     name: str
     passed: bool
@@ -435,6 +460,8 @@ class DemoPipelineResult(BaseModel):
     deid_comparison_json: str
     deid_comparison_html: str
     validation_json: str
+    share_readiness_json: str
+    share_readiness_html: str
     pixel_review_json: str
     pixel_review_html: str
     redaction_json: str

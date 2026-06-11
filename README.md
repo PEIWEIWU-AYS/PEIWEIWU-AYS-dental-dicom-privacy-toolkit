@@ -33,6 +33,7 @@ Core goals:
 - Local evidence bundle for MacBook validation and project demonstrations
 - Encrypted sharing package prototypes
 - Package verification receipts for receiver-side sharing evidence
+- Share-readiness gate before synthetic package handoff
 - Audit reports for de-identification and transfer events
 - Synthetic examples for safe testing
 
@@ -69,6 +70,7 @@ ddpt profile lint dental-basic --json demo-run/reports/profile-lint.json --html 
 ddpt profile coverage dental-basic
 ddpt profile coverage dental-research-sharing
 ddpt profile compare dental-basic dental-research-sharing --json demo-run/reports/profile-comparison.json --html demo-run/reports/profile-comparison.html
+ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
 ddpt profile init profiles/my-dental-profile.yml
 ddpt batch demo-run/input --out demo-run/batch-output
 ddpt audit verify demo-run/reports/audit-chain.json
@@ -103,6 +105,7 @@ See [docs/release-audit.md](docs/release-audit.md) for public release readiness 
 See [docs/evidence-bundle.md](docs/evidence-bundle.md) for one-command local evidence generation.
 See [docs/review-dashboard.md](docs/review-dashboard.md) for the static local review dashboard.
 See [docs/package-verification-receipts.md](docs/package-verification-receipts.md) for receiver-side sharing receipts.
+See [docs/share-readiness.md](docs/share-readiness.md) for the final synthetic sharing gate.
 See [docs/local-api.md](docs/local-api.md) for the local REST API demo.
 
 ## Manual Step-by-Step Demo
@@ -120,6 +123,7 @@ ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out d
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental-pixel-redaction.yml --out demo-run/outputs/sample.plan-redacted.dcm --audit demo-run/reports/plan-redaction.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
 ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key --receipt demo-run/reports/package-receipt.json --html demo-run/reports/package-receipt.html
+ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
 ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out demo-run/restored
 ```
 
@@ -160,7 +164,7 @@ research-sharing date shifting, release-readiness checks, and local evidence
 bundle generation, package verification receipts, profile comparison reports,
 profile lint checks, policy registry exports, capability matrix reports, static
 review dashboards, de-identification comparison reports, and pixel review
-reports.
+reports, plus share-readiness gates.
 
 ## License
 

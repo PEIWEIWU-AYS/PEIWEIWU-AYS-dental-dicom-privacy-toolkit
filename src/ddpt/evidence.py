@@ -192,6 +192,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            Path(demo_result.share_readiness_html),
+            "Share readiness HTML",
+            "sharing",
+            "Final local gate for synthetic package sharing readiness.",
+        ),
+        _artifact(
+            output_dir,
             workflow_json,
             "Workflow report JSON",
             "workflow",
