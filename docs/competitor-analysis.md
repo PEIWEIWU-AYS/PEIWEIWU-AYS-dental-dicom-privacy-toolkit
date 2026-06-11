@@ -64,6 +64,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - pixel review reports with original, overlay, and redacted previews
 - read-only directory inventory before anonymization
 - RSNA CTP-inspired YAML workflow recipes
+- workflow-level de-identification certificate generation
 - HTML workflow reports for staged pipeline review
 - anonymization dry-run previews before writing DICOM files
 - before/after de-identification comparison reports

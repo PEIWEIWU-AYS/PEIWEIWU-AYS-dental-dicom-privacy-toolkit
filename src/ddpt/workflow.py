@@ -7,6 +7,7 @@ import yaml
 
 from ddpt.anonymize import anonymize_dicom
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
+from ddpt.certificate import build_deidentification_certificate
 from ddpt.deid_compare import compare_deidentification
 from ddpt.inspection import inspect_dicom
 from ddpt.inventory import build_inventory, write_inventory_csv
@@ -17,6 +18,7 @@ from ddpt.preview import render_dicom_preview
 from ddpt.reports import (
     model_to_dict,
     write_audit_html,
+    write_deid_certificate_html,
     write_deid_comparison_html,
     write_inspection_html,
     write_inventory_html,
@@ -290,6 +292,23 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             artifacts.append(html_path)
         if not report.passed:
             raise ValueError("Share readiness failed")
+        return artifacts
+
+    if action == "certificate":
+        certificate = build_deidentification_certificate(
+            _path(root_dir, step.get("root", "."))
+        )
+        artifacts = []
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(certificate))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_deid_certificate_html(html_path, certificate)
+            artifacts.append(html_path)
+        if not certificate.passed:
+            raise ValueError("De-identification certificate failed")
         return artifacts
 
     raise ValueError(f"Unsupported workflow action: {action}")

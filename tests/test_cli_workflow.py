@@ -311,6 +311,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "audit-chain-verify.json").exists()
     assert (workflow_dir / "reports" / "share-readiness.json").exists()
     assert (workflow_dir / "reports" / "share-readiness.html").exists()
+    assert (workflow_dir / "reports" / "deid-certificate.json").exists()
+    assert (workflow_dir / "reports" / "deid-certificate.html").exists()
     report = json.loads(workflow_json.read_text())
     assert report["passed"] is True
     assert [step["id"] for step in report["steps"]] == [
@@ -328,11 +330,15 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "audit-chain",
         "audit-verify",
         "share-readiness",
+        "deid-certificate",
     ]
+    certificate = json.loads((workflow_dir / "reports" / "deid-certificate.json").read_text())
+    assert certificate["passed"] is True
+    assert certificate["passed_checks"] == certificate["total_checks"]
     html = workflow_html.read_text()
     assert "Dental DICOM Workflow Report" in html
     assert "create-synthetic" in html
-    assert "audit-chain" in html
+    assert "deid-certificate" in html
 
 
 def test_workflow_recipe_accepts_relative_root(
@@ -361,6 +367,7 @@ def test_workflow_recipe_accepts_relative_root(
     report = json.loads(Path("relative-workflow/reports/workflow-run.json").read_text())
     assert report["passed"] is True
     assert Path("relative-workflow/reports/audit-chain-verify.json").exists()
+    assert Path("relative-workflow/reports/deid-certificate.html").exists()
     assert Path("relative-workflow/reports/workflow-run.html").exists()
 
 

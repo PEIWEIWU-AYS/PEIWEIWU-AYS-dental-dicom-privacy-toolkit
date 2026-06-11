@@ -27,6 +27,7 @@ Core goals:
 - Objective completion audit against the original competitor-learning goal
 - Before/after de-identification comparison reports
 - De-identification certificate for synthetic sharing handoff evidence
+- Workflow-level certificate generation as the final YAML recipe stage
 - Anonymization dry-run previews before writing DICOM files
 - PNG pixel previews for workflow review
 - Pixel review reports with original, overlay, and redacted PNG previews

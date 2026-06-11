@@ -91,3 +91,9 @@ steps:
     root: .
     json: reports/share-readiness.json
     html: reports/share-readiness.html
+
+  - id: deid-certificate
+    action: certificate
+    root: .
+    json: reports/deid-certificate.json
+    html: reports/deid-certificate.html

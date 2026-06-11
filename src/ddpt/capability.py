@@ -360,8 +360,11 @@ CAPABILITY_SPECS = [
         source_tools=("RSNA DICOM Anonymizer", "RSNA CTP", "PixelMed DicomCleaner"),
         evidence_files=(
             "src/ddpt/certificate.py",
+            "src/ddpt/workflow.py",
             "docs/deid-certificate.md",
+            "docs/workflow-recipes.md",
             "src/ddpt/pipeline.py",
+            "recipes/dental-demo-workflow.yml",
             "tests/test_cli_workflow.py",
         ),
         command=(
@@ -370,7 +373,8 @@ CAPABILITY_SPECS = [
         ),
         differentiator=(
             "A portable JSON/HTML handoff certificate gathers privacy, pixel, "
-            "package, audit, and readiness proof in one artifact."
+            "package, audit, and readiness proof in one artifact, including "
+            "as the final YAML workflow stage."
         ),
         note=(
             "This is project evidence for synthetic demos, not legal, clinical, "

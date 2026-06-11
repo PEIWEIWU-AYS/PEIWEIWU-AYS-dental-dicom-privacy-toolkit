@@ -181,6 +181,7 @@ WORKFLOW_ACTIONS = {
     "audit-chain",
     "audit-verify",
     "share-readiness",
+    "certificate",
 }
 
 PROFILE_COVERAGE_FILES = [

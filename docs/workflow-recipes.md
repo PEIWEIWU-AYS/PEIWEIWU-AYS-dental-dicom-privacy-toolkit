@@ -26,6 +26,7 @@ Expected outputs:
 - `workflow-run/reports/package-receipt.html`
 - `workflow-run/reports/audit-chain.json`
 - `workflow-run/reports/share-readiness.html`
+- `workflow-run/reports/deid-certificate.html`
 - `workflow-run/reports/workflow-run.json`
 - `workflow-run/reports/workflow-run.html`
 
@@ -45,7 +46,13 @@ Expected outputs:
 - `audit-chain`
 - `audit-verify`
 - `share-readiness`
+- `certificate`
 
 ## Safety Boundary
 
-Workflow recipes are automation, not privacy certification. They should be used with synthetic or explicitly approved test DICOM files. Generated `workflow-run/` and `workflow-*` folders are ignored by Git and by the public repository safety scan.
+Workflow recipes are automation, not privacy certification. The `certificate`
+action creates a project evidence certificate for synthetic handoff review; it
+is not legal, clinical, regulatory, or security certification. Recipes should be
+used with synthetic or explicitly approved test DICOM files. Generated
+`workflow-run/` and `workflow-*` folders are ignored by Git and by the public
+repository safety scan.

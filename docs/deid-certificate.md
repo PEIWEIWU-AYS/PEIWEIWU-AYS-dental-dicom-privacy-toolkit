@@ -65,6 +65,16 @@ ddpt evidence bundle . --out evidence-run
 open evidence-run/demo-run/reports/deid-certificate.html
 ```
 
+It can also run as the final stage in a YAML workflow recipe:
+
+```yaml
+- id: deid-certificate
+  action: certificate
+  root: .
+  json: reports/deid-certificate.json
+  html: reports/deid-certificate.html
+```
+
 ## Safety Notes
 
 This is a project evidence certificate for synthetic demonstrations. It is not

@@ -188,7 +188,7 @@ Required:
 - step-level pass/fail status
 - artifacts list per step
 - non-zero exit status when any step fails
-- support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, audit chain verification, and share-readiness stages
+- support synthetic, inventory, inspect, anonymize, validate, preview, pixel redaction, package, package verification, audit chain, audit chain verification, share-readiness, and certificate stages
 - support before/after de-identification comparison stages
 
 ### `ddpt inventory`
@@ -455,6 +455,7 @@ Required:
 - check pixel review report and previews exist
 - check encrypted package verification receipt passed
 - check audit chain verification passed
+- check or generate de-identification certificate when used as a final workflow stage
 - JSON report
 - optional HTML report
 - non-zero exit status when any readiness check fails

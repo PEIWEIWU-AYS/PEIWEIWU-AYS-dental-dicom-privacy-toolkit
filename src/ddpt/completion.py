@@ -191,6 +191,8 @@ OBJECTIVE_REQUIREMENTS = [
         evidence_terms=(
             ("docs/deid-certificate.md", "De-identification Certificate"),
             ("src/ddpt/certificate.py", "build_deidentification_certificate"),
+            ("recipes/dental-demo-workflow.yml", "action: certificate"),
+            ("docs/workflow-recipes.md", "`certificate`"),
         ),
         note=(
             "Collects anonymization, validation, comparison, pixel review, "
