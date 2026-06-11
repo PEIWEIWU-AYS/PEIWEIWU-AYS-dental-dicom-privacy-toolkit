@@ -49,10 +49,11 @@ Version 0.1 is successful when a new user can:
 39. Generate a local evidence bundle for MacBook validation and public demonstrations.
 40. Run a workflow quality gate that verifies public review evidence.
 41. Export a review-only Orthanc REST anonymization plan from a dental profile.
-42. Run a residual privacy risk score across generated workflow evidence.
-43. Run a synthetic adversarial privacy regression suite.
-44. Run a GitHub publish preflight before creating or pushing the public repository.
-45. Run automated tests locally and in GitHub Actions.
+42. Export a reference-tool pack for DCMTK, Orthanc, RSNA CTP-style migration notes, and pydicom scripts.
+43. Run a residual privacy risk score across generated workflow evidence.
+44. Run a synthetic adversarial privacy regression suite.
+45. Run a GitHub publish preflight before creating or pushing the public repository.
+46. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -139,6 +140,7 @@ Required:
 - safe DICOM JSON export JSON and HTML from the staged workflow
 - filename privacy scan JSON and HTML from the staged workflow
 - dcmodify plan JSON, HTML, and review script from the staged workflow
+- reference-tool export pack JSON and HTML from the staged workflow
 - DICOM confidentiality alignment JSON and HTML
 - evidence index JSON and HTML
 - links to demo summary, audit chain, encrypted package, and workflow report
@@ -184,6 +186,7 @@ Required:
 - map inherited capability areas to local repository evidence
 - show the project's dental-specific differentiators
 - report implemented, partial, and missing capability counts
+- include reference-tool export evidence when mapping DCMTK, Orthanc, RSNA CTP, and pydicom learning
 - JSON output
 - optional HTML report
 - non-zero exit status when capability evidence is missing

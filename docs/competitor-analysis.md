@@ -84,6 +84,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - Orthanc-inspired local REST API without heavy PACS infrastructure
 - Orthanc-inspired safe metadata JSON export without running a PACS
 - Orthanc REST anonymization payload and curl plan export without contacting a PACS
+- one-pack reference-tool export for DCMTK, Orthanc, RSNA CTP-style migration notes, and pydicom scripts
 - local browser workbench that runs against the REST API without cloud upload
 - local API evidence endpoints for remediation, filename, pixel-risk, regression, and publish-readiness reports
 - JSON audit events and manifests
@@ -151,6 +152,7 @@ The project should add:
 - local REST API endpoints for inventory, inspection, anonymization, validation, and preview
 - safe DICOM JSON export for local integration demos
 - Orthanc anonymization plan export for review-only server integration
+- reference-tool export pack that maps one dental profile into DCMTK, Orthanc, RSNA CTP-style, and pydicom artifacts
 - local browser workbench for synthetic demo, inventory, inspect, anonymize, validate, and preview
 - local REST evidence endpoints for privacy reports, regression tests, and GitHub publish preflight
 - static HTML reports

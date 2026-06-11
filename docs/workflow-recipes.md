@@ -25,6 +25,9 @@ Expected outputs:
 - `workflow-run/reports/dcmodify-plan.html`
 - `workflow-run/reports/dcmodify-plan.sh`
 - `workflow-run/reports/orthanc-plan.html`
+- `workflow-run/reports/reference-tool-export.html`
+- `workflow-run/reference-tool-pack/pydicom/pydicom-profile-anonymizer.py`
+- `workflow-run/reference-tool-pack/rsna-ctp/ctp-style-pipeline.xml`
 - `workflow-run/outputs/sample.anonymized.dcm`
 - `workflow-run/reports/profile-conformance.html`
 - `workflow-run/reports/deid-comparison.html`
@@ -54,6 +57,7 @@ Expected outputs:
 - `confidentiality-alignment`
 - `dcmodify-plan`
 - `orthanc-plan`
+- `reference-tool-export`
 - `anonymize`
 - `profile-verify`
 - `compare-deid`

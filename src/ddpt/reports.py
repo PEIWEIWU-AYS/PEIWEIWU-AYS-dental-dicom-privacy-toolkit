@@ -33,6 +33,7 @@ from ddpt.models import (
     ProfileConformanceReport,
     ProfileLintReport,
     PublishPreflightReport,
+    ReferenceToolExportReport,
     ReleaseAuditReport,
     ResidualRiskReport,
     ReviewDashboardReport,
@@ -401,6 +402,113 @@ ORTHANC_PLAN_TEMPLATE = Template(
         <td><code>{{ item.orthanc_key }}</code></td>
         <td><code>{{ item.orthanc_value }}</code></td>
         <td>{{ item.note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
+REFERENCE_TOOL_EXPORT_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Reference Tool Export Pack</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Reference Tool Export Pack</h1>
+  <p class="warning">
+    Review-only export package. The toolkit generated external-tool artifacts
+    for comparison and migration planning, but did not run dcmodify, contact
+    Orthanc, install RSNA CTP, or upload DICOM files.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>
+      Status:
+      <span class="{{ "ok" if report.passed else "fail" }}">
+        {{ "PASS" if report.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Input: <code>{{ report.input_path }}</code></li>
+    <li>Profile: <code>{{ report.profile }}</code></li>
+    <li>Output directory: <code>{{ report.output_dir }}</code></li>
+    <li>Total operations: {{ report.total_operations }}</li>
+    <li>Tools: {{ report.tools|join(", ") }}</li>
+    <li>Generated at: {{ report.generated_at }}</li>
+  </ul>
+  <h2>Boundary Notes</h2>
+  <ul>
+    {% for note in report.boundary_notes %}
+    <li>{{ note }}</li>
+    {% endfor %}
+  </ul>
+  <h2>Artifacts</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Tool</th>
+        <th>Format</th>
+        <th>Artifact</th>
+        <th>Description</th>
+        <th>Review Only</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for artifact in artifact_links %}
+      <tr>
+        <td>{{ artifact.tool }}</td>
+        <td>{{ artifact.format }}</td>
+        <td><a href="{{ artifact.href }}"><code>{{ artifact.path }}</code></a></td>
+        <td>{{ artifact.description }}</td>
+        <td>{{ artifact.review_only }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Cross-tool Mapping</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Keyword</th>
+        <th>Tag</th>
+        <th>Profile Action</th>
+        <th>DCMTK</th>
+        <th>Orthanc</th>
+        <th>CTP-style Line</th>
+        <th>pydicom Statement</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in report.mapping %}
+      <tr>
+        <td>{{ item.order }}</td>
+        <td><code>{{ item.keyword }}</code></td>
+        <td><code>{{ item.tag }}</code></td>
+        <td>{{ item.profile_action }}</td>
+        <td><code>{{ item.dcmtk_command }}</code></td>
+        <td><code>{{ item.orthanc_mapping }}</code></td>
+        <td><code>{{ item.ctp_script_line }}</code></td>
+        <td><code>{{ item.pydicom_statement }}</code></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -2891,6 +2999,27 @@ def write_orthanc_plan_html(path: Path, report: OrthancAnonymizePlanReport) -> N
     )
 
 
+def write_reference_tool_export_html(path: Path, report: ReferenceToolExportReport) -> None:
+    artifact_links = [
+        {
+            "tool": artifact.tool,
+            "format": artifact.format,
+            "path": artifact.path,
+            "description": artifact.description,
+            "review_only": artifact.review_only,
+            "href": _relative_html_src(path, Path(artifact.path)),
+        }
+        for artifact in report.artifacts
+    ]
+    _write_html(
+        path,
+        REFERENCE_TOOL_EXPORT_TEMPLATE.render(
+            report=report,
+            artifact_links=artifact_links,
+        ),
+    )
+
+
 def write_demo_summary_html(path: Path, result: DemoPipelineResult) -> None:
     preview_images = [
         {"label": "Input", "src": Path(result.input_preview_png).name},
@@ -3009,6 +3138,7 @@ def write_review_dashboard_html(path: Path, report: ReviewDashboardReport) -> No
         "Residual privacy risk HTML",
         "Privacy regression suite HTML",
         "Orthanc anonymization plan HTML",
+        "Reference tool export HTML",
         "Pixel review HTML",
         "Package verification receipt",
     }

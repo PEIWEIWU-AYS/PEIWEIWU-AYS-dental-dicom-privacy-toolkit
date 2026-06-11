@@ -353,6 +353,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            workflow_dir / "reports" / "reference-tool-export.html",
+            "Reference tool export HTML",
+            "integration",
+            "DCMTK, Orthanc, RSNA CTP-style, and pydicom export pack from the workflow.",
+        ),
+        _artifact(
+            output_dir,
             workflow_dir / "reports" / "confidentiality-alignment.html",
             "Workflow DICOM confidentiality alignment HTML",
             "standards",

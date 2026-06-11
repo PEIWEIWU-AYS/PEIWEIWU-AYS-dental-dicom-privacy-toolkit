@@ -23,6 +23,7 @@ from ddpt.pixels import parse_rectangle, redact_pixels
 from ddpt.preview import render_dicom_preview
 from ddpt.profile_verify import verify_profile_conformance
 from ddpt.quality_gate import run_workflow_quality_gate
+from ddpt.reference_export import build_reference_tool_export_pack
 from ddpt.remediation import build_privacy_remediation_plan
 from ddpt.reports import (
     model_to_dict,
@@ -41,6 +42,7 @@ from ddpt.reports import (
     write_pixel_risk_scan_html,
     write_privacy_remediation_html,
     write_profile_conformance_html,
+    write_reference_tool_export_html,
     write_residual_risk_html,
     write_share_readiness_html,
     write_workflow_quality_gate_html,
@@ -252,6 +254,27 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
             html_path = _path(root_dir, step["html"])
             write_orthanc_plan_html(html_path, report)
             artifacts.append(html_path)
+        return artifacts
+
+    if action == "reference-tool-export":
+        report = build_reference_tool_export_pack(
+            _path(root_dir, step["input"]),
+            _path(root_dir, step["out"]),
+            profile=str(step.get("profile", "dental-basic")),
+            resource_id=str(step.get("resource_id", "<orthanc-resource-id>")),
+            orthanc_base_url=str(step.get("base_url", "http://localhost:8042")),
+        )
+        artifacts = [Path(artifact.path) for artifact in report.artifacts]
+        if step.get("json"):
+            json_path = _path(root_dir, step["json"])
+            write_json(json_path, model_to_dict(report))
+            artifacts.append(json_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_reference_tool_export_html(html_path, report)
+            artifacts.append(html_path)
+        if not report.passed:
+            raise ValueError("Reference tool export pack failed")
         return artifacts
 
     if action == "anonymize":

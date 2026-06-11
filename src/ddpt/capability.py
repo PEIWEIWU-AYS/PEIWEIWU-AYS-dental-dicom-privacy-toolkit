@@ -514,6 +514,36 @@ CAPABILITY_SPECS = [
         ),
     ),
     CapabilitySpec(
+        id="reference-tool-export-pack",
+        capability="Reference-tool export pack for DCMTK, Orthanc, RSNA CTP, and pydicom",
+        source_tools=(
+            "DCMTK dcmodify",
+            "Orthanc",
+            "RSNA CTP",
+            "pydicom anonymization example",
+            "RSNA DICOM Anonymizer",
+        ),
+        evidence_files=(
+            "src/ddpt/reference_export.py",
+            "docs/reference-tool-export.md",
+            "recipes/dental-demo-workflow.yml",
+            "tests/test_cli_workflow.py",
+        ),
+        command=(
+            "ddpt reference export input.dcm --profile dental-basic "
+            "--out reference-tool-pack --json reference-tool-export.json "
+            "--html reference-tool-export.html"
+        ),
+        differentiator=(
+            "One dental YAML profile becomes a review-only migration package "
+            "across command-line, server, pipeline, and Python library styles."
+        ),
+        note=(
+            "Turns competitor learning into portable artifacts without running "
+            "external tools or uploading DICOM files."
+        ),
+    ),
+    CapabilitySpec(
         id="local-browser-workbench",
         capability="Local browser workbench for synthetic DICOM workflow review",
         source_tools=("RSNA DICOM Anonymizer", "PixelMed DicomCleaner", "Orthanc"),

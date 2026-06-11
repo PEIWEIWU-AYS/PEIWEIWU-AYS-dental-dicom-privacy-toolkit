@@ -56,6 +56,7 @@ from ddpt.redaction_plan import (
     rectangles_from_plan,
     write_redaction_plan_template,
 )
+from ddpt.reference_export import build_reference_tool_export_pack
 from ddpt.regression import run_privacy_regression_suite
 from ddpt.release import run_release_audit
 from ddpt.remediation import build_privacy_remediation_plan
@@ -84,6 +85,7 @@ from ddpt.reports import (
     write_profile_conformance_html,
     write_profile_lint_html,
     write_publish_preflight_html,
+    write_reference_tool_export_html,
     write_release_audit_html,
     write_residual_risk_html,
     write_review_dashboard_html,
@@ -130,6 +132,7 @@ remediation_app = typer.Typer(help="Build privacy remediation plans.")
 risk_app = typer.Typer(help="Score residual privacy risk from generated evidence.")
 regression_app = typer.Typer(help="Run synthetic privacy regression suites.")
 publish_app = typer.Typer(help="Prepare public GitHub publishing.")
+reference_app = typer.Typer(help="Export external reference-tool review packs.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(policy_app, name="policy")
 app.add_typer(confidentiality_app, name="confidentiality")
@@ -158,6 +161,7 @@ app.add_typer(remediation_app, name="remediation")
 app.add_typer(risk_app, name="risk")
 app.add_typer(regression_app, name="regression")
 app.add_typer(publish_app, name="publish")
+app.add_typer(reference_app, name="reference")
 console = Console()
 
 
@@ -745,6 +749,60 @@ def orthanc_plan(
     console.print(f"Remove operations: {report.remove_operations}")
     console.print(f"Standard anonymizer operations: {report.standard_anonymizer_operations}")
     console.print("Review-only: no Orthanc request was sent.")
+
+
+@reference_app.command("export")
+def reference_tool_export(
+    input_path: Annotated[Path, typer.Argument(help="Input DICOM path.")],
+    output_dir: Annotated[
+        Path,
+        typer.Option("--out", help="Output directory for reference-tool artifacts."),
+    ],
+    profile: Annotated[str, typer.Option(help="Profile name or YAML path.")] = "dental-basic",
+    resource_id: Annotated[
+        str,
+        typer.Option(
+            "--resource-id",
+            help="Orthanc resource ID placeholder for generated curl examples.",
+        ),
+    ] = "<orthanc-resource-id>",
+    base_url: Annotated[
+        str,
+        typer.Option("--base-url", help="Orthanc base URL for generated curl examples."),
+    ] = "http://localhost:8042",
+    json_output: Annotated[
+        Path | None,
+        typer.Option("--json", help="Write reference export index JSON."),
+    ] = None,
+    html_output: Annotated[
+        Path | None,
+        typer.Option("--html", help="Write reference export index HTML."),
+    ] = None,
+) -> None:
+    report = build_reference_tool_export_pack(
+        input_path,
+        output_dir,
+        profile=profile,
+        resource_id=resource_id,
+        orthanc_base_url=base_url,
+    )
+    if json_output:
+        write_json(json_output, model_to_dict(report))
+    if html_output:
+        write_reference_tool_export_html(html_output, report)
+
+    table = Table(title="Reference Tool Export Pack")
+    table.add_column("Tool")
+    table.add_column("Format")
+    table.add_column("Artifact")
+    for artifact in report.artifacts:
+        table.add_row(artifact.tool, artifact.format, artifact.path)
+    console.print(table)
+    console.print(f"Operations mapped: {report.total_operations}")
+    console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
+    console.print("Review-only: no external tool was executed.")
+    if not report.passed:
+        raise typer.Exit(1)
 
 
 @share_app.command("readiness")

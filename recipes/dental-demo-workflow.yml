@@ -59,6 +59,15 @@ steps:
     json: reports/orthanc-plan.json
     html: reports/orthanc-plan.html
 
+  - id: reference-tool-export
+    action: reference-tool-export
+    input: input/sample.synthetic.dcm
+    profile: dental-basic
+    resource_id: sample-synthetic-instance
+    out: reference-tool-pack
+    json: reports/reference-tool-export.json
+    html: reports/reference-tool-export.html
+
   - id: anonymize
     action: anonymize
     input: input/sample.synthetic.dcm

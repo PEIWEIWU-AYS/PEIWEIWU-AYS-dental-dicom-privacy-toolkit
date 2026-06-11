@@ -332,6 +332,16 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "reports" / "dcmodify-plan.sh").exists()
     assert (workflow_dir / "reports" / "orthanc-plan.json").exists()
     assert (workflow_dir / "reports" / "orthanc-plan.html").exists()
+    assert (workflow_dir / "reports" / "reference-tool-export.json").exists()
+    assert (workflow_dir / "reports" / "reference-tool-export.html").exists()
+    assert (workflow_dir / "reference-tool-pack" / "dcmtk" / "dcmodify-plan.sh").exists()
+    assert (workflow_dir / "reference-tool-pack" / "orthanc" / "orthanc-payload.json").exists()
+    assert (
+        workflow_dir / "reference-tool-pack" / "rsna-ctp" / "ctp-style-pipeline.xml"
+    ).exists()
+    assert (
+        workflow_dir / "reference-tool-pack" / "pydicom" / "pydicom-profile-anonymizer.py"
+    ).exists()
     assert (workflow_dir / "outputs" / "sample.anonymized.dcm").exists()
     assert (workflow_dir / "outputs" / "sample.redacted.dcm").exists()
     assert (workflow_dir / "reports" / "profile-conformance.json").exists()
@@ -369,6 +379,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
         "confidentiality-alignment",
         "dcmodify-plan",
         "orthanc-plan",
+        "reference-tool-export",
         "anonymize",
         "profile-conformance",
         "compare-deidentification",
@@ -420,6 +431,7 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert "confidentiality-alignment" in html
     assert "dcmodify-plan" in html
     assert "orthanc-plan" in html
+    assert "reference-tool-export" in html
     assert "profile-conformance" in html
     assert "pixel-risk-scan" in html
     assert "deid-certificate" in html
@@ -796,6 +808,76 @@ def test_orthanc_plan_command_exports_review_only_payload(tmp_path: Path) -> Non
     html = plan_html.read_text()
     assert "Dental DICOM Orthanc Anonymize Plan" in html
     assert "Review-only Orthanc REST anonymization plan" in html
+
+
+def test_reference_tool_export_pack_maps_profile_to_external_tools(tmp_path: Path) -> None:
+    source = tmp_path / "sample.dcm"
+    export_dir = tmp_path / "reference-tool-pack"
+    index_json = tmp_path / "reports" / "reference-tool-export.json"
+    index_html = tmp_path / "reports" / "reference-tool-export.html"
+    pydicom_output = tmp_path / "outputs" / "pydicom-output.dcm"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    result = runner.invoke(
+        app,
+        [
+            "reference",
+            "export",
+            str(source),
+            "--out",
+            str(export_dir),
+            "--profile",
+            "dental-basic",
+            "--resource-id",
+            "sample-synthetic-instance",
+            "--json",
+            str(index_json),
+            "--html",
+            str(index_html),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert index_json.exists()
+    assert index_html.exists()
+    assert (export_dir / "dcmtk" / "dcmodify-plan.json").exists()
+    assert (export_dir / "dcmtk" / "dcmodify-plan.html").exists()
+    assert (export_dir / "dcmtk" / "dcmodify-plan.sh").exists()
+    assert (export_dir / "orthanc" / "orthanc-plan.json").exists()
+    assert (export_dir / "orthanc" / "orthanc-plan.html").exists()
+    assert (export_dir / "orthanc" / "orthanc-payload.json").exists()
+    assert (export_dir / "orthanc" / "orthanc-anonymize.sh").exists()
+    assert (export_dir / "rsna-ctp" / "ctp-anonymizer.script").exists()
+    assert (export_dir / "rsna-ctp" / "ctp-style-pipeline.xml").exists()
+    assert (export_dir / "pydicom" / "pydicom-profile-anonymizer.py").exists()
+
+    report = json.loads(index_json.read_text())
+    assert report["passed"] is True
+    assert set(report["tools"]) == {
+        "DCMTK dcmodify",
+        "Orthanc",
+        "RSNA CTP",
+        "pydicom",
+    }
+    assert report["total_operations"] >= 20
+    mapping = {item["keyword"]: item for item in report["mapping"]}
+    assert "dcmodify" in mapping["PatientName"]["dcmtk_command"]
+    assert mapping["PatientName"]["orthanc_mapping"].startswith("Replace:")
+    assert "set PatientName" in mapping["PatientName"]["ctp_script_line"]
+    assert "setattr(dataset, 'PatientName'" in mapping["PatientName"]["pydicom_statement"]
+    assert "Dental DICOM Reference Tool Export Pack" in index_html.read_text()
+    assert "Review-only export package" in index_html.read_text()
+
+    script = export_dir / "pydicom" / "pydicom-profile-anonymizer.py"
+    subprocess.run(
+        [sys.executable, str(script), str(source), "--out", str(pydicom_output)],
+        check=True,
+    )
+    dataset = pydicom.dcmread(pydicom_output)
+    assert str(dataset.PatientName) == "ANONYMIZED^DENTAL"
+    assert dataset.PatientBirthDate == ""
+    assert dataset.SOPInstanceUID
+    assert not any(tag.is_private for tag in dataset)
 
 
 def test_privacy_regression_suite_generates_adversarial_evidence(
@@ -1296,6 +1378,7 @@ def test_capability_matrix_reports_competitor_informed_evidence(tmp_path: Path) 
     assert "dcmodify-plan-export" in capability_ids
     assert "dicom-json-export" in capability_ids
     assert "orthanc-anonymize-plan" in capability_ids
+    assert "reference-tool-export-pack" in capability_ids
     assert "local-api-evidence-endpoints" in capability_ids
     assert "pipeline-recipes" in capability_ids
     assert "static-review-dashboard" in capability_ids
@@ -1353,6 +1436,7 @@ def test_competitor_coverage_reports_reference_tool_mapping(tmp_path: Path) -> N
     assert "pixel-review-redaction" in capability_ids
     assert "dicom-json-export" in capability_ids
     assert "orthanc-anonymize-plan" in capability_ids
+    assert "reference-tool-export-pack" in capability_ids
     assert "local-api-evidence-endpoints" in capability_ids
     assert "dcmodify-plan-export" in capability_ids
     assert "privacy-regression-suite" in capability_ids
@@ -1442,6 +1526,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "workflow-run" / "reports" / "confidentiality-alignment.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "dcmodify-plan.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "orthanc-plan.html").exists()
+    assert (output_dir / "workflow-run" / "reports" / "reference-tool-export.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "profile-conformance.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "pixel-risk.html").exists()
     assert (output_dir / "workflow-run" / "reports" / "residual-risk.html").exists()
@@ -1477,6 +1562,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "workflow-run/reports/confidentiality-alignment.html" in artifact_paths
     assert "workflow-run/reports/dcmodify-plan.html" in artifact_paths
     assert "workflow-run/reports/orthanc-plan.html" in artifact_paths
+    assert "workflow-run/reports/reference-tool-export.html" in artifact_paths
     assert "workflow-run/reports/profile-conformance.html" in artifact_paths
     assert "workflow-run/reports/pixel-risk.html" in artifact_paths
     assert "workflow-run/reports/residual-risk.html" in artifact_paths
@@ -1509,6 +1595,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "Workflow DICOM confidentiality alignment HTML" in html
     assert "dcmodify plan HTML" in html
     assert "Orthanc anonymization plan HTML" in html
+    assert "Reference tool export HTML" in html
     assert "Profile conformance HTML" in html
     assert "Workflow profile conformance HTML" in html
     assert "Pixel risk scan HTML" in html

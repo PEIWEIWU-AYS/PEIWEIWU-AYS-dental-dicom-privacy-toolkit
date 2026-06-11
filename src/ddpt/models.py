@@ -758,6 +758,41 @@ class OrthancAnonymizePlanReport(BaseModel):
     )
 
 
+class ReferenceToolArtifact(BaseModel):
+    tool: str
+    path: str
+    format: str
+    description: str
+    review_only: bool = True
+
+
+class ReferenceToolMappingItem(BaseModel):
+    order: int
+    keyword: str
+    tag: str
+    profile_action: str
+    dcmtk_command: str
+    orthanc_mapping: str
+    ctp_script_line: str
+    pydicom_statement: str
+    note: str
+
+
+class ReferenceToolExportReport(BaseModel):
+    input_path: str
+    profile: str
+    output_dir: str
+    passed: bool
+    total_operations: int
+    tools: list[str]
+    artifacts: list[ReferenceToolArtifact]
+    mapping: list[ReferenceToolMappingItem]
+    boundary_notes: list[str] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class WorkflowStepResult(BaseModel):
     id: str
     action: str

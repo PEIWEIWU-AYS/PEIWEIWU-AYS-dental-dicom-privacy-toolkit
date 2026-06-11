@@ -91,6 +91,7 @@ ddpt remediation plan demo-run/input --profile dental-basic --json demo-run/repo
 ddpt dcmodify plan demo-run/input/sample.synthetic.dcm --profile dental-basic --json demo-run/reports/dcmodify-plan.json --html demo-run/reports/dcmodify-plan.html --script demo-run/reports/dcmodify-plan.sh
 ddpt dicom-json export demo-run/input/sample.synthetic.dcm --json demo-run/reports/dicom-json.json --html demo-run/reports/dicom-json.html
 ddpt orthanc plan demo-run/input/sample.synthetic.dcm --profile dental-basic --resource-id sample-synthetic-instance --json demo-run/reports/orthanc-plan.json --html demo-run/reports/orthanc-plan.html
+ddpt reference export demo-run/input/sample.synthetic.dcm --profile dental-basic --resource-id sample-synthetic-instance --out demo-run/reference-tool-pack --json demo-run/reports/reference-tool-export.json --html demo-run/reports/reference-tool-export.html
 ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
 ddpt profile verify demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --profile dental-basic --json demo-run/reports/profile-conformance.json --html demo-run/reports/profile-conformance.html
 ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
@@ -141,6 +142,7 @@ See [docs/remediation-plan.md](docs/remediation-plan.md) for pre-anonymization p
 See [docs/dcmodify-plan.md](docs/dcmodify-plan.md) for DCMTK-style low-level operation plans.
 See [docs/dicom-json-export.md](docs/dicom-json-export.md) for Orthanc-inspired safe metadata JSON export.
 See [docs/orthanc-plan.md](docs/orthanc-plan.md) for Orthanc REST anonymization plan export.
+See [docs/reference-tool-export.md](docs/reference-tool-export.md) for one-pack DCMTK, Orthanc, RSNA CTP-style, and pydicom reference exports.
 See [docs/competitor-coverage.md](docs/competitor-coverage.md) for reference-tool coverage and differentiator evidence.
 See [docs/synthetic-study.md](docs/synthetic-study.md) for multi-file synthetic dental study generation.
 See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limits.
