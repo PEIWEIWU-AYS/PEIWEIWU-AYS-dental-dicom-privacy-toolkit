@@ -104,6 +104,13 @@ def run_evidence_bundle(repository_root: Path, output_dir: Path) -> EvidenceBund
         ),
         _artifact(
             output_dir,
+            Path(demo_result.package_receipt_html),
+            "Package verification receipt",
+            "sharing",
+            "Human-readable verification receipt for the encrypted package.",
+        ),
+        _artifact(
+            output_dir,
             workflow_json,
             "Workflow report JSON",
             "workflow",

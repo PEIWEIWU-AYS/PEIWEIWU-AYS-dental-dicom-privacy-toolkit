@@ -27,10 +27,11 @@ Version 0.1 is successful when a new user can:
 17. Package anonymized files with checksums.
 18. Encrypt the package.
 19. Verify or decrypt the package.
-20. Run local REST API workflow demos for integration testing.
-21. Run a release-readiness audit before public GitHub publishing.
-22. Generate a local evidence bundle for MacBook validation and public demonstrations.
-23. Run automated tests locally and in GitHub Actions.
+20. Generate package verification receipts for receiver-side sharing evidence.
+21. Run local REST API workflow demos for integration testing.
+22. Run a release-readiness audit before public GitHub publishing.
+23. Generate a local evidence bundle for MacBook validation and public demonstrations.
+24. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -47,6 +48,7 @@ Required:
 - manual pixel redaction
 - encrypted package creation
 - package verification
+- package verification receipt JSON and HTML
 - JSON reports
 - HTML reports
 - summary HTML page
@@ -111,6 +113,7 @@ Required:
 - YAML workflow JSON and HTML reports
 - evidence index JSON and HTML
 - links to demo summary, audit chain, encrypted package, and workflow report
+- links to package verification receipts
 - non-zero exit status when any major evidence gate fails
 - documentation that generated evidence output must not be committed by default
 
@@ -309,6 +312,18 @@ Required:
 - optional Fernet encryption
 - optional key output
 
+### `ddpt verify`
+
+Verify a package manifest and checksums.
+
+Required:
+
+- support encrypted package when key is provided
+- report pass/fail clearly
+- optional verification receipt JSON
+- optional verification receipt HTML
+- non-zero exit status when decryption, manifest, path safety, missing file, or checksum checks fail
+
 ### `ddpt redact-pixels`
 
 Apply manual rectangular pixel redaction for known burned-in annotation regions.
@@ -334,15 +349,6 @@ Required:
 - show plan regions in terminal
 - optional JSON export
 - support `pixels` and `percent` coordinate units
-
-### `ddpt verify`
-
-Verify a package manifest and checksums.
-
-Required:
-
-- support encrypted package when key is provided
-- report pass/fail clearly
 
 ### `ddpt validate`
 

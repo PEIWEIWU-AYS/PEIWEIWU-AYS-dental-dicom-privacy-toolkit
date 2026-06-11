@@ -17,8 +17,9 @@ from ddpt.reports import (
     write_audit_html,
     write_inspection_html,
     write_inventory_html,
+    write_package_receipt_html,
 )
-from ddpt.sharing import create_package, verify_package
+from ddpt.sharing import create_package, create_verification_receipt
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.utils import write_json
 from ddpt.validation import validate_anonymized_dicom
@@ -190,8 +191,22 @@ def _run_step(action: str, step: dict[str, Any], root_dir: Path) -> list[Path]:
         return [path for path in [output, manifest_path, key_path] if path is not None]
 
     if action == "verify-package":
-        verify_package(_path(root_dir, step["package"]), _optional_path(root_dir, step.get("key")))
-        return []
+        receipt = create_verification_receipt(
+            _path(root_dir, step["package"]),
+            _optional_path(root_dir, step.get("key")),
+        )
+        artifacts = []
+        if step.get("receipt"):
+            receipt_path = _path(root_dir, step["receipt"])
+            write_json(receipt_path, model_to_dict(receipt))
+            artifacts.append(receipt_path)
+        if step.get("html"):
+            html_path = _path(root_dir, step["html"])
+            write_package_receipt_html(html_path, receipt)
+            artifacts.append(html_path)
+        if not receipt.passed:
+            raise ValueError("Package verification failed")
+        return artifacts
 
     if action == "audit-chain":
         output = _path(root_dir, step["output"])

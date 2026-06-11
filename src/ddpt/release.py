@@ -22,6 +22,7 @@ REQUIRED_FILES = [
     "docs/discoverability.md",
     "docs/evidence-bundle.md",
     "docs/macbook-validation.md",
+    "docs/package-verification-receipts.md",
     "docs/product-requirements.md",
     "docs/project-blueprint.md",
     "docs/release-audit.md",

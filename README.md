@@ -25,6 +25,7 @@ Core goals:
 - Release-readiness audit for public GitHub publishing
 - Local evidence bundle for MacBook validation and project demonstrations
 - Encrypted sharing package prototypes
+- Package verification receipts for receiver-side sharing evidence
 - Audit reports for de-identification and transfer events
 - Synthetic examples for safe testing
 
@@ -65,7 +66,7 @@ To inspect the local REST API docs, run this as a separate long-running command:
 ddpt api serve demo-run
 ```
 
-The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, PNG previews, JSON reports, HTML reports, an encrypted package, and a summary page to `demo-run/`.
+The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, PNG previews, JSON reports, HTML reports, an encrypted package, a verification receipt, and a summary page to `demo-run/`.
 
 `ddpt inventory` is a read-only directory preflight. It counts files, modalities, high-risk tags, medium-risk tags, readable/unreadable DICOMs, patient field presence, and UID hashes without exporting raw patient names or IDs.
 
@@ -80,6 +81,7 @@ See [docs/macbook-validation.md](docs/macbook-validation.md) for a local accepta
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
 See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
 See [docs/evidence-bundle.md](docs/evidence-bundle.md) for one-command local evidence generation.
+See [docs/package-verification-receipts.md](docs/package-verification-receipts.md) for receiver-side sharing receipts.
 See [docs/local-api.md](docs/local-api.md) for the local REST API demo.
 
 ## Manual Step-by-Step Demo
@@ -96,7 +98,7 @@ ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/val
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out demo-run/outputs/sample.redacted.dcm --audit demo-run/reports/redaction.json
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental-pixel-redaction.yml --out demo-run/outputs/sample.plan-redacted.dcm --audit demo-run/reports/plan-redaction.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
-ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key
+ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key --receipt demo-run/reports/package-receipt.json --html demo-run/reports/package-receipt.html
 ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out demo-run/restored
 ```
 
@@ -134,7 +136,7 @@ Version 0.1 local prototype in active development. The current workflow supports
 synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
 encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
 research-sharing date shifting, release-readiness checks, and local evidence
-bundle generation.
+bundle generation, and package verification receipts.
 
 ## License
 

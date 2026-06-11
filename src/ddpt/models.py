@@ -75,6 +75,21 @@ class PackageManifest(BaseModel):
     )
 
 
+class PackageVerificationReceipt(BaseModel):
+    package_path: str
+    key_provided: bool
+    passed: bool
+    package_sha256: str
+    package_name: str | None = None
+    encrypted: bool | None = None
+    entries: list[ManifestEntry] = Field(default_factory=list)
+    total_size_bytes: int = 0
+    errors: list[str] = Field(default_factory=list)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+
 class ValidationCheck(BaseModel):
     name: str
     passed: bool
@@ -296,6 +311,8 @@ class DemoPipelineResult(BaseModel):
     manifest_json: str
     package_path: str
     key_path: str
+    package_receipt_json: str
+    package_receipt_html: str
     audit_chain_json: str
     audit_chain_verify_json: str
     summary_html: str

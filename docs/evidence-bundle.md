@@ -25,6 +25,7 @@ The bundle includes:
 - one-command synthetic demo output
 - demo summary HTML with synthetic PNG previews
 - encrypted sharing package from anonymized synthetic DICOM files
+- package verification receipt HTML
 - tamper-evident demo audit chain
 - YAML workflow JSON and HTML report
 - evidence bundle JSON and HTML index
@@ -45,6 +46,7 @@ evidence-run/
   demo-run/
     reports/demo-summary.html
     reports/audit-chain.json
+    reports/package-receipt.html
     share/package.ddpt
     share/package.key
   workflow-run/

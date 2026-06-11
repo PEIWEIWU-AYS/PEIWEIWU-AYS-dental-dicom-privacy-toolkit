@@ -44,9 +44,9 @@ ddpt tag dump examples/synthetic-dicom/sample.dcm --json reports/tag-dump.json
 ddpt inspect examples/synthetic-dicom/sample.dcm --json reports/inspect.json --html reports/inspect.html
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out outputs/sample.anonymized.dcm --audit reports/audit.json
 ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-research-sharing --dry-run --audit reports/research-dry-run.json
-ddpt package outputs/ --encrypt --manifest reports/manifest.json --out share/dental-dicom-package.zip
-ddpt verify share/dental-dicom-package.zip
-ddpt decrypt share/dental-dicom-package.zip --out restored/
+ddpt package outputs/ --encrypt --key-out share/package.key --manifest reports/manifest.json --out share/dental-dicom-package.ddpt
+ddpt verify share/dental-dicom-package.ddpt --key share/package.key --receipt reports/package-receipt.json --html reports/package-receipt.html
+ddpt decrypt share/dental-dicom-package.ddpt --key share/package.key --out restored/
 ddpt api serve demo-run
 ddpt release audit . --json release-audit.json --html release-audit.html
 ddpt evidence bundle . --out evidence-run

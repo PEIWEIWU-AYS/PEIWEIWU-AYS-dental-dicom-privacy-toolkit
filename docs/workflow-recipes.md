@@ -21,6 +21,7 @@ Expected outputs:
 - `workflow-run/outputs/sample.anonymized.dcm`
 - `workflow-run/outputs/sample.redacted.dcm`
 - `workflow-run/share/package.ddpt`
+- `workflow-run/reports/package-receipt.html`
 - `workflow-run/reports/audit-chain.json`
 - `workflow-run/reports/workflow-run.json`
 - `workflow-run/reports/workflow-run.html`

@@ -15,8 +15,9 @@ from ddpt.reports import (
     write_demo_summary_html,
     write_inspection_html,
     write_inventory_html,
+    write_package_receipt_html,
 )
-from ddpt.sharing import create_package, verify_package
+from ddpt.sharing import create_package, create_verification_receipt
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.utils import write_json
 from ddpt.validation import validate_anonymized_dicom
@@ -54,6 +55,8 @@ def run_demo_pipeline(
     manifest_json = share_dir / "manifest.json"
     package_path = share_dir / "package.ddpt"
     key_path = share_dir / "package.key"
+    package_receipt_json = reports_dir / "package-receipt.json"
+    package_receipt_html = reports_dir / "package-receipt.html"
 
     create_synthetic_dicom(input_dicom)
     render_dicom_preview(input_dicom, input_preview_png)
@@ -86,7 +89,11 @@ def run_demo_pipeline(
         encrypt=True,
         key_output=key_path,
     )
-    verify_package(package_path, key_path)
+    package_receipt = create_verification_receipt(package_path, key_path)
+    write_json(package_receipt_json, model_to_dict(package_receipt))
+    write_package_receipt_html(package_receipt_html, package_receipt)
+    if not package_receipt.passed:
+        raise ValueError("Package verification receipt failed")
 
     create_audit_chain(output_dir, audit_chain_json)
     audit_chain_verification = verify_audit_chain(audit_chain_json)
@@ -112,6 +119,8 @@ def run_demo_pipeline(
         manifest_json=str(manifest_json),
         package_path=str(package_path),
         key_path=str(key_path),
+        package_receipt_json=str(package_receipt_json),
+        package_receipt_html=str(package_receipt_html),
         audit_chain_json=str(audit_chain_json),
         audit_chain_verify_json=str(audit_chain_verify_json),
         summary_html=str(summary_html),

@@ -12,6 +12,7 @@ from ddpt.models import (
     EvidenceBundleResult,
     InspectionReport,
     InventoryReport,
+    PackageVerificationReceipt,
     ReleaseAuditReport,
     WorkflowRunReport,
 )
@@ -226,6 +227,8 @@ DEMO_SUMMARY_TEMPLATE = Template(
       <tr><td>Encrypted package</td><td><code>{{ result.package_path }}</code></td></tr>
       <tr><td>Package manifest</td><td><code>{{ result.manifest_json }}</code></td></tr>
       <tr><td>Package key</td><td><code>{{ result.key_path }}</code></td></tr>
+      <tr><td>Package receipt JSON</td><td><code>{{ result.package_receipt_json }}</code></td></tr>
+      <tr><td>Package receipt HTML</td><td><code>{{ result.package_receipt_html }}</code></td></tr>
       <tr><td>Audit chain</td><td><code>{{ result.audit_chain_json }}</code></td></tr>
       <tr>
         <td>Audit chain verification</td>
@@ -614,6 +617,83 @@ EVIDENCE_BUNDLE_TEMPLATE = Template(
 """
 )
 
+PACKAGE_RECEIPT_TEMPLATE = Template(
+    """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dental DICOM Package Verification Receipt</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 32px;
+      color: #17202a;
+    }
+    h1, h2 { color: #123; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #d9dee3; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f8; }
+    .warning { padding: 12px; background: #fff3cd; border: 1px solid #ffe08a; border-radius: 6px; }
+    .ok { color: #1f6f43; font-weight: 700; }
+    .fail { color: #b00020; font-weight: 700; }
+    code { background: #f3f6f8; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Dental DICOM Package Verification Receipt</h1>
+  <p class="warning">
+    Synthetic-data sharing receipt. This confirms package integrity checks only;
+    it is not legal, regulatory, clinical, or security certification.
+  </p>
+  <h2>Summary</h2>
+  <ul>
+    <li>Package: <code>{{ receipt.package_path }}</code></li>
+    <li>
+      Overall:
+      <span class="{{ "ok" if receipt.passed else "fail" }}">
+        {{ "PASS" if receipt.passed else "FAIL" }}
+      </span>
+    </li>
+    <li>Package SHA-256: <code>{{ receipt.package_sha256 }}</code></li>
+    <li>Key provided: {{ receipt.key_provided }}</li>
+    <li>Manifest package name: {{ receipt.package_name or "" }}</li>
+    <li>Encrypted: {{ receipt.encrypted }}</li>
+    <li>Entries: {{ receipt.entries|length }}</li>
+    <li>Total entry bytes: {{ receipt.total_size_bytes }}</li>
+    <li>Generated at: {{ receipt.generated_at }}</li>
+  </ul>
+  {% if receipt.errors %}
+  <h2>Errors</h2>
+  <ul>
+    {% for error in receipt.errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <h2>Manifest Entries</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Size</th>
+        <th>SHA-256</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in receipt.entries %}
+      <tr>
+        <td><code>{{ item.path }}</code></td>
+        <td>{{ item.size_bytes }}</td>
+        <td><code>{{ item.sha256 }}</code></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+"""
+)
+
 
 def write_inspection_html(path: Path, report: InspectionReport) -> None:
     _write_html(path, INSPECTION_TEMPLATE.render(report=report))
@@ -653,6 +733,10 @@ def write_release_audit_html(path: Path, report: ReleaseAuditReport) -> None:
 
 def write_evidence_bundle_html(path: Path, result: EvidenceBundleResult) -> None:
     _write_html(path, EVIDENCE_BUNDLE_TEMPLATE.render(result=result))
+
+
+def write_package_receipt_html(path: Path, receipt: PackageVerificationReceipt) -> None:
+    _write_html(path, PACKAGE_RECEIPT_TEMPLATE.render(receipt=receipt))
 
 
 def _write_html(path: Path, html: str) -> None:

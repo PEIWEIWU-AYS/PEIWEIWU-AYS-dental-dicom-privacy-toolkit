@@ -16,6 +16,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [Public Repository Safety Scan](safety-scan.md)
 - [Release Audit](release-audit.md)
 - [Evidence Bundle](evidence-bundle.md)
+- [Package Verification Receipts](package-verification-receipts.md)
 - [DICOM Inventory Preflight](inventory.md)
 - [DICOM PNG Preview](preview.md)
 - [Pixel Redaction Plans](pixel-redaction-plans.md)

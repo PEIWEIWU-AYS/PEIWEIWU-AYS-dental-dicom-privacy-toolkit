@@ -34,6 +34,8 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     package = tmp_path / "share" / "package.ddpt"
     manifest = tmp_path / "share" / "manifest.json"
     key = tmp_path / "share" / "package.key"
+    receipt_json = tmp_path / "reports" / "package-receipt.json"
+    receipt_html = tmp_path / "reports" / "package-receipt.html"
     decrypted = tmp_path / "restored"
 
     result = runner.invoke(app, ["synthetic", str(source)])
@@ -135,8 +137,27 @@ def test_full_synthetic_privacy_workflow(tmp_path: Path) -> None:
     assert manifest.exists()
     assert key.exists()
 
-    result = runner.invoke(app, ["verify", str(package), "--key", str(key)])
+    result = runner.invoke(
+        app,
+        [
+            "verify",
+            str(package),
+            "--key",
+            str(key),
+            "--receipt",
+            str(receipt_json),
+            "--html",
+            str(receipt_html),
+        ],
+    )
     assert result.exit_code == 0, result.output
+    assert receipt_json.exists()
+    assert receipt_html.exists()
+    receipt = json.loads(receipt_json.read_text())
+    assert receipt["passed"] is True
+    assert receipt["key_provided"] is True
+    assert len(receipt["entries"]) == 2
+    assert "Dental DICOM Package Verification Receipt" in receipt_html.read_text()
     verified_manifest = verify_package(package, key)
     assert len(verified_manifest.entries) == 2
 
@@ -210,6 +231,8 @@ def test_demo_pipeline_command(tmp_path: Path) -> None:
     assert (demo_dir / "reports" / "demo-summary.html").exists()
     assert (demo_dir / "reports" / "audit-chain.json").exists()
     assert (demo_dir / "reports" / "audit-chain-verify.json").exists()
+    assert (demo_dir / "reports" / "package-receipt.json").exists()
+    assert (demo_dir / "reports" / "package-receipt.html").exists()
     assert (demo_dir / "share" / "package.ddpt").exists()
     assert (demo_dir / "share" / "manifest.json").exists()
     assert (demo_dir / "share" / "package.key").exists()
@@ -245,6 +268,8 @@ def test_workflow_recipe_command_runs_multistage_pipeline(tmp_path: Path) -> Non
     assert (workflow_dir / "outputs" / "sample.redacted.dcm").exists()
     assert (workflow_dir / "share" / "package.ddpt").exists()
     assert (workflow_dir / "share" / "package.key").exists()
+    assert (workflow_dir / "reports" / "package-receipt.json").exists()
+    assert (workflow_dir / "reports" / "package-receipt.html").exists()
     assert (workflow_dir / "reports" / "audit-chain.json").exists()
     assert (workflow_dir / "reports" / "audit-chain-verify.json").exists()
     report = json.loads(workflow_json.read_text())
@@ -676,6 +701,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert (output_dir / "reports" / "release-audit.html").exists()
     assert (output_dir / "reports" / "workflow-run.html").exists()
     assert (output_dir / "demo-run" / "reports" / "demo-summary.html").exists()
+    assert (output_dir / "demo-run" / "reports" / "package-receipt.html").exists()
     assert (output_dir / "demo-run" / "share" / "package.ddpt").exists()
     report = json.loads(evidence_json.read_text())
     assert report["passed"] is True
@@ -683,6 +709,7 @@ def test_evidence_bundle_command_generates_local_proof_index(tmp_path: Path) -> 
     assert "reports/release-audit.html" in artifact_paths
     assert "reports/workflow-run.html" in artifact_paths
     assert "demo-run/reports/demo-summary.html" in artifact_paths
+    assert "demo-run/reports/package-receipt.html" in artifact_paths
     html = evidence_html.read_text()
     assert "Dental DICOM Evidence Bundle" in html
     assert "Release audit HTML" in html

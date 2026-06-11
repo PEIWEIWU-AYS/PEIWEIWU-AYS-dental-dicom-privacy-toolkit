@@ -32,11 +32,12 @@ from ddpt.reports import (
     write_audit_html,
     write_inspection_html,
     write_inventory_html,
+    write_package_receipt_html,
     write_release_audit_html,
     write_workflow_html,
 )
 from ddpt.safety import scan_repository_safety
-from ddpt.sharing import create_package, decrypt_package, verify_package
+from ddpt.sharing import create_package, create_verification_receipt, decrypt_package
 from ddpt.synthetic import create_synthetic_dicom
 from ddpt.tag_ops import blank_tag_value, delete_tag, dump_tags, set_tag_value
 from ddpt.utils import write_json
@@ -666,9 +667,24 @@ def package_command(
 def verify(
     package_path: Annotated[Path, typer.Argument(help="Package path.")],
     key: Annotated[Path | None, typer.Option("--key", help="Encryption key path.")] = None,
+    receipt_json: Annotated[
+        Path | None, typer.Option("--receipt", help="Write verification receipt JSON.")
+    ] = None,
+    receipt_html: Annotated[
+        Path | None, typer.Option("--html", help="Write verification receipt HTML.")
+    ] = None,
 ) -> None:
-    manifest = verify_package(package_path, key)
-    console.print(f"Verification passed for {len(manifest.entries)} file(s).")
+    receipt = create_verification_receipt(package_path, key)
+    if receipt_json:
+        write_json(receipt_json, model_to_dict(receipt))
+    if receipt_html:
+        write_package_receipt_html(receipt_html, receipt)
+    if not receipt.passed:
+        for error in receipt.errors:
+            console.print(f"ERROR {error}")
+        raise typer.Exit(1)
+    console.print(f"Verification passed for {len(receipt.entries)} file(s).")
+    console.print(f"Package SHA-256: {receipt.package_sha256}")
 
 
 @app.command()

@@ -32,6 +32,8 @@ demo-run/
   reports/redaction.json
   reports/audit-chain.json
   reports/audit-chain-verify.json
+  reports/package-receipt.json
+  reports/package-receipt.html
   reports/demo-summary.json
   reports/demo-summary.html
   share/manifest.json
@@ -64,6 +66,7 @@ The demo should show:
 - reusable percent-based pixel redaction plans
 - tamper-evident audit chain
 - encrypted package with manifest and checksums
+- package verification receipt for receiver-side evidence
 
 ## CLI Equivalent
 
@@ -86,7 +89,7 @@ ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/val
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out demo-run/outputs/sample.redacted.dcm --audit demo-run/reports/redaction.json
 ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental-pixel-redaction.yml --out demo-run/outputs/sample.plan-redacted.dcm --audit demo-run/reports/plan-redaction.json
 ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
-ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key
+ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key --receipt demo-run/reports/package-receipt.json --html demo-run/reports/package-receipt.html
 ```
 
 For a directory-level preflight before batch anonymization:

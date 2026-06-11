@@ -7,7 +7,7 @@ from pathlib import Path
 
 from cryptography.fernet import Fernet
 
-from ddpt.models import ManifestEntry, PackageManifest
+from ddpt.models import ManifestEntry, PackageManifest, PackageVerificationReceipt
 from ddpt.utils import ensure_parent, sha256_file, write_json
 
 MANIFEST_NAME = "manifest.json"
@@ -74,6 +74,34 @@ def verify_package(package_path: Path, key_path: Path | None = None) -> PackageM
             if sha256_file(file_path) != entry.sha256:
                 raise ValueError(f"Checksum mismatch for: {entry.path}")
         return manifest
+
+
+def create_verification_receipt(
+    package_path: Path,
+    key_path: Path | None = None,
+) -> PackageVerificationReceipt:
+    package_sha256 = sha256_file(package_path)
+    try:
+        manifest = verify_package(package_path, key_path)
+    except Exception as exc:
+        return PackageVerificationReceipt(
+            package_path=str(package_path),
+            key_provided=key_path is not None,
+            passed=False,
+            package_sha256=package_sha256,
+            errors=[str(exc)],
+        )
+
+    return PackageVerificationReceipt(
+        package_path=str(package_path),
+        key_provided=key_path is not None,
+        passed=True,
+        package_sha256=package_sha256,
+        package_name=manifest.package_name,
+        encrypted=manifest.encrypted,
+        entries=manifest.entries,
+        total_size_bytes=sum(entry.size_bytes for entry in manifest.entries),
+    )
 
 
 def decrypt_package(package_path: Path, output_dir: Path, key_path: Path) -> PackageManifest:

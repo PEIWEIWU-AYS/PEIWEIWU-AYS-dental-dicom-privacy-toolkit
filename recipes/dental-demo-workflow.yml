@@ -57,6 +57,8 @@ steps:
     action: verify-package
     package: share/package.ddpt
     key: share/package.key
+    receipt: reports/package-receipt.json
+    html: reports/package-receipt.html
 
   - id: audit-chain
     action: audit-chain
