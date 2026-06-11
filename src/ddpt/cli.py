@@ -9,6 +9,7 @@ from rich.table import Table
 
 from ddpt import __version__
 from ddpt.anonymize import anonymize_dicom
+from ddpt.api import create_api_app
 from ddpt.audit_chain import create_audit_chain, verify_audit_chain
 from ddpt.batch import run_batch_workflow
 from ddpt.doctor import run_doctor
@@ -43,11 +44,13 @@ audit_app = typer.Typer(help="Create and verify audit chains.")
 safety_app = typer.Typer(help="Run public repository safety checks.")
 redaction_plan_app = typer.Typer(help="Create and inspect pixel redaction plans.")
 tag_app = typer.Typer(help="Inspect and edit individual DICOM tags.")
+api_app = typer.Typer(help="Run local REST API demo.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(audit_app, name="audit")
 app.add_typer(safety_app, name="safety")
 app.add_typer(redaction_plan_app, name="redaction-plan")
 app.add_typer(tag_app, name="tag")
+app.add_typer(api_app, name="api")
 console = Console()
 
 
@@ -176,6 +179,20 @@ def doctor(
     console.print(f"Overall: {'PASS' if report.passed else 'FAIL'}")
     if not report.passed:
         raise typer.Exit(1)
+
+
+@api_app.command("serve")
+def api_serve(
+    root_dir: Annotated[Path, typer.Argument(help="Local API workspace root.")],
+    host: Annotated[str, typer.Option(help="Bind host.")] = "127.0.0.1",
+    port: Annotated[int, typer.Option(help="Bind port.")] = 8765,
+) -> None:
+    import uvicorn
+
+    application = create_api_app(root_dir)
+    console.print(f"Serving local DDPT API at http://{host}:{port}")
+    console.print("Synthetic or explicitly approved test DICOM files only.")
+    uvicorn.run(application, host=host, port=port)
 
 
 @safety_app.command("scan")

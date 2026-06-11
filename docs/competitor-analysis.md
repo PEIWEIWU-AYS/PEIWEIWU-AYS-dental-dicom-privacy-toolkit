@@ -60,6 +60,7 @@ Many tools do one or two things very well, but they do not always combine all of
 - read-only directory inventory before anonymization
 - reusable YAML pixel redaction plans for known burned-in regions
 - DCMTK-style exact tag operations with audit JSON
+- Orthanc-inspired local REST API without heavy PACS infrastructure
 - JSON audit events and manifests
 - encrypted sharing package demo
 - GitHub-friendly screenshots, docs, and one-command demo
@@ -102,6 +103,7 @@ The project should add:
 - PNG preview generation for before/after workflow review
 - percent-based pixel redaction plans for repeated dental export layouts
 - exact tag dump/set/blank/delete commands with write-operation audits
+- local REST API endpoints for inventory, inspection, anonymization, validation, and preview
 - static HTML reports
 - encrypted sharing package with manifest and checksums
 - manual pixel redaction audit for known burned-in annotation regions

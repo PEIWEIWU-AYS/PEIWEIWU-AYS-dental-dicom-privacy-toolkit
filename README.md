@@ -18,6 +18,7 @@ Core goals:
 - Directory inventory and privacy risk preflight
 - DICOM anonymization profiles for dental imaging
 - PNG pixel previews for workflow review
+- Local REST API for integration demos
 - Encrypted sharing package prototypes
 - Audit reports for de-identification and transfer events
 - Synthetic examples for safe testing
@@ -47,6 +48,12 @@ ddpt batch demo-run/input --out demo-run/batch-output
 ddpt audit verify demo-run/reports/audit-chain.json
 ```
 
+To inspect the local REST API docs, run this as a separate long-running command:
+
+```bash
+ddpt api serve demo-run
+```
+
 The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, PNG previews, JSON reports, HTML reports, an encrypted package, and a summary page to `demo-run/`.
 
 `ddpt inventory` is a read-only directory preflight. It counts files, modalities, high-risk tags, medium-risk tags, readable/unreadable DICOMs, patient field presence, and UID hashes without exporting raw patient names or IDs.
@@ -57,6 +64,7 @@ See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limit
 See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
 See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
 See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
+See [docs/local-api.md](docs/local-api.md) for the local REST API demo.
 
 ## Manual Step-by-Step Demo
 

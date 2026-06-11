@@ -9,9 +9,11 @@ from pathlib import Path
 
 import pydicom
 import pytest
+from fastapi.testclient import TestClient
 from PIL import Image
 from typer.testing import CliRunner
 
+from ddpt.api import create_api_app
 from ddpt.cli import app
 from ddpt.sharing import create_package, verify_package
 
@@ -409,6 +411,57 @@ def test_tag_commands_dump_set_blank_and_delete(tmp_path: Path) -> None:
     assert insert_report["actions"][0]["existed_before"] is False
 
 
+def test_local_api_workflow_and_path_safety(tmp_path: Path) -> None:
+    source = tmp_path / "input" / "api.synthetic.dcm"
+    anonymized = "outputs/api.anonymized.dcm"
+    preview_png = "reports/api-preview.png"
+
+    assert runner.invoke(app, ["synthetic", str(source)]).exit_code == 0
+    client = TestClient(create_api_app(tmp_path))
+
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["ok"] is True
+
+    response = client.post("/inventory", json={"path": "input"})
+    assert response.status_code == 200
+    inventory = response.json()
+    assert inventory["total_files"] == 1
+    assert inventory["readable_files"] == 1
+
+    response = client.post("/inspect", json={"path": "input/api.synthetic.dcm"})
+    assert response.status_code == 200
+    inspection = response.json()
+    assert inspection["patient_name_present"] is True
+
+    response = client.post(
+        "/anonymize",
+        json={
+            "input_path": "input/api.synthetic.dcm",
+            "output_path": anonymized,
+            "profile": "dental-basic",
+        },
+    )
+    assert response.status_code == 200
+    audit = response.json()
+    assert audit["actions"]
+    assert pydicom.dcmread(tmp_path / anonymized).PatientID == "DDPT-SYNTHETIC-ID"
+
+    response = client.post("/validate", json={"path": anonymized})
+    assert response.status_code == 200
+    assert response.json()["passed"] is True
+
+    response = client.post(
+        "/preview",
+        json={"input_path": anonymized, "output_path": preview_png},
+    )
+    assert response.status_code == 200
+    assert (tmp_path / preview_png).exists()
+
+    response = client.post("/inspect", json={"path": "../outside.dcm"})
+    assert response.status_code == 400
+
+
 def test_doctor_command_reports_environment(tmp_path: Path) -> None:
     doctor_json = tmp_path / "reports" / "doctor.json"
 
@@ -422,6 +475,8 @@ def test_doctor_command_reports_environment(tmp_path: Path) -> None:
     assert "python-version" in check_names
     assert "module:pydicom" in check_names
     assert "module:PIL" in check_names
+    assert "module:fastapi" in check_names
+    assert "module:uvicorn" in check_names
 
 
 def test_safety_scan_passes_current_repository(tmp_path: Path) -> None:

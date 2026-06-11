@@ -15,6 +15,7 @@ Use this folder for public documentation about DICOM privacy, de-identification 
 - [DICOM PNG Preview](preview.md)
 - [Pixel Redaction Plans](pixel-redaction-plans.md)
 - [DICOM Tag Operations](tag-operations.md)
+- [Local REST API](local-api.md)
 - [Audit Chain](audit-chain.md)
 - [Data Safety](data-safety.md)
 - [Discoverability Profile](discoverability.md)

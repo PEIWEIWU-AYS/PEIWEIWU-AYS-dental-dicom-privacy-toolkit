@@ -8,11 +8,11 @@
 
 ## GitHub Description
 
-Open-source dental DICOM anonymization, de-identification, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
+Open-source dental DICOM anonymization, de-identification, REST API, encryption, audit reporting, and privacy-preserving dental imaging sharing toolkit.
 
 ## Suggested GitHub Topics
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `privacy` `rest-api` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
 
 ## English Keywords
 
@@ -23,6 +23,8 @@ Open-source dental DICOM anonymization, de-identification, encryption, audit rep
 - medical imaging privacy
 - encrypted DICOM sharing
 - DICOM metadata
+- DICOM REST API
+- DICOM tag editing
 - audit report
 - CBCT
 - oral radiology
@@ -36,6 +38,8 @@ Open-source dental DICOM anonymization, de-identification, encryption, audit rep
 - DICOM脱敏
 - DICOM去标识化
 - 医学影像隐私
+- DICOM接口
+- DICOM标签编辑
 - 口腔影像
 - CBCT隐私
 - 加密共享
@@ -50,6 +54,8 @@ Open-source dental DICOM anonymization, de-identification, encryption, audit rep
 - open source DICOM de-identification
 - dental imaging privacy toolkit
 - encrypted DICOM sharing
+- DICOM REST API privacy workflow
+- DICOM tag editing audit
 - CBCT privacy open source
 - 牙科 DICOM 脱敏 工具
 - 医学影像隐私 开源
@@ -57,4 +63,4 @@ Open-source dental DICOM anonymization, de-identification, encryption, audit rep
 
 ## Short Pitch
 
-Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including DICOM directory inventory, PNG previews, metadata inspection, anonymization profiles, encrypted sharing packages, and audit reporting.
+Dental DICOM Privacy Toolkit is a synthetic-data-only open-source project for exploring dental imaging privacy workflows, including DICOM directory inventory, PNG previews, metadata inspection, audited tag operations, anonymization profiles, local REST API integration demos, encrypted sharing packages, and audit reporting.

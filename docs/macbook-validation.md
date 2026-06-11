@@ -22,7 +22,7 @@ Expected:
 
 - overall status is `PASS`
 - Python is 3.10 or newer
-- `pydicom`, `numpy`, `Pillow`, `cryptography`, `typer`, and `rich` are available
+- `pydicom`, `numpy`, `Pillow`, `cryptography`, `fastapi`, `uvicorn`, `typer`, and `rich` are available
 
 ## 3. Run One-Command Demo
 
@@ -64,6 +64,25 @@ demo-run/reports/audit.html
 ```
 
 The summary page should show embedded PNG previews for the synthetic input, anonymized DICOM, and pixel-redacted DICOM.
+
+## 6. Optional Local API Check
+
+Run this as a separate long-running command:
+
+```bash
+ddpt api serve demo-run --host 127.0.0.1 --port 8765
+```
+
+Open:
+
+```text
+http://127.0.0.1:8765/docs
+```
+
+Expected:
+
+- the API docs page loads locally
+- `/health`, `/inventory`, `/inspect`, `/anonymize`, `/validate`, and `/preview` are listed
 
 ## Safety Boundary
 

@@ -9,6 +9,7 @@ from ddpt.models import DoctorCheck, DoctorReport
 
 REQUIRED_MODULES = {
     "cryptography": "encryption and package protection",
+    "fastapi": "local REST API demo",
     "jinja2": "HTML report rendering",
     "numpy": "pixel processing",
     "PIL": "PNG preview rendering",
@@ -16,6 +17,7 @@ REQUIRED_MODULES = {
     "pydicom": "DICOM reading and writing",
     "rich": "terminal output",
     "typer": "CLI framework",
+    "uvicorn": "local API server",
     "yaml": "YAML anonymization profiles",
 }
 

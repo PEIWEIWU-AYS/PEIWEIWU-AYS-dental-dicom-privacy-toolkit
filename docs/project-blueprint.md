@@ -14,7 +14,7 @@ The project should prove one thing clearly:
 
 > Dental imaging files can be handled through a reproducible privacy workflow: inventory, preview, inspect, classify risk, anonymize, validate, redact, encrypt, package, audit, and share.
 
-The first phase should avoid heavy web architecture. A strong command-line tool plus static reports is more credible and easier to test. A web demo can come after the core logic is stable.
+The first phase should avoid heavy web architecture. A strong command-line tool, static reports, and a small local REST API are more credible and easier to test than a production PACS clone.
 
 ## Workflow
 
@@ -45,6 +45,7 @@ ddpt anonymize examples/synthetic-dicom/sample.dcm --profile dental-basic --out 
 ddpt package outputs/ --encrypt --manifest reports/manifest.json --out share/dental-dicom-package.zip
 ddpt verify share/dental-dicom-package.zip
 ddpt decrypt share/dental-dicom-package.zip --out restored/
+ddpt api serve demo-run
 ddpt demo demo-run
 ```
 
@@ -82,16 +83,16 @@ The GitHub front page should eventually include:
 - synthetic-only warning
 - copyable install and demo commands
 
-### 4. Web Demo Later
+### 4. Local REST API
 
-After the CLI is stable, add a local-only web dashboard for synthetic DICOM examples. The web UI should not encourage uploading real patient files.
+The local API demonstrates integration potential without turning the project into a PACS or public cloud service. It should stay bound to local synthetic or explicitly approved test data.
 
 Best for:
 
-- public demos
-- videos
-- conference slides
-- GitHub star conversion
+- technical integration demos
+- local workflow automation
+- future web dashboard experiments
+- showing Orthanc-inspired REST design in a lightweight way
 
 ## Languages
 
@@ -122,6 +123,10 @@ Machine-readable inspection reports, audit events, manifests, and validation res
 
 Static privacy and audit reports generated from CLI output.
 
+### REST API
+
+Local FastAPI service for synthetic-data integration demos.
+
 ### TypeScript/React
 
 Optional later web demo, only after the CLI and core workflow are stable.
@@ -143,6 +148,8 @@ Small development scripts and reproducible demo commands.
 - `numpy`: pixel data normalization and redaction support.
 - `pillow`: PNG preview/report assets.
 - `pyyaml`: load anonymization profile configuration.
+- `fastapi`: local REST API demo.
+- `uvicorn`: local REST API server.
 
 ### Development Dependencies
 
@@ -154,7 +161,6 @@ Small development scripts and reproducible demo commands.
 ### Later or Optional Dependencies
 
 - `opencv-python`: possible future pixel redaction experiments, not first-phase default.
-- `fastapi`: possible later API demo.
 - `react` or `next`: possible later web dashboard.
 
 ## Tools

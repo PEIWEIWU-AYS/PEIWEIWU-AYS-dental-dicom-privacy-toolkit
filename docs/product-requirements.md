@@ -24,7 +24,8 @@ Version 0.1 is successful when a new user can:
 14. Package anonymized files with checksums.
 15. Encrypt the package.
 16. Verify or decrypt the package.
-17. Run automated tests locally and in GitHub Actions.
+17. Run local REST API workflow demos for integration testing.
+18. Run automated tests locally and in GitHub Actions.
 
 ### `ddpt demo`
 
@@ -195,6 +196,22 @@ Required:
 - accept both DICOM keywords and hex tags such as `0010,0010`
 - audit JSON output for write operations
 
+### `ddpt api serve`
+
+Run a local REST API demo for synthetic-data workflows.
+
+Required:
+
+- local-only FastAPI app
+- `/health` endpoint
+- inventory endpoint
+- inspect endpoint
+- anonymize endpoint
+- validate endpoint
+- preview endpoint
+- path traversal protection
+- documentation that this is not a production PACS, DICOMweb server, or clinical viewer
+
 ### `ddpt preview`
 
 Render DICOM pixel data to a PNG preview for workflow review.
@@ -343,6 +360,7 @@ HTML report sections:
 - Python package under `src/ddpt`.
 - `pyproject.toml` with runtime and development dependencies.
 - Typer CLI.
+- FastAPI and Uvicorn for the local API demo.
 - pydicom for DICOM handling.
 - cryptography for encryption.
 - pytest tests.
