@@ -1,257 +1,670 @@
 # Dental DICOM Privacy Toolkit | 牙科 DICOM 脱敏加密共享工具包
 
-An open-source toolkit for dental DICOM anonymization, de-identification, encryption, audit reporting, and privacy-preserving dental imaging sharing.
+Dental DICOM Privacy Toolkit is a local-first open-source toolkit for dental
+DICOM anonymization, DICOM de-identification, pixel privacy review, audit
+evidence, and encrypted DICOM sharing.
 
-一个面向牙科影像、DICOM 脱敏、医学影像隐私、加密共享、审计报告和患者隐私保护的开源工具包。
+牙科 DICOM 脱敏加密共享工具包是一个本地优先的开源项目，用于牙科 DICOM 脱敏、DICOM 去标识化、像素隐私复核、审计证据和加密共享流程。
 
-**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM PS3.15, DICOMDIR, clinic export intake, DICOM confidentiality alignment, DICOM JSON export, Orthanc-inspired API, local API evidence endpoints, Orthanc anonymization plan, Orthanc REST anonymize, filename privacy scan, path privacy, privacy remediation plan, profile conformance, anonymization profile verification, dcmodify plan, DCMTK dcmodify, pixel risk scan, residual privacy risk score, privacy regression suite, MacBook validation report, public showcase gallery, community health, security policy, GitHub publish preflight, adversarial synthetic DICOM, competitor coverage, reference tool coverage, workflow quality gate, de-identification certificate, deterministic pseudonymization, local browser workbench, objective completion audit, medical imaging privacy, encrypted DICOM sharing, audit report, radiograph privacy, CBCT, oral radiology, open source healthcare, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, DICOMDIR预检, 诊所导出包预检, DICOM保密配置, DICOM PS3.15, DICOM保密配置对齐, DICOM JSON导出, Orthanc风格接口, 本地API证据端点, Orthanc匿名化计划, Orthanc REST脱敏, 文件名隐私扫描, 路径隐私, 隐私整改计划, 脱敏配置符合性验证, 脱敏profile验收, dcmodify操作计划, DCMTK标签操作, 像素风险扫描, 残余隐私风险评分, 隐私回归测试, MacBook验收报告, 公开示例画廊, 开源协作健康, 安全政策, GitHub发布预检, 对抗性合成DICOM, 竞品能力覆盖, 精品项目对标, 工作流质量门禁, 去标识化证明书, DICOM伪名化, 本地工作台, 原始目标完成度审计, 医学影像隐私, 加密共享, 口腔影像, CBCT隐私, 患者隐私保护, 医疗数据安全
+**Keywords:** dental DICOM, dental imaging, DICOM anonymization, DICOM de-identification, DICOM confidentiality, DICOM JSON export, filename privacy scan, privacy remediation plan, profile conformance, pixel risk scan, Orthanc anonymization plan, dcmodify plan, encrypted DICOM sharing, de-identification certificate, deterministic pseudonymization, local browser workbench, workflow quality gate, residual privacy risk score, privacy regression suite, MacBook validation report, GitHub publish preflight, public showcase gallery, community health, security policy, CBCT, oral radiology, synthetic DICOM, 牙科DICOM, 牙科影像, DICOM脱敏, DICOM去标识化, 医学影像隐私, 文件名隐私扫描, 隐私整改计划, 脱敏配置符合性验证, 像素风险扫描, 去标识化证明书, DICOM伪名化, 本地工作台, 工作流质量门禁, 残余隐私风险评分, 隐私回归测试, MacBook验收报告, GitHub发布预检, 公开示例画廊, 开源协作健康, 安全政策, Orthanc匿名化计划, 加密共享, 患者隐私保护
 
-This project is designed for public code, synthetic examples, documentation, and reproducible demonstrations. Do not commit real patient data, radiographs, DICOM files, clinical photographs, consent forms, clinic exports, or private manuscript drafts.
+> Safety boundary: this public repository is for source code, documentation,
+> tests, synthetic examples, and reproducible demonstrations only. Do not commit
+> real patient DICOM files, CBCT scans, radiographs, intraoral photos, clinic
+> exports, consent forms, credentials, private notes, or manuscript drafts.
 
-## Purpose
+## English
 
-The toolkit explores practical privacy controls for dental imaging workflows.
+### What You Can Do
 
-Core goals:
+Use this project when you need a reproducible local workflow for dental imaging
+privacy review before research sharing, teaching, product demos, or technical
+collaboration.
 
-- DICOM metadata inspection
-- Directory inventory and privacy risk preflight
-- Clinic export intake triage for DICOMDIR, ZIP, sidecar files, and path risks
-- Filename and path privacy scan before sharing
-- Pre-anonymization privacy remediation plans
-- DCMTK dcmodify-style expert operation plan export
-- Orthanc-inspired safe DICOM JSON metadata export
-- Orthanc REST anonymization payload and curl plan export
-- Multi-file synthetic dental study generation
-- DICOM anonymization profiles for dental imaging
-- Research-sharing profile with deterministic date shifting
-- Linkable research profile with deterministic patient pseudonymization
-- Profile comparison reports for transparent anonymization configuration review
-- Profile lint checks for custom anonymization YAML safety
-- Profile conformance verification after anonymization
-- DICOM privacy policy registry export in JSON, CSV, and HTML
-- DICOM PS3.15-inspired confidentiality alignment reports
-- Competitor-informed capability matrix with repository evidence
-- Competitor coverage report for RSNA, DicomCleaner, Orthanc, CTP, DCMTK, and pydicom lessons
-- Objective completion audit against the original competitor-learning goal
-- Before/after de-identification comparison reports
-- Batch de-identification evidence for directory workflows
-- De-identification certificate for synthetic sharing handoff evidence
-- Workflow quality gate for reproducible public review evidence
-- Workflow-level certificate generation as the final YAML recipe stage
-- Anonymization dry-run previews before writing DICOM files
-- PNG pixel previews for workflow review
-- Pixel risk scan for conservative burned-in identifier triage
-- Residual privacy risk score across generated workflow evidence
-- Synthetic adversarial privacy regression suite
-- GitHub publish preflight for public repository creation, topics, remote, and push readiness
-- Pixel review reports with original, overlay, and redacted PNG previews
-- YAML workflow recipes for reproducible staged pipelines
-- Local REST API for integration demos
-- Local API evidence endpoints for privacy reports and publish preflight
-- Local browser workbench for synthetic workflow review
-- Static local review dashboard for non-programmer walkthroughs
-- Public synthetic showcase gallery for GitHub visitors and screenshots
-- Release-readiness audit for public GitHub publishing
-- Local evidence bundle for MacBook validation and project demonstrations
-- One-command MacBook validation report for local acceptance and GitHub readiness
-- Encrypted sharing package prototypes
-- Package verification receipts for receiver-side sharing evidence
-- Share-readiness gate before synthetic package handoff
-- Community health files for safe issues, PRs, support, and security reporting
-- Audit reports for de-identification and transfer events
-- Synthetic examples for safe testing
+- Generate synthetic dental DICOM files for safe testing.
+- Inspect DICOM metadata and flag privacy-sensitive tags.
+- Scan file and folder names for patient identifiers.
+- Build a privacy remediation plan before anonymization.
+- Anonymize DICOM files with readable YAML profiles.
+- Verify anonymized files against the selected profile.
+- Render PNG previews for human review.
+- Run conservative pixel risk scans for burned-in identifiers.
+- Apply planned rectangular pixel redaction when a region is known.
+- Create JSON and HTML reports for audit evidence.
+- Package de-identified files with checksums and optional encryption.
+- Run local quality gates, MacBook validation, and publish preflight checks.
 
-## Project Blueprint
+This is not a diagnostic viewer, clinical decision tool, legal compliance
+certificate, PACS replacement, or guarantee that every identifier has been
+removed. Pixel-level burned-in identifiers still require human review.
 
-See [docs/project-blueprint.md](docs/project-blueprint.md) for the full workflow, implementation plan, languages, dependencies, tools, and presentation format.
+### Requirements
 
-## Quick Local Demo
+- Python 3.11+
+- Git
+- macOS, Linux, or Windows
+- Synthetic or explicitly approved test files only
+
+### Install
 
 ```bash
+git clone git@github.com:PEIWEIWU-AYS/PEIWEIWU-AYS-dental-dicom-privacy-toolkit.git
+cd PEIWEIWU-AYS-dental-dicom-privacy-toolkit
+
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
-
-ddpt doctor
-ddpt safety scan .
-ddpt release audit . --json release-audit.json --html release-audit.html
-ddpt capability matrix --root . --json capability-matrix.json --html capability-matrix.html
-ddpt competitor coverage --root . --json competitor-coverage.json --html competitor-coverage.html
-ddpt completion audit . --json objective-audit.json --html objective-audit.html
-ddpt evidence bundle . --out evidence-run
-ddpt macbook validate . --out macbook-validation-run
-ddpt regression suite regression-run --json regression-run/reports/privacy-regression-suite.json --html regression-run/reports/privacy-regression-suite.html
-ddpt publish preflight . --json publish-preflight.json --html publish-preflight.html
-ddpt publish preflight . --check-remote --json publish-preflight-remote.json --html publish-preflight-remote.html
-ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html --json evidence-run/reports/review-dashboard.json
-ddpt showcase build evidence-run --out showcase-run/showcase.html --json showcase-run/showcase.json
-ddpt demo demo-run
-ddpt synthetic-study synthetic-study-demo --patients 2 --files-per-patient 2 --json synthetic-study-demo/manifest.json
-ddpt workflow run recipes/dental-demo-workflow.yml --root workflow-run --json workflow-run/reports/workflow-run.json --html workflow-run/reports/workflow-run.html
-ddpt quality gate workflow-run --workflow-report workflow-run/reports/workflow-run.json --json workflow-run/reports/quality-gate.json --html workflow-run/reports/quality-gate.html
-ddpt risk score workflow-run --json workflow-run/reports/residual-risk.json --html workflow-run/reports/residual-risk.html
-ddpt intake triage demo-run/input --json demo-run/reports/intake-triage.json --html demo-run/reports/intake-triage.html
-ddpt filename scan demo-run/input --json demo-run/reports/filename-privacy.json --html demo-run/reports/filename-privacy.html
-ddpt inventory demo-run/input --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
-ddpt remediation plan demo-run/input --profile dental-basic --json demo-run/reports/remediation-plan.json --html demo-run/reports/remediation-plan.html
-ddpt dcmodify plan demo-run/input/sample.synthetic.dcm --profile dental-basic --json demo-run/reports/dcmodify-plan.json --html demo-run/reports/dcmodify-plan.html --script demo-run/reports/dcmodify-plan.sh
-ddpt dicom-json export demo-run/input/sample.synthetic.dcm --json demo-run/reports/dicom-json.json --html demo-run/reports/dicom-json.html
-ddpt orthanc plan demo-run/input/sample.synthetic.dcm --profile dental-basic --resource-id sample-synthetic-instance --json demo-run/reports/orthanc-plan.json --html demo-run/reports/orthanc-plan.html
-ddpt reference export demo-run/input/sample.synthetic.dcm --profile dental-basic --resource-id sample-synthetic-instance --out demo-run/reference-tool-pack --json demo-run/reports/reference-tool-export.json --html demo-run/reports/reference-tool-export.html
-ddpt anonymize demo-run/input/sample.synthetic.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
-ddpt profile verify demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --profile dental-basic --json demo-run/reports/profile-conformance.json --html demo-run/reports/profile-conformance.html
-ddpt compare deid demo-run/input/sample.synthetic.dcm demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/deid-comparison.json --html demo-run/reports/deid-comparison.html
-ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
-ddpt preview demo-run/input/sample.synthetic.dcm --out demo-run/reports/input-preview.png
-ddpt pixel-risk scan demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/pixel-risk.json --html demo-run/reports/pixel-risk.html
-ddpt pixel-review demo-run/outputs/sample.anonymized.dcm --out-dir demo-run/reports/pixel-review --plan profiles/dental-pixel-redaction.yml --json demo-run/reports/pixel-review.json --html demo-run/reports/pixel-review.html
-ddpt redaction-plan show profiles/dental-pixel-redaction.yml
-ddpt tag dump demo-run/input/sample.synthetic.dcm --json demo-run/reports/tag-dump.json
-ddpt policy export --json demo-run/reports/policy-registry.json --csv demo-run/reports/policy-registry.csv --html demo-run/reports/policy-registry.html
-ddpt confidentiality alignment --profile dental-basic --json demo-run/reports/confidentiality-alignment.json --html demo-run/reports/confidentiality-alignment.html
-ddpt profile show dental-basic
-ddpt profile show dental-research-sharing
-ddpt profile show dental-linkable-research
-ddpt profile lint dental-basic --json demo-run/reports/profile-lint.json --html demo-run/reports/profile-lint.html
-ddpt profile lint dental-linkable-research --json demo-run/reports/linkable-profile-lint.json --html demo-run/reports/linkable-profile-lint.html
-ddpt profile coverage dental-basic
-ddpt profile coverage dental-research-sharing
-ddpt profile coverage dental-linkable-research
-ddpt profile compare dental-basic dental-research-sharing --json demo-run/reports/profile-comparison.json --html demo-run/reports/profile-comparison.html
-ddpt profile compare dental-basic dental-linkable-research --json demo-run/reports/linkable-profile-comparison.json --html demo-run/reports/linkable-profile-comparison.html
-ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
-ddpt api serve demo-run --host 127.0.0.1 --port 8765
-ddpt profile init profiles/my-dental-profile.yml
-ddpt batch demo-run/input --out demo-run/batch-output
-ddpt audit verify demo-run/reports/audit-chain.json
 ```
 
-To inspect the local REST API docs, run this as a separate long-running command:
+On Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Check the installation:
 
 ```bash
-ddpt api serve demo-run
+ddpt doctor
+ddpt safety scan .
 ```
 
-Then open the local browser workbench:
+### Fastest Demo
+
+Run the complete synthetic demo:
+
+```bash
+ddpt demo demo-run
+```
+
+Open the generated report:
+
+```text
+demo-run/reports/demo-summary.html
+```
+
+The demo creates synthetic input, anonymized output, preview images, pixel review
+artifacts, an encrypted sharing package, verification receipts, and HTML reports.
+
+### Step-by-Step Workflow
+
+Create a synthetic DICOM file:
+
+```bash
+ddpt synthetic demo-run/input/sample.synthetic.dcm
+```
+
+Inspect metadata:
+
+```bash
+ddpt inspect demo-run/input/sample.synthetic.dcm \
+  --json demo-run/reports/inspect.json \
+  --html demo-run/reports/inspect.html
+```
+
+Review the folder before sharing:
+
+```bash
+ddpt inventory demo-run/input \
+  --json demo-run/reports/inventory.json \
+  --csv demo-run/reports/inventory.csv \
+  --html demo-run/reports/inventory.html
+
+ddpt filename scan demo-run/input \
+  --json demo-run/reports/filename-privacy.json \
+  --html demo-run/reports/filename-privacy.html
+```
+
+Create a remediation plan:
+
+```bash
+ddpt remediation plan demo-run/input \
+  --profile dental-basic \
+  --json demo-run/reports/remediation-plan.json \
+  --html demo-run/reports/remediation-plan.html
+```
+
+Preview anonymization without writing a new DICOM file:
+
+```bash
+ddpt anonymize demo-run/input/sample.synthetic.dcm \
+  --dry-run \
+  --audit demo-run/reports/dry-run-audit.json \
+  --html demo-run/reports/dry-run-audit.html
+```
+
+Write the anonymized DICOM file:
+
+```bash
+ddpt anonymize demo-run/input/sample.synthetic.dcm \
+  --out demo-run/outputs/sample.anonymized.dcm \
+  --audit demo-run/reports/anonymization-audit.json \
+  --html demo-run/reports/anonymization-audit.html
+```
+
+Validate the output:
+
+```bash
+ddpt validate demo-run/outputs/sample.anonymized.dcm \
+  --json demo-run/reports/validation.json
+
+ddpt profile verify demo-run/input/sample.synthetic.dcm \
+  demo-run/outputs/sample.anonymized.dcm \
+  --profile dental-basic \
+  --json demo-run/reports/profile-conformance.json \
+  --html demo-run/reports/profile-conformance.html
+```
+
+Create visual review artifacts:
+
+```bash
+ddpt preview demo-run/input/sample.synthetic.dcm \
+  --out demo-run/reports/input-preview.png
+
+ddpt pixel-risk scan demo-run/outputs/sample.anonymized.dcm \
+  --json demo-run/reports/pixel-risk.json \
+  --html demo-run/reports/pixel-risk.html
+
+ddpt pixel-review demo-run/outputs/sample.anonymized.dcm \
+  --out-dir demo-run/reports/pixel-review \
+  --plan profiles/dental-pixel-redaction.yml \
+  --json demo-run/reports/pixel-review.json \
+  --html demo-run/reports/pixel-review.html
+```
+
+Redact a known pixel region:
+
+```bash
+ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm \
+  --plan profiles/dental-pixel-redaction.yml \
+  --out demo-run/outputs/sample.redacted.dcm \
+  --audit demo-run/reports/pixel-redaction.json
+```
+
+Package, verify, and decrypt shared output:
+
+```bash
+ddpt package demo-run/outputs \
+  --encrypt \
+  --key-out demo-run/share/package.key \
+  --manifest demo-run/share/manifest.json \
+  --out demo-run/share/package.ddpt
+
+ddpt verify demo-run/share/package.ddpt \
+  --key demo-run/share/package.key \
+  --receipt demo-run/reports/package-receipt.json \
+  --html demo-run/reports/package-receipt.html
+
+ddpt decrypt demo-run/share/package.ddpt \
+  --key demo-run/share/package.key \
+  --out demo-run/restored
+```
+
+Create handoff evidence:
+
+```bash
+ddpt compare deid demo-run/input/sample.synthetic.dcm \
+  demo-run/outputs/sample.anonymized.dcm \
+  --json demo-run/reports/deid-comparison.json \
+  --html demo-run/reports/deid-comparison.html
+
+ddpt certificate create demo-run \
+  --json demo-run/reports/deid-certificate.json \
+  --html demo-run/reports/deid-certificate.html
+
+ddpt share readiness demo-run \
+  --json demo-run/reports/share-readiness.json \
+  --html demo-run/reports/share-readiness.html
+```
+
+### Repeatable Recipe Workflow
+
+Use the included YAML recipe for a repeatable staged run:
+
+```bash
+ddpt workflow run recipes/dental-demo-workflow.yml \
+  --root workflow-run \
+  --json workflow-run/reports/workflow-run.json \
+  --html workflow-run/reports/workflow-run.html
+
+ddpt quality gate workflow-run \
+  --workflow-report workflow-run/reports/workflow-run.json \
+  --json workflow-run/reports/quality-gate.json \
+  --html workflow-run/reports/quality-gate.html
+
+ddpt risk score workflow-run \
+  --json workflow-run/reports/residual-risk.json \
+  --html workflow-run/reports/residual-risk.html
+```
+
+### Local Browser Workbench
+
+Start the local API:
+
+```bash
+ddpt api serve demo-run --host 127.0.0.1 --port 8765
+```
+
+Open:
 
 ```text
 http://127.0.0.1:8765/workbench
 ```
 
-The one-command demo writes a synthetic input file, anonymized and pixel-redacted DICOM files, PNG previews, JSON reports, HTML reports, an encrypted package, a verification receipt, and a summary page to `demo-run/`.
+The local browser workbench is for local demonstration only. It does not upload
+DICOM files to a cloud service.
 
-`ddpt inventory` is a read-only directory preflight. It counts files, modalities, high-risk tags, medium-risk tags, readable/unreadable DICOMs, patient field presence, and UID hashes without exporting raw patient names or IDs.
-
-See [docs/inventory.md](docs/inventory.md) for the inventory safety boundary and output formats.
-See [docs/intake-triage.md](docs/intake-triage.md) for clinic export, DICOMDIR, ZIP, and sidecar preflight.
-See [docs/filename-privacy-scan.md](docs/filename-privacy-scan.md) for path-level privacy checks.
-See [docs/remediation-plan.md](docs/remediation-plan.md) for pre-anonymization privacy action plans.
-See [docs/dcmodify-plan.md](docs/dcmodify-plan.md) for DCMTK-style low-level operation plans.
-See [docs/dicom-json-export.md](docs/dicom-json-export.md) for Orthanc-inspired safe metadata JSON export.
-See [docs/orthanc-plan.md](docs/orthanc-plan.md) for Orthanc REST anonymization plan export.
-See [docs/reference-tool-export.md](docs/reference-tool-export.md) for one-pack DCMTK, Orthanc, RSNA CTP-style, and pydicom reference exports.
-See [docs/competitor-coverage.md](docs/competitor-coverage.md) for reference-tool coverage and differentiator evidence.
-See [docs/synthetic-study.md](docs/synthetic-study.md) for multi-file synthetic dental study generation.
-See [docs/preview.md](docs/preview.md) for PNG preview behavior and safety limits.
-See [docs/pixel-risk-scan.md](docs/pixel-risk-scan.md) for conservative burned-in identifier triage.
-See [docs/pixel-review.md](docs/pixel-review.md) for burned-in annotation region review reports.
-
-See [docs/demo-guide.md](docs/demo-guide.md) for MacBook validation steps and expected outputs.
-See [docs/workflow-recipes.md](docs/workflow-recipes.md) for recipe-driven staged pipelines.
-See [docs/quality-gate.md](docs/quality-gate.md) for workflow-level evidence gates.
-See [docs/residual-risk-score.md](docs/residual-risk-score.md) for residual privacy risk scoring.
-See [docs/anonymization-dry-run.md](docs/anonymization-dry-run.md) for pre-write anonymization previews.
-See [docs/research-sharing-profile.md](docs/research-sharing-profile.md) for deterministic date-shift research sharing.
-See [docs/linkable-research-profile.md](docs/linkable-research-profile.md) for deterministic patient pseudonymization in longitudinal research demos.
-See [docs/profile-lint.md](docs/profile-lint.md) for anonymization profile configuration checks.
-See [docs/profile-comparison.md](docs/profile-comparison.md) for anonymization profile comparison reports.
-See [docs/profile-conformance.md](docs/profile-conformance.md) for post-anonymization profile verification.
-See [docs/policy-registry.md](docs/policy-registry.md) for the DICOM privacy policy registry export.
-See [docs/confidentiality-alignment.md](docs/confidentiality-alignment.md) for DICOM PS3.15-inspired confidentiality alignment reports.
-See [docs/deid-comparison.md](docs/deid-comparison.md) for before/after de-identification comparison reports.
-See [docs/batch.md](docs/batch.md) for batch de-identification evidence.
-See [docs/deid-certificate.md](docs/deid-certificate.md) for the synthetic de-identification certificate.
-See [docs/capability-matrix.md](docs/capability-matrix.md) for competitor-informed capability evidence.
-See [docs/objective-completion-audit.md](docs/objective-completion-audit.md) for requirement-level evidence against the original goal.
-See [docs/macbook-validation.md](docs/macbook-validation.md) for a local acceptance checklist.
-See [docs/macbook-validation-report.md](docs/macbook-validation-report.md) for one-command local validation reports.
-See [docs/safety-scan.md](docs/safety-scan.md) for public repository safety checks.
-See [docs/release-audit.md](docs/release-audit.md) for public release readiness checks.
-See [docs/evidence-bundle.md](docs/evidence-bundle.md) for one-command local evidence generation.
-See [docs/privacy-regression-suite.md](docs/privacy-regression-suite.md) for adversarial synthetic privacy regression tests.
-See [docs/github-publish-preflight.md](docs/github-publish-preflight.md) for GitHub repository creation, topics, remote, and push readiness checks.
-See [docs/review-dashboard.md](docs/review-dashboard.md) for the static local review dashboard.
-See [docs/showcase-gallery.md](docs/showcase-gallery.md) for a public synthetic evidence gallery.
-See [docs/package-verification-receipts.md](docs/package-verification-receipts.md) for receiver-side sharing receipts.
-See [docs/share-readiness.md](docs/share-readiness.md) for the final synthetic sharing gate.
-See [docs/local-api.md](docs/local-api.md) for the local REST API demo.
-See [docs/local-workbench.md](docs/local-workbench.md) for the local browser workbench.
-See [docs/community-health.md](docs/community-health.md) for issue, PR, support, and security reporting boundaries.
-See [docs/discoverability.md](docs/discoverability.md) for the bilingual GitHub search profile.
-
-## Manual Step-by-Step Demo
+### Useful Checks Before Publishing
 
 ```bash
-ddpt synthetic demo-run/sample.dcm
-ddpt inventory demo-run --json demo-run/reports/inventory.json --csv demo-run/reports/inventory.csv --html demo-run/reports/inventory.html
-ddpt preview demo-run/sample.dcm --out demo-run/reports/sample-preview.png --json demo-run/reports/sample-preview.json
-ddpt tag set demo-run/sample.dcm PatientName ANON^TEST --out demo-run/outputs/sample.tag-set.dcm --audit demo-run/reports/tag-set-audit.json
-ddpt inspect demo-run/sample.dcm --json demo-run/reports/inspect.json --html demo-run/reports/inspect.html
-ddpt anonymize demo-run/sample.dcm --dry-run --audit demo-run/reports/dry-run-audit.json --html demo-run/reports/dry-run-audit.html
-ddpt anonymize demo-run/sample.dcm --out demo-run/outputs/sample.anonymized.dcm --audit demo-run/reports/audit.json --html demo-run/reports/audit.html
-ddpt validate demo-run/outputs/sample.anonymized.dcm --json demo-run/reports/validation.json
-ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --rect 1,0,1,1 --out demo-run/outputs/sample.redacted.dcm --audit demo-run/reports/redaction.json
-ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm --plan profiles/dental-pixel-redaction.yml --out demo-run/outputs/sample.plan-redacted.dcm --audit demo-run/reports/plan-redaction.json
-ddpt package demo-run/outputs --encrypt --key-out demo-run/share/package.key --manifest demo-run/share/manifest.json --out demo-run/share/package.ddpt
-ddpt verify demo-run/share/package.ddpt --key demo-run/share/package.key --receipt demo-run/reports/package-receipt.json --html demo-run/reports/package-receipt.html
-ddpt certificate create demo-run --json demo-run/reports/deid-certificate.json --html demo-run/reports/deid-certificate.html
-ddpt share readiness demo-run --json demo-run/reports/share-readiness.json --html demo-run/reports/share-readiness.html
-ddpt decrypt demo-run/share/package.ddpt --key demo-run/share/package.key --out demo-run/restored
+ddpt release audit .
+ddpt evidence bundle . --out evidence-run
+ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html
+ddpt showcase build evidence-run --out showcase-run/showcase.html
+ddpt regression suite regression-run
+ddpt macbook validate . --out macbook-validation-run
+ddpt publish preflight . --check-remote
 ```
 
-## Suggested GitHub Topics
+### Other Useful Commands
 
-`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-confidentiality` `dicom-json` `orthanc` `orthanc-anonymization` `filename-privacy` `privacy-remediation` `profile-conformance` `dcmodify` `pixel-risk` `residual-risk` `privacy-regression` `regression-testing` `github-publishing` `quality-gate` `pseudonymization` `local-first` `web-ui` `privacy` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+```bash
+ddpt profile lint dental-basic
+ddpt profile coverage dental-basic
+ddpt profile compare dental-basic dental-research-sharing
+ddpt confidentiality alignment --profile dental-basic
+ddpt policy export --json reports/policy-registry.json --csv reports/policy-registry.csv --html reports/policy-registry.html
+ddpt dcmodify plan demo-run/input/sample.synthetic.dcm --profile dental-basic
+ddpt dicom-json export demo-run/input/sample.synthetic.dcm --json demo-run/reports/dicom-json.json
+ddpt orthanc plan demo-run/input/sample.synthetic.dcm --profile dental-basic --resource-id sample-synthetic-instance
+ddpt synthetic-study synthetic-study-demo --patients 2 --files-per-patient 2 --json synthetic-study-demo/manifest.json
+ddpt batch demo-run/input --out demo-run/batch-output
+```
 
-## Repository Structure
+### Outputs
+
+Most commands can write machine-readable JSON and human-readable HTML.
+
+Typical output folders:
 
 ```text
-src/                    Shared source code
-dicom-anonymizer/       De-identification logic and profiles
-dicom-encryption/       Encryption and packaging prototypes
-dicom-sharing/          Sharing workflow and access-control prototypes
-docs/                   Public project documentation
-examples/synthetic-dicom/ Synthetic DICOM examples only
-synthetic-data/         Synthetic demo metadata only
-scripts/                Development and validation scripts
-tests/                  Automated tests
+demo-run/input/      synthetic DICOM input
+demo-run/outputs/    anonymized and pixel-redacted DICOM files
+demo-run/reports/    JSON reports, HTML reports, PNG previews
+demo-run/share/      encrypted package, manifest, verification key
+demo-run/restored/   decrypted package contents for receiver-side checks
 ```
 
-## Safety Boundary
+Generated demo output should normally stay out of Git. Keep the repository
+focused on source code, documentation, tests, synthetic examples, and community
+health files.
 
-This is a public repository. Use synthetic files only.
+### Documentation
 
-Sensitive local materials should stay outside the repository, for example:
+- [Demo guide](docs/demo-guide.md)
+- [Data safety](docs/data-safety.md)
+- [Workflow recipes](docs/workflow-recipes.md)
+- [Profile conformance](docs/profile-conformance.md)
+- [Pixel review](docs/pixel-review.md)
+- [Share readiness](docs/share-readiness.md)
+- [MacBook validation](docs/macbook-validation.md)
+- [Local API](docs/local-api.md)
+- [Discoverability](docs/discoverability.md)
+
+### Repository Layout
 
 ```text
-/Users/pengqian/Desktop/GitHub-PEIWEIWU-AYS/teledentistry-private-data_DO_NOT_UPLOAD
+src/ddpt/                 Python package and CLI implementation
+profiles/                 anonymization and pixel redaction profiles
+recipes/                  reproducible YAML workflows
+docs/                     detailed documentation
+tests/                    automated tests
+examples/synthetic-dicom/ synthetic-only examples
+dicom-anonymizer/         de-identification notes and profile area
+dicom-encryption/         packaging and encryption notes
+dicom-sharing/            sharing workflow notes
 ```
 
-## Status
+### Contributing and Security
 
-Version 0.1 local prototype in active development. The current workflow supports
-synthetic-data DICOM inspection, anonymization, validation, pixel redaction,
-encrypted packaging, audit chains, YAML workflow recipes, local REST API demos,
-local browser workbench, research-sharing date shifting, linkable research pseudonymization,
-objective completion audit, release-readiness checks, and local evidence bundle generation,
-package verification receipts, profile comparison reports,
-profile lint checks, policy registry exports, capability matrix reports, static
-review dashboards, de-identification comparison reports, de-identification
-certificates, residual privacy risk score reports, privacy regression suite
-reports, GitHub publish preflight reports, and pixel review reports, plus
-share-readiness gates.
+Issues and pull requests are welcome with synthetic examples only. Please read:
 
-## License
+- [Contributing](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Support](SUPPORT.md)
+- [Code of conduct](CODE_OF_CONDUCT.md)
+
+Do not include real clinical images, real patient metadata, exported clinic
+folders, credentials, private manuscripts, or other sensitive material in
+issues, pull requests, examples, or tests.
+
+### Suggested GitHub Topics
+
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-confidentiality` `dicom-json` `orthanc` `dcmodify` `pydicom` `pixel-risk` `privacy-regression` `pseudonymization` `local-first` `web-ui` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+
+### License
+
+MIT License.
+
+## 中文
+
+### 你可以用它做什么
+
+当你需要在研究共享、教学演示、产品展示或技术协作前，本地复现一套牙科影像隐私处理流程时，可以使用这个项目。
+
+- 生成安全测试用的 synthetic 合成牙科 DICOM。
+- 检查 DICOM metadata，并标记隐私敏感 tag。
+- 扫描文件名和文件夹路径中的患者标识风险。
+- 在脱敏前生成 privacy remediation plan 隐私整改计划。
+- 使用可读 YAML profile 执行 DICOM 脱敏。
+- 验证脱敏文件是否符合指定 profile。
+- 生成 PNG 预览图供人工复核。
+- 对 burned-in identifier 像素标识风险进行保守筛查。
+- 对已知区域执行矩形像素遮盖。
+- 生成 JSON 和 HTML 审计报告。
+- 将去标识化文件打包，并可选择加密。
+- 运行本地质量门禁、MacBook 验收和 GitHub 发布预检。
+
+它不是诊断阅片软件、临床决策工具、法律合规证书、PACS 替代品，也不能保证自动移除所有标识。像素层烧录标识仍然需要人工复核。
+
+### 环境要求
+
+- Python 3.11+
+- Git
+- macOS、Linux 或 Windows
+- 只使用 synthetic 合成数据，或明确获准使用的测试文件
+
+### 安装
+
+```bash
+git clone git@github.com:PEIWEIWU-AYS/PEIWEIWU-AYS-dental-dicom-privacy-toolkit.git
+cd PEIWEIWU-AYS-dental-dicom-privacy-toolkit
+
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+```
+
+Windows PowerShell 使用：
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+检查安装是否成功：
+
+```bash
+ddpt doctor
+ddpt safety scan .
+```
+
+### 最快演示
+
+运行完整合成演示：
+
+```bash
+ddpt demo demo-run
+```
+
+打开生成的报告：
+
+```text
+demo-run/reports/demo-summary.html
+```
+
+这个演示会生成合成输入、脱敏输出、预览图、像素复核材料、加密共享包、验证回执和 HTML 报告。
+
+### 分步骤使用流程
+
+生成合成 DICOM 文件：
+
+```bash
+ddpt synthetic demo-run/input/sample.synthetic.dcm
+```
+
+检查 metadata：
+
+```bash
+ddpt inspect demo-run/input/sample.synthetic.dcm \
+  --json demo-run/reports/inspect.json \
+  --html demo-run/reports/inspect.html
+```
+
+共享前检查文件夹：
+
+```bash
+ddpt inventory demo-run/input \
+  --json demo-run/reports/inventory.json \
+  --csv demo-run/reports/inventory.csv \
+  --html demo-run/reports/inventory.html
+
+ddpt filename scan demo-run/input \
+  --json demo-run/reports/filename-privacy.json \
+  --html demo-run/reports/filename-privacy.html
+```
+
+生成隐私整改计划：
+
+```bash
+ddpt remediation plan demo-run/input \
+  --profile dental-basic \
+  --json demo-run/reports/remediation-plan.json \
+  --html demo-run/reports/remediation-plan.html
+```
+
+先预览脱敏动作，不写入新 DICOM：
+
+```bash
+ddpt anonymize demo-run/input/sample.synthetic.dcm \
+  --dry-run \
+  --audit demo-run/reports/dry-run-audit.json \
+  --html demo-run/reports/dry-run-audit.html
+```
+
+写出脱敏后的 DICOM 文件：
+
+```bash
+ddpt anonymize demo-run/input/sample.synthetic.dcm \
+  --out demo-run/outputs/sample.anonymized.dcm \
+  --audit demo-run/reports/anonymization-audit.json \
+  --html demo-run/reports/anonymization-audit.html
+```
+
+验证输出结果：
+
+```bash
+ddpt validate demo-run/outputs/sample.anonymized.dcm \
+  --json demo-run/reports/validation.json
+
+ddpt profile verify demo-run/input/sample.synthetic.dcm \
+  demo-run/outputs/sample.anonymized.dcm \
+  --profile dental-basic \
+  --json demo-run/reports/profile-conformance.json \
+  --html demo-run/reports/profile-conformance.html
+```
+
+生成可视化复核材料：
+
+```bash
+ddpt preview demo-run/input/sample.synthetic.dcm \
+  --out demo-run/reports/input-preview.png
+
+ddpt pixel-risk scan demo-run/outputs/sample.anonymized.dcm \
+  --json demo-run/reports/pixel-risk.json \
+  --html demo-run/reports/pixel-risk.html
+
+ddpt pixel-review demo-run/outputs/sample.anonymized.dcm \
+  --out-dir demo-run/reports/pixel-review \
+  --plan profiles/dental-pixel-redaction.yml \
+  --json demo-run/reports/pixel-review.json \
+  --html demo-run/reports/pixel-review.html
+```
+
+遮盖已知像素区域：
+
+```bash
+ddpt redact-pixels demo-run/outputs/sample.anonymized.dcm \
+  --plan profiles/dental-pixel-redaction.yml \
+  --out demo-run/outputs/sample.redacted.dcm \
+  --audit demo-run/reports/pixel-redaction.json
+```
+
+打包、验证、解密共享输出：
+
+```bash
+ddpt package demo-run/outputs \
+  --encrypt \
+  --key-out demo-run/share/package.key \
+  --manifest demo-run/share/manifest.json \
+  --out demo-run/share/package.ddpt
+
+ddpt verify demo-run/share/package.ddpt \
+  --key demo-run/share/package.key \
+  --receipt demo-run/reports/package-receipt.json \
+  --html demo-run/reports/package-receipt.html
+
+ddpt decrypt demo-run/share/package.ddpt \
+  --key demo-run/share/package.key \
+  --out demo-run/restored
+```
+
+生成交接证据：
+
+```bash
+ddpt compare deid demo-run/input/sample.synthetic.dcm \
+  demo-run/outputs/sample.anonymized.dcm \
+  --json demo-run/reports/deid-comparison.json \
+  --html demo-run/reports/deid-comparison.html
+
+ddpt certificate create demo-run \
+  --json demo-run/reports/deid-certificate.json \
+  --html demo-run/reports/deid-certificate.html
+
+ddpt share readiness demo-run \
+  --json demo-run/reports/share-readiness.json \
+  --html demo-run/reports/share-readiness.html
+```
+
+### 可复现配方流程
+
+使用内置 YAML recipe 运行可复现的阶段式流程：
+
+```bash
+ddpt workflow run recipes/dental-demo-workflow.yml \
+  --root workflow-run \
+  --json workflow-run/reports/workflow-run.json \
+  --html workflow-run/reports/workflow-run.html
+
+ddpt quality gate workflow-run \
+  --workflow-report workflow-run/reports/workflow-run.json \
+  --json workflow-run/reports/quality-gate.json \
+  --html workflow-run/reports/quality-gate.html
+
+ddpt risk score workflow-run \
+  --json workflow-run/reports/residual-risk.json \
+  --html workflow-run/reports/residual-risk.html
+```
+
+### 本地浏览器工作台
+
+启动本地 API：
+
+```bash
+ddpt api serve demo-run --host 127.0.0.1 --port 8765
+```
+
+浏览器打开：
+
+```text
+http://127.0.0.1:8765/workbench
+```
+
+本地工作台只用于本机演示，不会把 DICOM 文件上传到云端服务。
+
+### 发布前常用检查
+
+```bash
+ddpt release audit .
+ddpt evidence bundle . --out evidence-run
+ddpt dashboard build evidence-run --out evidence-run/reports/review-dashboard.html
+ddpt showcase build evidence-run --out showcase-run/showcase.html
+ddpt regression suite regression-run
+ddpt macbook validate . --out macbook-validation-run
+ddpt publish preflight . --check-remote
+```
+
+### 其他常用命令
+
+```bash
+ddpt profile lint dental-basic
+ddpt profile coverage dental-basic
+ddpt profile compare dental-basic dental-research-sharing
+ddpt confidentiality alignment --profile dental-basic
+ddpt policy export --json reports/policy-registry.json --csv reports/policy-registry.csv --html reports/policy-registry.html
+ddpt dcmodify plan demo-run/input/sample.synthetic.dcm --profile dental-basic
+ddpt dicom-json export demo-run/input/sample.synthetic.dcm --json demo-run/reports/dicom-json.json
+ddpt orthanc plan demo-run/input/sample.synthetic.dcm --profile dental-basic --resource-id sample-synthetic-instance
+ddpt synthetic-study synthetic-study-demo --patients 2 --files-per-patient 2 --json synthetic-study-demo/manifest.json
+ddpt batch demo-run/input --out demo-run/batch-output
+```
+
+### 输出内容
+
+多数命令可以同时写出机器可读的 JSON 和适合人工查看的 HTML。
+
+常见输出文件夹：
+
+```text
+demo-run/input/      合成 DICOM 输入
+demo-run/outputs/    脱敏和像素遮盖后的 DICOM 文件
+demo-run/reports/    JSON 报告、HTML 报告、PNG 预览
+demo-run/share/      加密包、manifest、验证 key
+demo-run/restored/   解密后的接收方检查内容
+```
+
+生成的演示输出通常不要提交到 Git。仓库应主要保留源码、文档、测试、合成示例和 community health 文件。
+
+### 文档入口
+
+- [演示指南](docs/demo-guide.md)
+- [数据安全](docs/data-safety.md)
+- [工作流配方](docs/workflow-recipes.md)
+- [Profile 符合性验证](docs/profile-conformance.md)
+- [像素复核](docs/pixel-review.md)
+- [共享就绪检查](docs/share-readiness.md)
+- [MacBook 验收](docs/macbook-validation.md)
+- [本地 API](docs/local-api.md)
+- [可搜索性配置](docs/discoverability.md)
+
+### 仓库结构
+
+```text
+src/ddpt/                 Python 包和 CLI 实现
+profiles/                 脱敏和像素遮盖 profile
+recipes/                  可复现 YAML 工作流
+docs/                     详细文档
+tests/                    自动化测试
+examples/synthetic-dicom/ 仅合成数据示例
+dicom-anonymizer/         去标识化说明和 profile 区域
+dicom-encryption/         打包和加密说明
+dicom-sharing/            共享流程说明
+```
+
+### 贡献和安全
+
+欢迎提交 issue 和 pull request，但请只使用 synthetic 合成示例。贡献前请阅读：
+
+- [贡献指南](CONTRIBUTING.md)
+- [安全政策](SECURITY.md)
+- [支持说明](SUPPORT.md)
+- [行为准则](CODE_OF_CONDUCT.md)
+
+不要在 issue、pull request、示例或测试中包含真实临床影像、真实患者 metadata、诊所导出文件夹、账号密钥、私人论文草稿或其他敏感材料。
+
+### GitHub 推荐 Topics
+
+`dicom` `dental-imaging` `medical-imaging` `dicom-anonymization` `de-identification` `dicom-confidentiality` `dicom-json` `orthanc` `dcmodify` `pydicom` `pixel-risk` `privacy-regression` `pseudonymization` `local-first` `web-ui` `encryption` `audit-report` `cbct` `oral-radiology` `dentistry` `open-source-healthcare`
+
+### 许可证
 
 MIT License.
