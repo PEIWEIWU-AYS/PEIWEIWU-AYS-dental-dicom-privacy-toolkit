@@ -50,7 +50,7 @@ demos stable. `--check-remote` runs `git ls-remote` and can return
 
 ```text
 Owner: PEIWEIWU-AYS
-Repository name: dental-dicom-privacy-toolkit
+Repository name: PEIWEIWU-AYS-dental-dicom-privacy-toolkit
 Visibility: Public
 Initialize README: No
 Add .gitignore: No
@@ -72,7 +72,7 @@ dicom dental-imaging medical-imaging dicom-anonymization de-identification dicom
 ## Push After Creating the Empty Repository
 
 ```bash
-git remote set-url origin https://github.com/PEIWEIWU-AYS/dental-dicom-privacy-toolkit.git
+git remote set-url origin https://github.com/PEIWEIWU-AYS/PEIWEIWU-AYS-dental-dicom-privacy-toolkit.git
 git push -u origin main
 ```
 

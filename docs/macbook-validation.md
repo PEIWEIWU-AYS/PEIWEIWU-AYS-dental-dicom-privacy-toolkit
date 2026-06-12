@@ -257,7 +257,7 @@ Expected:
 
 - overall evidence bundle status is `PASS`
 - overall privacy regression suite status is `PASS`
-- publish preflight reports the expected `PEIWEIWU-AYS/dental-dicom-privacy-toolkit` remote
+- publish preflight reports the expected `PEIWEIWU-AYS/PEIWEIWU-AYS-dental-dicom-privacy-toolkit` remote
 - `evidence-run/reports/evidence-bundle.html` exists
 - `evidence-run/reports/privacy-regression-suite.html` exists
 - `evidence-run/reports/publish-preflight.html` exists

@@ -4,7 +4,7 @@
 
 - English name: Dental DICOM Privacy Toolkit
 - Chinese name: 牙科 DICOM 脱敏加密共享工具包
-- Repository slug: dental-dicom-privacy-toolkit
+- Repository slug: PEIWEIWU-AYS-dental-dicom-privacy-toolkit
 
 ## GitHub Description
 

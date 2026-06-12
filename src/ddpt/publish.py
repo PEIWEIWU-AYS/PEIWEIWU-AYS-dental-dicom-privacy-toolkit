@@ -12,7 +12,7 @@ from ddpt.models import (
 from ddpt.safety import scan_repository_safety
 
 DEFAULT_OWNER = "PEIWEIWU-AYS"
-DEFAULT_REPO_SLUG = "dental-dicom-privacy-toolkit"
+DEFAULT_REPO_SLUG = "PEIWEIWU-AYS-dental-dicom-privacy-toolkit"
 DEFAULT_DESCRIPTION = (
     "Dental DICOM anonymization, de-identification, privacy regression, "
     "audit evidence, and encrypted sharing toolkit."
@@ -173,7 +173,7 @@ def _remote_exists_check(root_dir: Path) -> PublishPreflightCheck:
     env["GIT_TERMINAL_PROMPT"] = "0"
     try:
         result = subprocess.run(
-            ["git", "ls-remote", "--exit-code", "origin", "HEAD"],
+            ["git", "ls-remote", "origin"],
             cwd=root_dir,
             capture_output=True,
             text=True,
@@ -196,7 +196,7 @@ def _remote_exists_check(root_dir: Path) -> PublishPreflightCheck:
             "github",
             "pass",
             "GitHub remote exists and is reachable.",
-            evidence or ["git ls-remote succeeded"],
+            evidence or ["git ls-remote reached an empty repository"],
         )
     return _check(
         "remote-exists",

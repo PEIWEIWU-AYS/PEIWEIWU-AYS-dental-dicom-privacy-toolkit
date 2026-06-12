@@ -4,7 +4,7 @@ title: "Dental DICOM Privacy Toolkit"
 authors:
   - family-names: "Wu"
     given-names: "Peiwei"
-repository-code: "https://github.com/PEIWEIWU-AYS/dental-dicom-privacy-toolkit"
+repository-code: "https://github.com/PEIWEIWU-AYS/PEIWEIWU-AYS-dental-dicom-privacy-toolkit"
 license: "MIT"
 version: "0.1.0"
 date-released: "2026-06-11"

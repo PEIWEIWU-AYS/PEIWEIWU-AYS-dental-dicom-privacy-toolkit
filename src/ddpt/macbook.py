@@ -212,7 +212,8 @@ def _next_steps(
         steps.append("Push the local main branch to GitHub.")
     else:
         steps.append(
-            "Create the empty GitHub repository PEIWEIWU-AYS/dental-dicom-privacy-toolkit, "
+            "Create the empty GitHub repository "
+            "PEIWEIWU-AYS/PEIWEIWU-AYS-dental-dicom-privacy-toolkit, "
             "then rerun with `--check-remote`."
         )
     if require_remote and not github_ready:

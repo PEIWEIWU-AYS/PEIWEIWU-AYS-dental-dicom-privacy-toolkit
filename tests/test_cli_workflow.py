@@ -1050,9 +1050,9 @@ def test_publish_preflight_generates_github_readiness_report(tmp_path: Path) -> 
     assert report_html.exists()
     report = json.loads(report_json.read_text())
     assert report["owner"] == "PEIWEIWU-AYS"
-    assert report["repo_slug"] == "dental-dicom-privacy-toolkit"
+    assert report["repo_slug"] == "PEIWEIWU-AYS-dental-dicom-privacy-toolkit"
     assert report["expected_remote_url"].endswith(
-        "PEIWEIWU-AYS/dental-dicom-privacy-toolkit.git"
+        "PEIWEIWU-AYS/PEIWEIWU-AYS-dental-dicom-privacy-toolkit.git"
     )
     assert report["check_remote"] is False
     assert "dicom" in report["suggested_topics"]
@@ -1067,7 +1067,7 @@ def test_publish_preflight_generates_github_readiness_report(tmp_path: Path) -> 
     )
     html = report_html.read_text()
     assert "Dental DICOM GitHub Publish Preflight" in html
-    assert "PEIWEIWU-AYS/dental-dicom-privacy-toolkit" in html
+    assert "PEIWEIWU-AYS/PEIWEIWU-AYS-dental-dicom-privacy-toolkit" in html
 
 
 def test_pixel_review_command_generates_overlay_and_report(tmp_path: Path) -> None:
@@ -1364,7 +1364,7 @@ def test_local_api_competitor_coverage_endpoint() -> None:
     assert response.status_code == 200
     publish = response.json()
     assert publish["owner"] == "PEIWEIWU-AYS"
-    assert publish["repo_slug"] == "dental-dicom-privacy-toolkit"
+    assert publish["repo_slug"] == "PEIWEIWU-AYS-dental-dicom-privacy-toolkit"
     assert publish["_api_artifacts"]["html"] == "reports/api-publish-preflight.html"
     assert Path("reports/api-publish-preflight.html").exists()
     Path("reports/api-publish-preflight.json").unlink()
