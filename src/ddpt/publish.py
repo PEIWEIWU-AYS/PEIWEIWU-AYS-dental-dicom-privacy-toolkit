@@ -208,6 +208,7 @@ def _remote_exists_check(root_dir: Path) -> PublishPreflightCheck:
 
 
 def _remote_config_check(remote_url: str, expected_remote_url: str) -> PublishPreflightCheck:
+    expected_remote_urls = [expected_remote_url, _ssh_remote_url(expected_remote_url)]
     if not remote_url:
         return _check(
             "remote-url",
@@ -216,7 +217,7 @@ def _remote_config_check(remote_url: str, expected_remote_url: str) -> PublishPr
             "No origin remote is configured.",
             [f"expected={expected_remote_url}"],
         )
-    status = "pass" if remote_url == expected_remote_url else "warning"
+    status = "pass" if remote_url in expected_remote_urls else "warning"
     return _check(
         "remote-url",
         "github",
@@ -224,8 +225,15 @@ def _remote_config_check(remote_url: str, expected_remote_url: str) -> PublishPr
         "Origin remote matches the expected GitHub repository."
         if status == "pass"
         else "Origin remote differs from the expected GitHub repository.",
-        [f"origin={remote_url}", f"expected={expected_remote_url}"],
+        [f"origin={remote_url}", *[f"expected={url}" for url in expected_remote_urls]],
     )
+
+
+def _ssh_remote_url(https_remote_url: str) -> str:
+    prefix = "https://github.com/"
+    if not https_remote_url.startswith(prefix):
+        return https_remote_url
+    return f"git@github.com:{https_remote_url.removeprefix(prefix)}"
 
 
 def _readme_check(root_dir: Path) -> PublishPreflightCheck:
